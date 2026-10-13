@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万圣节充值活动 · 线框图 v1.0（可编辑）</title>
+<style>
+/* ============================================================
+   万圣节充值活动 · 纯静态线框图
+   —— 本文件是"设计说明"，不是"视觉稿"
+   —— 灰阶仅表达层级，不代表最终配色
+   —— 全部间距 / 字号 / 圆角集中在下方变量，改一处全局生效
+   ============================================================ */
+
+:root{
+  /* —— 编辑开关 —— */
+  --editable: 1;              /* 1=文字可改，0=锁定（防误触） */
+  --show-guides: 1;           /* 1=显示布局标注（尺寸/间距），0=隐藏 */
+  --show-notes: 1;            /* 1=显示设计批注，0=隐藏 */
+
+  /* —— 画布 —— */
+  --canvas-w: 375px;          /* 逻辑画布宽 */
+  --canvas-h: 812px;          /* 逻辑画布高 */
+  --gutter: 28px;             /* 多屏之间的间距 */
+
+  /* —— 灰阶（仅表层级）—— */
+  --g-000:#ffffff;  /* 画布底 */
+  --g-050:#fafafa;
+  --g-100:#f2f2f2;  /* 卡片 / 面板块 */
+  --g-200:#e8e8e8;  /* 占位图 / 头像 */
+  --g-300:#d4d4d4;  /* 分隔线 / 弱边框 */
+  --g-400:#b0b0b0;  /* 图标 */
+  --g-500:#8a8a8a;  /* 次要文字 */
+  --g-600:#6b6b6b;
+  --g-700:#4a4a4a;  /* 正文 */
+  --g-800:#2b2b2b;  /* 标题 */
+  --g-900:#141414;  /* 主标题 */
+
+  /* —— 标注色（唯一非灰阶，用于标注层）—— */
+  --mark:    #d64545;         /* 尺寸标注 */
+  --mark-bg: #fff3f3;
+  --note:    #1f6fb2;         /* 设计批注 */
+  --note-bg: #f0f7fc;
+
+  /* —— 字号 —— */
+  --fs-hero:   34px;   /* 主标题 */
+  --fs-h1:     20px;   /* 屏标题 */
+  --fs-h2:     15px;   /* 区块标题 */
+  --fs-body:   13px;   /* 正文 */
+  --fs-small:  11px;   /* 次要 / 批注 */
+  --fs-tiny:    9px;   /* 标注 */
+
+  /* —— 间距 —— */
+  --sp-1:  4px;  --sp-2:  8px;  --sp-3: 12px;
+  --sp-4: 16px;  --sp-5: 20px;  --sp-6: 24px;
+  --sp-7: 32px;  --sp-8: 40px;  --sp-9: 56px;
+
+  /* —— 圆角 / 描边 —— */
+  --r-sm: 4px; --r-md: 8px; --r-lg: 14px;
+  --bd: 1px dashed var(--g-300);
+  --bd-solid: 1px solid var(--g-300);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ background:#5a5a5a; }
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:var(--fs-body); line-height:1.5; color:var(--g-700);
+  padding:var(--sp-6);
+}
+
+/* ============================================================
+   顶部工具栏
+   ============================================================ */
+.toolbar{
+  position:sticky; top:0; z-index:1000;
+  display:flex; align-items:center; flex-wrap:wrap; gap:var(--sp-3);
+  padding:var(--sp-3) var(--sp-4);
+  margin:0 0 var(--sp-6);
+  background:var(--g-000); border-radius:var(--r-md);
+  box-shadow:0 2px 12px rgba(0,0,0,.25);
+}
+.toolbar h1{ font-size:var(--fs-h2); color:var(--g-900); font-weight:700; }
+.toolbar .sub{ font-size:var(--fs-small); color:var(--g-500); }
+.toolbar .spacer{ flex:1; }
+.tbtn{
+  font:inherit; font-size:var(--fs-small); color:var(--g-700);
+  background:var(--g-100); border:var(--bd-solid); border-radius:var(--r-sm);
+  padding:5px 10px; cursor:pointer; white-space:nowrap;
+}
+.tbtn:hover{ background:var(--g-200); }
+.tbtn.on{ background:var(--g-900); color:var(--g-000); border-color:var(--g-900); }
+
+/* ============================================================
+   屏幕排布
+   ============================================================ */
+.screens{
+  display:flex; flex-wrap:wrap; gap:var(--gutter);
+  align-items:flex-start;
+}
+.screen-wrap{ flex:0 0 auto; }
+.screen-cap{
+  font-size:var(--fs-small); color:var(--g-100);
+  margin-bottom:var(--sp-2); font-weight:600;
+}
+.screen-cap b{ color:#fff; }
+.screen-cap span{ color:#c8c8c8; font-weight:400; }
+
+/* 画布：375 × 812，固定高，不滚动 —— 静态定格 */
+.canvas{
+  position:relative;
+  width:var(--canvas-w); height:var(--canvas-h);
+  background:var(--g-000);
+  border:2px solid var(--g-800);
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,.3);
+}
+
+/* ============================================================
+   通用线框元素
+   ============================================================ */
+.box{ border:var(--bd); border-radius:var(--r-sm); }
+.box.solid{ border-style:solid; border-color:var(--g-200); }
+.fill{ background:var(--g-100); }
+.photo{                                    /* 图片 / 插画占位 */
+  background:var(--g-200);
+  background-image:repeating-linear-gradient(45deg,transparent 0 6px,rgba(0,0,0,.045) 6px 12px);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--g-500); font-size:var(--fs-tiny); text-align:center;
+  border-radius:var(--r-sm);
+}
+.av{                                       /* 头像占位 */
+  background:var(--g-300); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--g-000); font-size:var(--fs-tiny); font-weight:700;
+}
+.ph{                                       /* 文字行占位 */
+  height:9px; background:var(--g-300); border-radius:2px;
+}
+.ph.w60{ width:60%; } .ph.w70{ width:70%; } .ph.w80{ width:80%; } .ph.w100{ width:100%; }
+.ph.thin{ height:6px; background:var(--g-200); }
+
+/* 可编辑文字 */
+.ed{ display:inline-block; min-width:12px; outline:none; }
+.canvas[contenteditable="true"] .ed{
+  cursor:text;
+  box-shadow:inset 0 -1px 0 var(--g-300);
+}
+.canvas[contenteditable="true"] .ed:hover{ background:var(--mark-bg); }
+.canvas[contenteditable="true"] .ed:focus{
+  background:var(--note-bg);
+  box-shadow:inset 0 -2px 0 var(--note);
+}
+
+/* 尺寸标注 */
+.dim{
+  position:absolute; font-size:var(--fs-tiny); color:var(--mark);
+  background:var(--mark-bg); border:1px solid var(--mark);
+  border-radius:2px; padding:0 3px; line-height:1.35;
+  white-space:nowrap; pointer-events:none; z-index:50;
+  font-variant-numeric:tabular-nums;
+}
+.dim.v{ writing-mode:vertical-rl; }
+.guides-off .dim{ display:none; }
+
+/* 设计批注 */
+.note{
+  position:absolute; z-index:60;
+  max-width:150px;
+  font-size:var(--fs-tiny); line-height:1.4; color:var(--note);
+  background:var(--note-bg);
+  border:1px solid var(--note); border-left-width:3px;
+  border-radius:3px; padding:3px 5px;
+  pointer-events:auto;
+}
+.note::before{
+  content:"✎"; margin-right:3px; font-weight:700;
+}
+.notes-off .note{ display:none; }
+
+/* 区块编号徽标 */
+.blk{
+  position:absolute; z-index:40;
+  min-width:15px; height:15px; padding:0 3px;
+  background:var(--g-900); color:var(--g-000);
+  font-size:var(--fs-tiny); font-weight:700;
+  border-radius:3px;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+
+/* ============================================================
+   S1 · 首屏 Hero —— 全屏独占，下滑才进正文
+   ============================================================ */
+.hero{ position:absolute; inset:0; display:flex; flex-direction:column; }
+/* 头图区：占满整屏（375×812），不再只占上半 */
+.hero__art{
+  position:absolute; inset:0; z-index:0;
+  display:flex; flex-direction:column; align-items:center;
+  padding-top:var(--sp-8);
+}
+.hero__art .art-bg{ position:absolute; inset:0; z-index:-1; border-radius:0; }
+.hero__eyebrow{
+  position:relative; z-index:2;
+  font-size:var(--fs-tiny); color:var(--g-600);
+  background:var(--g-000); border:var(--bd-solid);
+  border-radius:99px; padding:2px 8px; margin-bottom:var(--sp-3);
+}
+.hero__title{
+  position:relative; z-index:2;
+  font-size:26px; font-weight:800; letter-spacing:0;
+  color:var(--g-900); text-align:center; line-height:1.1;
+  width:100%; padding:0 var(--sp-3);
+}
+.hero__sub{
+  position:relative; z-index:2;
+  font-size:var(--fs-h2); font-weight:700; color:var(--g-800);
+  margin-top:var(--sp-1); text-align:center;
+}
+.hero__sub2{
+  position:relative; z-index:2;
+  font-size:var(--fs-small); color:var(--g-600);
+  letter-spacing:2px; margin-top:var(--sp-1); text-align:center;
+}
+.hero__tag{
+  position:relative; z-index:2;
+  font-size:var(--fs-small); color:var(--g-600);
+  margin-top:var(--sp-6); text-align:center; max-width:250px;
+  padding:0 var(--sp-4);
+}
+.hero__tag .ed{ color:var(--g-700); }
+
+/* 头图底部横条：左=规则按钮（与右侧头像对称） 右=TOP1 卡 + 倒计时 */
+.hero__bar{
+  position:absolute; left:var(--sp-4); right:0; bottom:96px; z-index:20;
+  display:flex; align-items:flex-start; justify-content:space-between;
+}
+/* 规则按钮：与 TOP1 卡（头像）左右对称 */
+.rulesbtn{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  background:var(--g-000); border:var(--bd-solid); border-radius:var(--r-md);
+  padding:var(--sp-2) 10px; width:64px;
+}
+.rulesbtn__ic{ width:26px; height:26px; }
+.rulesbtn__t{ font-size:var(--fs-tiny); color:var(--g-700); font-weight:700; }
+
+/* TOP1 卡 + 倒计时：右下贴边，固定不滚 */
+.dock{
+  position:static;
+  display:flex; flex-direction:column; align-items:flex-end; gap:var(--sp-2);
+}
+.top1{
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:var(--g-000); border:var(--bd-solid); border-radius:var(--r-md);
+  padding:var(--sp-2) var(--sp-3); width:78px;
+}
+.top1 .av{ width:36px; height:36px; }
+/* TOP1 空框态：无数据时保留外框，仅内容置空 */
+.top1--empty{ border-style:dashed; opacity:.75; }
+.top1 .crown{
+  font-size:var(--fs-tiny); color:var(--g-600);
+  margin-top:-9px; margin-bottom:1px;
+}
+.top1 .id{
+  font-size:var(--fs-tiny); color:var(--g-800); font-weight:700;
+  max-width:64px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.count{
+  display:flex; align-items:center; gap:var(--sp-2);
+  background:var(--g-000); border:var(--bd-solid); border-radius:var(--r-md);
+  padding:var(--sp-2) var(--sp-3);
+}
+.count__glass{ width:16px; height:20px; border-radius:2px; flex:0 0 auto; }
+.count__digits{ display:flex; align-items:center; gap:2px; }
+.count__cell{
+  display:flex; flex-direction:column; align-items:center; gap:1px;
+}
+.count__num{
+  min-width:22px; height:22px;
+  background:var(--g-800); color:var(--g-000);
+  border-radius:3px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:var(--fs-small); font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.count__cap{ font-size:var(--fs-tiny); color:var(--g-500); }
+.count__colon{ font-size:var(--fs-small); color:var(--g-600); padding-bottom:9px; }
+
+/* 页脚（下滑提示已按用户要求移除，仅保留版权行） */
+.hero__foot{
+  position:absolute; left:0; right:0; bottom:0; z-index:20;
+  text-align:center; font-size:var(--fs-tiny); color:var(--g-500);
+  padding-bottom:5px;
+}
+
+/* ============================================================
+   S2 / S3 · 正文
+   ============================================================ */
+.body{ position:absolute; inset:0; overflow:hidden; display:flex; flex-direction:column; }
+
+/* 迷你 banner */
+.mini{
+  flex:0 0 auto; height:56px;
+  display:flex; align-items:center; gap:var(--sp-2);
+  padding:0 var(--sp-4);
+  background:var(--g-100); border-bottom:var(--bd-solid);
+}
+.mini__t{ flex:1; min-width:0; }
+.mini__t .l1{ font-size:var(--fs-small); font-weight:700; color:var(--g-800); }
+.mini__t .l2{ font-size:var(--fs-tiny); color:var(--g-500); }
+.mini__art{ width:52px; height:34px; flex:0 0 auto; }
+
+/* 双 Tab */
+.tabs{
+  flex:0 0 auto;
+  display:flex; gap:var(--sp-2);
+  padding:var(--sp-3) var(--sp-4) 0;
+}
+.tab{
+  flex:1;
+  display:flex; align-items:center; justify-content:center; gap:var(--sp-1);
+  height:34px; border-radius:99px;
+  border:var(--bd-solid); background:var(--g-100);
+  font-size:var(--fs-small); font-weight:700; color:var(--g-500);
+}
+.tab.on{
+  background:var(--g-900); color:var(--g-000); border-color:var(--g-900);
+}
+.tab__zh{ font-size:var(--fs-tiny); font-weight:400; opacity:.75; }
+
+/* 滚动区 */
+.scroll{ flex:1; min-height:0; overflow:hidden; padding:var(--sp-3) var(--sp-4) 0; }
+.scroll.rank{ padding-bottom:72px; }   /* 给榜单 Tab 唯一吸底条让位 */
+
+/* （原「当前充值额卡片」.info / .curbadge 样式已废弃 —— 与进度条信息重复，已合并进 .prog） */
+
+/* —— 进度条（女巫坩埚）—— */
+.prog{
+  background:var(--g-100); border:var(--bd-solid); border-radius:var(--r-md);
+  padding:var(--sp-3); margin-bottom:var(--sp-3);
+}
+.prog__head{
+  display:flex; align-items:baseline; gap:var(--sp-2); margin-bottom:var(--sp-2);
+}
+.prog__title{ font-size:var(--fs-small); font-weight:700; color:var(--g-800); }
+.prog__amt{ margin-left:auto; font-size:var(--fs-small); color:var(--g-600); font-variant-numeric:tabular-nums; }
+.brew{ display:flex; align-items:flex-end; gap:var(--sp-2); }
+.cauldron{ width:30px; height:30px; flex:0 0 auto; }
+.trough{
+  position:relative; flex:1; height:16px;
+  background:var(--g-000); border:var(--bd-solid); border-radius:99px;
+  overflow:hidden;
+}
+.potion{
+  position:absolute; left:0; top:0; bottom:0;
+  width:64%;                                   /* 进度：当前/门槛 */
+  background:var(--g-400);
+  border-radius:99px;
+}
+.potion::after{
+  content:""; position:absolute; right:0; top:0; bottom:0; width:2px;
+  background:var(--g-700);
+}
+.trough__cap{
+  position:absolute; right:6px; top:50%; transform:translateY(-50%);
+  font-size:var(--fs-tiny); color:var(--g-700); font-weight:700;
+}
+.prog__need{
+  margin-top:var(--sp-2);
+  font-size:var(--fs-small); color:var(--g-700);
+}
+.prog__need b{ color:var(--g-900); }
+
+/* —— 宝箱轮播 —— */
+.sect-head{
+  display:flex; align-items:center; gap:var(--sp-2);
+  margin-bottom:var(--sp-1);
+}
+.sect-title{ font-size:var(--fs-small); font-weight:700; color:var(--g-800); }
+.sect-note{ margin-left:auto; font-size:var(--fs-tiny); color:var(--g-500); }
+/* ── 宝箱轮播 ──────────────────────────────────────────────
+   静态定格：模拟「已滑到最接近的未解锁档（LV3）并居中」。
+   居中公式：padding-left = 50% − 半卡宽 + 出血补偿(16px)
+             再整条左移 n 个步进，n = 选中档的索引
+   步进 pitch = 卡宽 76 + 间距 4 = 80px
+   ──────────────────────────────────────────────────────── */
+.deck{
+  --card-w:76px;
+  --pitch:80px;                             /* 卡宽 + gap */
+  display:flex; gap:4px;
+  overflow:hidden;
+  padding:var(--sp-2) 0 var(--sp-1);
+  margin:0 calc(-1 * var(--sp-4));          /* 出血到画布边 */
+  padding-left:calc(50% - var(--card-w)/2 + var(--sp-4));   /* 索引 0 居中 */
+}
+/* 定格在 LV3（索引 2）居中 —— 默认档 = 最接近的未解锁档 */
+.deck--at-3{ margin-left:calc(-1 * var(--sp-4) - 2 * var(--pitch)); }
+.card{
+  flex:0 0 auto; width:76px;
+  display:flex; flex-direction:column; align-items:center; gap:var(--sp-1);
+}
+.card__lv{
+  font-size:var(--fs-tiny); color:var(--g-600); font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.card__art{
+  position:relative; width:64px; height:64px;
+  border-radius:var(--r-md);
+}
+.card__halo{
+  position:absolute; inset:-6px; border-radius:50%;
+  border:2px dashed var(--g-400);
+}
+.card__web{
+  position:absolute; inset:0; border-radius:var(--r-md);
+  background:var(--g-200); opacity:.5;
+  display:none;                              /* 仅未点亮（未达门槛）时显示 */
+}
+.card__tick{
+  position:absolute; left:3px; top:3px;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--g-700); color:var(--g-000);
+  font-size:9px; display:flex; align-items:center; justify-content:center;
+  font-weight:700;
+  display:none;                              /* 仅点亮时显示 */
+}
+.card__lock{
+  position:absolute; right:3px; top:3px;
+  font-size:var(--fs-tiny); color:var(--g-700);
+  display:none;                              /* 仅未点亮时显示 */
+}
+.card__name{
+  font-size:var(--fs-tiny); color:var(--g-600); text-align:center;
+  max-width:74px; line-height:1.25;
+}
+/* 景深：中央大、两侧小 */
+.card{ transform:scale(.82); opacity:.45; }
+.card.is-c{ transform:scale(1); opacity:1; }
+.card.is-c .card__lv{ color:var(--g-900); font-size:var(--fs-small); }
+.card.is-c .card__name{ color:var(--g-800); font-weight:700; }
+
+/* ── 点亮逻辑：达到门槛才点亮该档南瓜宝箱 ── */
+.card.is-lit{ opacity:1; }
+.card.is-lit .card__art{ box-shadow:0 0 0 2px var(--g-700), 0 0 16px rgba(0,0,0,.22); }
+.card.is-lit .card__tick{ display:flex; }
+/* 未达门槛：不点亮 —— 暗态 + 蛛网 + 锁；中央选中档同样不点亮 */
+.card.is-locked .card__art{ box-shadow:none; }
+.card.is-locked .card__web{ display:block; opacity:.75; }
+.card.is-locked .card__lock{ display:block; }
+.card.is-locked .card__name{ color:var(--g-500); }
+
+.dots{ display:flex; justify-content:center; gap:5px; margin:var(--sp-1) 0 var(--sp-3); }
+.dots i{
+  width:5px; height:5px; border-radius:50%; background:var(--g-300);
+}
+.dots i.on{ background:var(--g-700); }
+
+/* —— 奖励面板 —— */
+.rw{
+  position:relative;
+  border:2px solid var(--g-700); border-radius:var(--r-md);
+  background:var(--g-050);
+  padding:var(--sp-3);
+  margin-bottom:var(--sp-3);
+}
+.rw__top{
+  display:flex; align-items:center; gap:var(--sp-2);
+  padding-bottom:var(--sp-2); margin-bottom:var(--sp-2);
+  border-bottom:var(--bd-solid);
+}
+.rw__ic{ width:18px; height:18px; flex:0 0 auto; }
+.rw__name{ font-size:var(--fs-small); font-weight:700; color:var(--g-800); }
+.rw__tag{
+  margin-left:auto; font-size:var(--fs-tiny); font-weight:700;
+  color:var(--g-700); background:var(--g-200);
+  border-radius:99px; padding:1px 7px;
+}
+.rw__grid{ display:flex; gap:var(--sp-2); }
+.rw__col{ display:flex; flex-direction:column; gap:var(--sp-2); flex:1; }
+.reward{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+.reward .pic{
+  width:52px; height:52px; border-radius:var(--r-sm);
+}
+.reward .nm{ font-size:var(--fs-tiny); color:var(--g-700); text-align:center; line-height:1.2; }
+.reward .ct{ font-size:var(--fs-tiny); color:var(--g-500); }
+/* 竖版（左列大图） */
+.rw__v{ flex:0 0 92px; }
+.rw__v .reward .pic{ width:88px; height:96px; }
+/* 横版（底部宽卡） */
+.rw__big{ margin-top:var(--sp-2); padding-top:var(--sp-2); border-top:var(--bd-solid); }
+.rw__big .reward .pic{ width:100%; height:44px; }
+
+/* 未解锁蒙层 */
+.lockcover{
+  position:absolute; inset:0; z-index:6;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--sp-1);
+  background:var(--g-000); opacity:.88;
+  border-radius:var(--r-md);
+}
+.lockcover__lock{ width:26px; height:26px; border-radius:4px; background:var(--g-400); }
+.lockcover__t{ font-size:var(--fs-small); color:var(--g-700); }
+.lockcover__go{ font-size:var(--fs-small); font-weight:700; color:var(--g-900); }
+
+/* （原「规则折叠区」样式已废弃 —— 规则改为头图左侧按钮 + 独立规则页 S6） */
+
+/* ============================================================
+   S6 · 规则页（由头图左侧「规则」按钮进入，分宝箱 / 榜单两个 Tab）
+   ============================================================ */
+.rulespage{ position:absolute; inset:0; display:flex; flex-direction:column; }
+.rulespage__hd{
+  flex:0 0 auto;
+  display:flex; align-items:center; gap:var(--sp-2);
+  padding:var(--sp-3) var(--sp-4);
+  border-bottom:var(--bd-solid);
+}
+.rulespage__hd .t{ font-size:var(--fs-h2); font-weight:800; color:var(--g-900); }
+.rulespage__hd .x{
+  margin-left:auto; width:22px; height:22px; border-radius:50%;
+  background:var(--g-100); color:var(--g-600);
+  display:flex; align-items:center; justify-content:center;
+  font-size:var(--fs-small);
+}
+.rulespage__body{
+  flex:1; min-height:0; overflow:hidden;
+  padding:var(--sp-3) var(--sp-4);
+}
+.rulespage__body h5{
+  font-size:var(--fs-small); font-weight:700; color:var(--g-800);
+  margin-bottom:var(--sp-2);
+}
+.rulespage__body p{
+  font-size:var(--fs-small); color:var(--g-600);
+  line-height:1.55; margin-bottom:var(--sp-2);
+}
+.rulespage__body ol{ padding-left:18px; }
+.rulespage__body li{
+  font-size:var(--fs-small); color:var(--g-600);
+  line-height:1.5; margin-bottom:var(--sp-2);
+}
+/* 规则按钮（头图左侧） */
+.rulesbtn{ cursor:pointer; }
+.rulesbtn:active{ filter:brightness(.96); }
+
+/* ============================================================
+   S3 · 榜单
+   ============================================================ */
+.periods{ display:flex; gap:var(--sp-1); margin-bottom:var(--sp-3); }
+.period{
+  flex:1; height:26px; border-radius:99px;
+  border:var(--bd-solid); background:var(--g-100);
+  font-size:var(--fs-small); color:var(--g-500); font-weight:600;
+  display:flex; align-items:center; justify-content:center;
+}
+.period.on{ background:var(--g-900); color:var(--g-000); border-color:var(--g-900); }
+
+.board{
+  display:flex; align-items:center; gap:var(--sp-3);
+  background:var(--g-100); border:var(--bd-solid); border-radius:var(--r-md);
+  padding:var(--sp-3); margin-bottom:var(--sp-3);
+}
+.board__t{ font-size:var(--fs-small); font-weight:700; color:var(--g-800); }
+.board__s{ font-size:var(--fs-tiny); color:var(--g-500); margin-top:2px; }
+.board__cd{ margin-left:auto; text-align:right; }
+.board__cd .v{ font-size:var(--fs-small); font-weight:800; color:var(--g-900); font-variant-numeric:tabular-nums; }
+.board__cd .k{ font-size:var(--fs-tiny); color:var(--g-500); }
+
+/* 领奖台 */
+.podium{
+  display:flex; align-items:flex-end; justify-content:center; gap:var(--sp-2);
+  margin-bottom:var(--sp-3);
+}
+.pod{
+  flex:1 1 0; max-width:104px;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+}
+.pod__badge{ width:26px; height:22px; flex:0 0 auto; }
+.pod__av{ width:44px; height:44px; }
+.pod--1 .pod__av{ width:54px; height:54px; }
+.pod--1 .pod__badge{ width:32px; height:26px; }
+.pod__nm{
+  font-size:var(--fs-tiny); color:var(--g-700); font-weight:600;
+  max-width:96px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.pod__amt{ font-size:var(--fs-tiny); color:var(--g-500); font-variant-numeric:tabular-nums; }
+.pod__base{
+  width:100%; height:22px; border-radius:var(--r-sm) var(--r-sm) 0 0;
+  background:var(--g-200);
+  display:flex; align-items:center; justify-content:center;
+  font-size:var(--fs-small); font-weight:800; color:var(--g-700);
+}
+.pod--1 .pod__base{ height:30px; background:var(--g-300); }
+
+/* 榜单行 */
+.ranklist{ display:flex; flex-direction:column; gap:var(--sp-2); }
+.rankrow{
+  display:flex; align-items:center; gap:var(--sp-2);
+  background:var(--g-100); border:var(--bd-solid); border-radius:var(--r-sm);
+  padding:var(--sp-2) var(--sp-3);
+}
+.rankrow__rk{
+  flex:0 0 26px; text-align:center;
+  font-size:var(--fs-small); font-weight:800; color:var(--g-700);
+  font-variant-numeric:tabular-nums;
+}
+.rankrow .av{ width:26px; height:26px; flex:0 0 auto; }
+.rankrow__nm{
+  flex:1; min-width:0; font-size:var(--fs-small); color:var(--g-700);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.rankrow__val{
+  font-size:var(--fs-small); color:var(--g-600); font-variant-numeric:tabular-nums;
+}
+.rankrow.placeholder{ opacity:.55; }
+.rankrow.placeholder .rankrow__nm{ color:var(--g-500); }
+
+/* 榜单 Tab 唯一吸底条：只展示 头像 / 排名 / ID / 已充值金额 */
+.myrank{
+  position:absolute; left:0; right:0; bottom:0; z-index:20;
+  margin:0 var(--sp-4) var(--sp-3);
+  background:var(--g-900);
+  border-radius:var(--r-md);
+  display:flex; align-items:center; gap:var(--sp-2);
+  padding:var(--sp-3);
+}
+.myrank__rk{
+  flex:0 0 28px; text-align:center;
+  font-size:var(--fs-body); font-weight:800; color:var(--g-000);
+}
+.myrank .av{ width:28px; height:28px; background:var(--g-600); color:var(--g-000); }
+.myrank__nm{ flex:1; font-size:var(--fs-small); color:var(--g-000); font-weight:600; }
+.myrank__val{ font-size:var(--fs-small); color:var(--g-300); font-variant-numeric:tabular-nums; }
+
+/* ============================================================
+   吸底 CTA
+   ============================================================ */
+.cta{
+  position:absolute; left:0; right:0; bottom:0; z-index:30;
+  padding:var(--sp-6) var(--sp-4) var(--sp-4);
+  background:linear-gradient(180deg,rgba(255,255,255,0),var(--g-000) 38%);
+}
+.cta__btn{
+  width:100%; height:46px;
+  background:var(--g-800); color:var(--g-000);
+  border:none; border-radius:99px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:1px;
+}
+.cta__btn .l1{ font-size:var(--fs-body); font-weight:700; }
+.cta__btn .l2{ font-size:var(--fs-tiny); opacity:.8; }
+
+/* ============================================================
+   S4 · 弹窗
+   ============================================================ */
+.mask{
+  position:absolute; inset:0; z-index:80;
+  background:rgba(0,0,0,.55);
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--sp-5);
+}
+.modal{
+  width:100%; max-width:300px;
+  background:var(--g-000); border-radius:var(--r-lg);
+  padding:var(--sp-5) var(--sp-4) var(--sp-4);
+  max-height:78%; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.modal__hd{
+  display:flex; align-items:center; gap:var(--sp-2);
+  padding-bottom:var(--sp-3); margin-bottom:var(--sp-3);
+  border-bottom:var(--bd-solid);
+}
+.modal__hd .t{ font-size:var(--fs-h2); font-weight:800; color:var(--g-900); }
+.modal__close{
+  margin-left:auto; width:22px; height:22px; border-radius:50%;
+  background:var(--g-100); color:var(--g-600);
+  display:flex; align-items:center; justify-content:center;
+  font-size:var(--fs-body);
+}
+.modal__bd{ overflow:hidden; }
+.mrow{ margin-bottom:var(--sp-4); }
+.mrow__title{ margin-bottom:var(--sp-2); }
+.mrow__title .ph{ width:110px; height:16px; background:var(--g-300); }
+.mrow__rewards{ display:flex; gap:var(--sp-2); }
+.mrow__rewards .reward .pic{ width:46px; height:46px; }
+
+/* ============================================================
+   屏说明（画布外）
+   ============================================================ */
+.screen-desc{
+  margin-top:var(--sp-3); width:var(--canvas-w);
+  font-size:var(--fs-small); color:#e0e0e0; line-height:1.55;
+}
+.screen-desc h4{
+  font-size:var(--fs-small); color:#fff; margin-bottom:var(--sp-1); font-weight:700;
+}
+.screen-desc ul{ padding-left:16px; }
+.screen-desc li{ margin-bottom:2px; }
+
+/* ============================================================
+   打印
+   ============================================================ */
+@media print{
+  body{ background:#fff; padding:0; }
+  .toolbar{ display:none; }
+  .screen-cap,.screen-desc{ color:#333; }
+  .screen-cap b{ color:#000; }
+  .screen-cap span{ color:#666; }
+}
+</style>
+</head>
+<body class="guides-on notes-on">
+
+<!-- ============================================================
+     工具栏
+     ============================================================ -->
+<div class="toolbar">
+  <div>
+    <h1>万圣节充值活动 · 线框图 v1.0</h1>
+    <div class="sub">375 × 812 · 纯静态定格 · 灰阶仅表层级，不代表最终配色</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="tbtn on" id="btnEdit">✎ 文字可编辑</button>
+  <button class="tbtn on" id="btnGuides">📐 尺寸标注</button>
+  <button class="tbtn on" id="btnNotes">✎ 设计批注</button>
+  <button class="tbtn" id="btnLockAll">🔒 全部锁定</button>
+</div>
+
+<div class="screens" id="screens">
+
+<!-- ============================================================
+     S1 · 首屏 Hero
+     ============================================================ -->
+<div class="screen-wrap">
+  <div class="screen-cap"><b>S1 · 首屏 Hero（全屏）</b> <span>｜ 头图占满整屏 · 下滑进正文</span></div>
+  <div class="canvas" contenteditable="true">
+    <div class="hero">
+      <!-- ① 头图区（全屏独占） -->
+      <div class="hero__art">
+        <div class="photo art-bg"></div>
+        <span class="blk" style="left:6px;top:6px">①</span>
+        <span class="hero__eyebrow ed">Oct 31 · Ends 23:59</span>
+        <h2 class="hero__title ed">HALLOWEEN</h2>
+        <p class="hero__sub ed">万圣寻宝夜</p>
+        <p class="hero__sub2 ed">TREASURE NIGHT</p>
+        <p class="hero__tag ed">每充一笔，城堡里的南瓜宝箱就亮一盏</p>
+      </div>
+
+      <!-- ② 规则按钮（头图左侧，与右侧头像对称） -->
+      <div class="hero__bar">
+        <button class="rulesbtn">
+          <span class="blk" style="left:-16px;top:-8px">②</span>
+          <span class="photo rulesbtn__ic"></span>
+          <span class="rulesbtn__t ed">Rules</span>
+        </button>
+
+        <!-- 右侧：TOP1 卡 + 倒计时 -->
+        <div class="dock">
+          <div class="top1">
+            <span class="blk" style="left:-16px;top:-8px">③</span>
+            <div class="av">👤</div>
+            <span class="crown">👑</span>
+            <span class="id ed">DarkLord_666</span>
+          </div>
+          <!-- ④ 倒计时 -->
+          <div class="count">
+            <span class="blk" style="left:-16px;top:-8px">④</span>
+            <div class="photo count__glass"></div>
+            <div class="count__digits">
+              <div class="count__cell">
+                <span class="count__num ed">22</span>
+                <span class="count__cap">d</span>
+              </div>
+              <span class="count__colon">:</span>
+              <div class="count__cell">
+                <span class="count__num ed">08</span>
+                <span class="count__cap">h</span>
+              </div>
+              <span class="count__colon">:</span>
+              <div class="count__cell">
+                <span class="count__num ed">45</span>
+                <span class="count__cap">m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__foot ed">RoStar · Halloween Treasure Night</div>
+    </div>
+
+    <!-- 标注 -->
+    <span class="dim" style="right:8px;top:8px">头图占满 375×812</span>
+
+    <!-- 批注 -->
+    <div class="note" style="left:8px;top:150px;max-width:150px">
+      头图为<strong>静态兜底</strong>，实际叠加 yyeva 动态视频。<strong>头图占满整屏</strong>，正文不在首屏露出。
+    </div>
+    <div class="note" style="left:8px;top:330px;max-width:130px">
+      ② <strong>规则按钮</strong>：置于头图左侧、与右侧头像<strong>左右对称</strong>，点击进入<strong>规则页</strong>（见 S6）。
+    </div>
+    <div class="note" style="right:8px;top:300px;max-width:134px">
+      ③ 固定右下贴边，<strong>TOP1 纯展示不可点</strong>，仅两行：头像 + ID。<br>
+      无数据时<strong>保留外框、内容置空</strong>（不隐藏，见 S5 变体 A）。
+    </div>
+    <div class="note" style="left:8px;top:520px;max-width:138px">
+      ④ 倒计时目标 = 当月最后一天<br>沙特 19:00 / 埃及 18:00<br>剩余 &lt;24h 整组转橙高亮
+    </div>
+    <div class="note" style="left:8px;bottom:40px;max-width:140px">
+      ⚠️ <strong>底部不放下滑提示</strong>（原左右两条已按用户要求移除），仅保留版权行。
+    </div>
+  </div>
+
+  <div class="screen-desc">
+    <h4>本屏要点</h4>
+    <ul>
+      <li><strong>头图占满整屏 375×812</strong>，下滑即进入活动正文</li>
+      <li>头图高度沿用现版 <code>16.96rem</code>（750×1272），万圣版建议 750×1314</li>
+      <li><strong>规则改为头图左侧的按钮</strong>（与头像对称），点击进规则页，正文不再折叠</li>
+      <li>标题区可直接改字：点一下文字即可编辑</li>
+      <li>TOP1 无数据时<strong>展示空框</strong>（头像与 ID 置空为「—」），不隐藏</li>
+      <li><strong>底部不放下滑提示</strong>，仅保留版权行</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================
+     S2 · 宝箱 Tab
+     ============================================================ -->
+<div class="screen-wrap">
+  <div class="screen-cap"><b>S2 · 宝箱 Tab</b> <span>｜ 进度 + 轮播 + 奖励</span></div>
+  <div class="canvas" contenteditable="true">
+    <div class="body">
+      <!-- 迷你 banner -->
+      <div class="mini">
+        <span class="blk" style="left:-2px;top:-8px">①</span>
+        <div class="mini__t">
+          <div class="l1 ed">Halloween · 万圣寻宝夜</div>
+          <div class="l2 ed">RECHARGE EVENT</div>
+        </div>
+        <div class="photo mini__art"></div>
+      </div>
+
+      <!-- 双 Tab -->
+      <div class="tabs">
+        <span class="blk" style="left:10px;top:-8px">②</span>
+        <button class="tab on">🎃 <span class="ed">Chests</span> <span class="tab__zh ed">宝箱</span></button>
+        <button class="tab">🦇 <span class="ed">Ranking</span> <span class="tab__zh ed">榜单</span></button>
+      </div>
+
+      <div class="scroll">
+        <!-- ③ 进度条（充值额 / 当前档门槛 / 差额，三合一，不再单列充值额卡片） -->
+        <div class="prog">
+          <span class="blk" style="left:-14px;top:-8px">③</span>
+          <div class="prog__head">
+            <span class="prog__title ed">Witch's Brew</span>
+            <span class="prog__amt"><b>$<span class="ed">32</span></b> / $<span class="ed">50</span></span>
+          </div>
+          <div class="brew">
+            <div class="photo cauldron"></div>
+            <div class="trough">
+              <div class="potion"></div>
+              <span class="trough__cap ed">64%</span>
+            </div>
+          </div>
+          <div class="prog__need ed">再充 <b>$18</b> 即可解锁 <b>LV3</b></div>
+        </div>
+
+        <!-- ④ 宝箱轮播 -->
+        <div class="sect-head">
+          <span class="blk" style="left:-14px;top:-8px">④</span>
+          <span class="sect-title ed">Pumpkin Chests</span>
+          <span class="sect-note ed">← 左右滑动查看 →</span>
+        </div>
+        <div class="deck deck--at-3">
+          <div class="card is-lit">
+            <span class="card__lv ed">LV1 · $5</span>
+            <div class="card__art">
+              <div class="photo" style="width:100%;height:100%"></div>
+              <span class="card__web"></span>
+              <span class="card__tick">✓</span>
+              <span class="card__lock">🔒</span>
+            </div>
+            <span class="card__name ed">糖果南瓜罐</span>
+          </div>
+          <div class="card is-lit">
+            <span class="card__lv ed">LV2 · $20</span>
+            <div class="card__art">
+              <div class="photo" style="width:100%;height:100%"></div>
+              <span class="card__web"></span>
+              <span class="card__tick">✓</span>
+              <span class="card__lock">🔒</span>
+            </div>
+            <span class="card__name ed">蝙蝠木桶</span>
+          </div>
+          <div class="card is-c is-locked">
+            <span class="card__lv ed">LV3 · $50</span>
+            <div class="card__art">
+              <div class="photo" style="width:100%;height:100%"></div>
+              <span class="card__halo"></span>
+              <span class="card__web"></span>
+              <span class="card__lock">🔒</span>
+            </div>
+            <span class="card__name ed">幽灵宝箱</span>
+          </div>
+          <div class="card is-locked">
+            <span class="card__lv ed">LV4</span>
+            <div class="card__art">
+              <div class="photo" style="width:100%;height:100%"></div>
+              <span class="card__web"></span>
+              <span class="card__lock">🔒</span>
+            </div>
+            <span class="card__name ed">女巫坩埚</span>
+          </div>
+          <div class="card is-locked">
+            <span class="card__lv ed">LV5</span>
+            <div class="card__art">
+              <div class="photo" style="width:100%;height:100%"></div>
+              <span class="card__web"></span>
+              <span class="card__lock">🔒</span>
+            </div>
+            <span class="card__name ed">南瓜王皇冠箱</span>
+          </div>
+        </div>
+        <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i></div>
+
+        <!-- ⑤ 奖励面板 -->
+        <div class="rw">
+          <span class="blk" style="left:-14px;top:-8px">⑤</span>
+          <div class="rw__top">
+            <div class="photo rw__ic"></div>
+            <span class="rw__name ed">LV3 CHEST REWARDS</span>
+            <span class="rw__tag ed">Locked</span>
+          </div>
+          <div class="rw__grid">
+            <div class="rw__v">
+              <div class="reward">
+                <div class="photo pic"></div>
+                <span class="nm ed">Diamonds</span>
+                <span class="ct ed">No expiry</span>
+              </div>
+            </div>
+            <div class="rw__col">
+              <div class="reward">
+                <div class="photo pic"></div>
+                <span class="nm ed">Ghost Bouquet</span>
+                <span class="ct ed">7 days</span>
+              </div>
+              <div class="reward">
+                <div class="photo pic"></div>
+                <span class="nm ed">Night Walker</span>
+                <span class="ct ed">30 days</span>
+              </div>
+            </div>
+          </div>
+          <!-- 未解锁蒙层 -->
+          <div class="lockcover">
+            <div class="lockcover__lock"></div>
+            <span class="lockcover__t ed">Chest locked</span>
+            <span class="lockcover__go ed">$18 to go</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑥ 吸底 CTA（宝箱 Tab 保持现有设计） -->
+      <div class="cta">
+        <span class="blk" style="left:12px;top:6px">⑥</span>
+        <button class="cta__btn">
+          <span class="l1 ed">Go Recharge</span>
+          <span class="l2 ed">· only $18 to unlock LV3</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 标注 -->
+    <span class="dim" style="right:6px;top:6px">画布 375×812</span>
+    <span class="dim" style="left:6px;bottom:56px">吸底 CTA 常驻</span>
+
+    <!-- 批注 -->
+    <div class="note" style="left:8px;bottom:170px;max-width:152px">
+      ③ 这张卡把<strong>充值额 / 当前档门槛 / 差额</strong>三合一（原「Current Recharge」卡片已删除，信息重复）。<br>
+      币种<strong>只显 $，不带 USD</strong>；药水填充 = 当前额 ÷ 门槛。
+    </div>
+    <div class="note" style="left:8px;top:300px;max-width:136px">
+      ④ <strong>点亮逻辑：达到门槛才点亮该档宝箱</strong>（实线光晕 + 左上 ✓）；未达门槛＝暗态 + 蛛网 + 🔒。<br>
+      <strong>选中的宝箱居中</strong>；<strong>默认选中最接近的未解锁档</strong>（此处 $32 → LV3，已居中定格）。
+    </div>
+    <div class="note" style="right:8px;top:440px;max-width:122px">
+      ⑤ 奖励按 type 分流：竖版左列 / 横版底部 / 其余右列宫格。<strong>三态比例必须锁定</strong>（156×157 / 236×443 / 619×236）。
+    </div>
+    <div class="note" style="right:8px;top:600px;max-width:132px">
+      ⑥ 宝箱 Tab 的吸底 CTA <strong>保持现有设计</strong>。规则已移出头图左侧按钮（见 S1 ② / S6）。
+    </div>
+  </div>
+
+  <div class="screen-desc">
+    <h4>本屏要点</h4>
+    <ul>
+      <li><strong>点亮逻辑</strong>：达到门槛才点亮该档南瓜宝箱；未达门槛不点亮（暗态 + 蛛网 + 🔒）</li>
+      <li><strong>选中的宝箱必须居中</strong>；<strong>默认选中最接近的未解锁档</strong>（$32 → LV3，本屏已居中定格）</li>
+      <li><strong>顶部「Current Recharge」卡片已删除</strong> —— 与进度条信息重复，充值额 / 档位门槛 / 差额三合一保留在进度条那张卡里</li>
+      <li>「还差 $18」在进度条与 CTA 两处常驻</li>
+      <li>宝箱 Tab 吸底 CTA <strong>保持现有设计</strong>（不改）</li>
+      <li>规则正文<strong>不再折叠</strong>，已改为头图左侧规则按钮 → 规则页（S6）</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================
+     S3 · 榜单 Tab
+     ============================================================ -->
+<div class="screen-wrap">
+  <div class="screen-cap"><b>S3 · 榜单 Tab</b> <span>｜ 领奖台 + 列表 + 我的排名</span></div>
+  <div class="canvas" contenteditable="true">
+    <div class="body">
+      <div class="mini">
+        <div class="mini__t">
+          <div class="l1 ed">Halloween · 万圣寻宝夜</div>
+          <div class="l2 ed">RECHARGE EVENT</div>
+        </div>
+        <div class="photo mini__art"></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab">🎃 <span class="ed">Chests</span> <span class="tab__zh ed">宝箱</span></button>
+        <button class="tab on">🦇 <span class="ed">Ranking</span> <span class="tab__zh ed">榜单</span></button>
+      </div>
+
+      <div class="scroll rank">
+        <!-- ① 榜单头 -->
+        <div class="board">
+          <span class="blk" style="left:-14px;top:-8px">①</span>
+          <div>
+            <div class="board__t ed">Party Contribution Board</div>
+            <div class="board__s ed">按充值金额排名 · 月末为前三名加冕</div>
+          </div>
+          <div class="board__cd">
+            <div class="v ed">21d 04h</div>
+            <div class="k ed">距离截止</div>
+          </div>
+        </div>
+
+        <!-- ② 领奖台 -->
+        <div class="podium">
+          <span class="blk" style="left:-14px;top:-8px">②</span>
+          <div class="pod pod--2">
+            <div class="photo pod__badge"></div>
+            <div class="av pod__av">👤</div>
+            <span class="pod__nm ed">PumpkinPie</span>
+            <span class="pod__amt ed">$9,150</span>
+            <div class="pod__base">2</div>
+          </div>
+          <div class="pod pod--1">
+            <div class="photo pod__badge"></div>
+            <div class="av pod__av">👤</div>
+            <span class="pod__nm ed">Nocturne_Hex</span>
+            <span class="pod__amt ed">$12,480</span>
+            <div class="pod__base">1</div>
+          </div>
+          <div class="pod pod--3">
+            <div class="photo pod__badge"></div>
+            <div class="av pod__av">👤</div>
+            <span class="pod__nm ed">GrimLily</span>
+            <span class="pod__amt ed">$7,320</span>
+            <div class="pod__base">3</div>
+          </div>
+        </div>
+
+        <!-- ③ 4~10 名 -->
+        <div class="ranklist">
+          <span class="blk" style="left:-14px;top:-8px">③</span>
+          <div class="rankrow">
+            <span class="rankrow__rk ed">4</span>
+            <div class="av">👤</div>
+            <span class="rankrow__nm ed">Witch_Morgana</span>
+            <span class="rankrow__val ed">$2,410</span>
+          </div>
+          <div class="rankrow">
+            <span class="rankrow__rk ed">5</span>
+            <div class="av">👤</div>
+            <span class="rankrow__nm ed">Wolf_Cry</span>
+            <span class="rankrow__val ed">$1,980</span>
+          </div>
+          <div class="rankrow placeholder">
+            <span class="rankrow__rk ed">6</span>
+            <div class="av"></div>
+            <span class="rankrow__nm ed">???</span>
+            <span class="rankrow__val ed">$0</span>
+          </div>
+          <div class="rankrow placeholder">
+            <span class="rankrow__rk ed">7</span>
+            <div class="av"></div>
+            <span class="rankrow__nm ed">???</span>
+            <span class="rankrow__val ed">$0</span>
+          </div>
+          <div class="rankrow placeholder">
+            <span class="rankrow__rk ed">8</span>
+            <div class="av"></div>
+            <span class="rankrow__nm ed">???</span>
+            <span class="rankrow__val ed">$0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ④ 榜单 Tab 唯一吸底条：头像 / 排名 / ID / 已充值金额 -->
+      <div class="myrank">
+        <span class="blk" style="left:-14px;top:-8px">④</span>
+        <span class="myrank__rk ed">12</span>
+        <div class="av">👤</div>
+        <span class="myrank__nm ed">Me (You)</span>
+        <span class="myrank__val ed">$860</span>
+      </div>
+    </div>
+
+    <span class="dim" style="right:6px;top:6px">画布 375×812</span>
+
+    <div class="note" style="right:8px;top:64px;max-width:118px">
+      ② 帽徽层级：1 南瓜王冠 / 2 女巫尖帽 / 3 恶魔角。可复用既有 <code>avatar_top1~3</code>（280×280）。
+    </div>
+    <div class="note" style="left:8px;top:300px;max-width:130px">
+      ③ 现版逻辑：<strong>无数据时补 ??? 占位行</strong>，榜单永不空白。此处保留该行为。
+    </div>
+    <div class="note" style="left:8px;bottom:96px;max-width:140px">
+      ④ 榜单 Tab 底部<strong>只保留这一条</strong>（原「我的排名」+ CTA 两条合并），内容＝<strong>头像 / 排名 / ID / 已充值金额</strong>。未上榜时名次显示 <strong>-</strong>。
+    </div>
+  </div>
+
+  <div class="screen-desc">
+    <h4>本屏要点</h4>
+    <ul>
+      <li>榜单 Tab <strong>只展示</strong>：用户头像、排名、ID、已充值金额</li>
+      <li>底部<strong>只保留一条吸底条</strong>（原两条合并），不再单独放吸底 CTA</li>
+      <li>本期只做<strong>月榜</strong>；现版的周/月子 Tab 是未接线死代码，建议删除</li>
+      <li>昵称是否脱敏待确认（现版有脱敏过滤器但未启用）</li>
+      <li>TOP1/2 得 7% / 3% 钻石，TOP3 规则待运营补齐</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================
+     S4 · 奖励弹窗
+     ============================================================ -->
+<div class="screen-wrap">
+  <div class="screen-cap"><b>S4 · 排名奖励弹窗</b> <span>｜ 点 Ranking Rewards 打开</span></div>
+  <div class="canvas" contenteditable="true">
+    <div class="body">
+      <div class="mini">
+        <div class="mini__t">
+          <div class="l1 ed">Halloween · 万圣寻宝夜</div>
+          <div class="l2 ed">RECHARGE EVENT</div>
+        </div>
+        <div class="photo mini__art"></div>
+      </div>
+      <div class="tabs">
+        <button class="tab">🎃 <span class="ed">Chests</span></button>
+        <button class="tab on">🦇 <span class="ed">Ranking</span></button>
+      </div>
+      <div class="scroll rank">
+        <div class="board">
+          <div>
+            <div class="board__t ed">Party Contribution Board</div>
+            <div class="board__s ed">按充值金额排名 · 月末为前三名加冕</div>
+          </div>
+          <div class="board__cd">
+            <div class="v ed">21d 04h</div>
+            <div class="k ed">距离截止</div>
+          </div>
+        </div>
+        <div class="podium">
+          <div class="pod pod--2">
+            <div class="photo pod__badge"></div>
+            <div class="av pod__av">👤</div>
+            <span class="pod__nm ed">PumpkinPie</span>
+            <span class="pod__amt ed">$9,150</span>
+            <div class="pod__base">2</div>
+          </div>
+          <div class="pod pod--1">
+            <div class="photo pod__badge"></div>
+            <div class="av pod__av">👤</div>
+            <span class="pod__nm ed">Nocturne_Hex</span>
+            <span class="pod__amt ed">$12,480</span>
+            <div class="pod__base">1</div>
+          </div>
+          <div class="pod pod--3">
+            <div class="photo pod__badge"></div>
+            <div class="av pod__av">👤</div>
+            <span class="pod__nm ed">GrimLily</span>
+            <span class="pod__amt ed">$7,320</span>
+            <div class="pod__base">3</div>
+          </div>
+        </div>
+        <div class="ranklist">
+          <div class="rankrow">
+            <span class="rankrow__rk ed">4</span>
+            <div class="av">👤</div>
+            <span class="rankrow__nm ed">Witch_Morgana</span>
+            <span class="rankrow__val ed">$2,410</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 弹窗 -->
+      <div class="mask">
+        <span class="blk" style="left:14px;top:-30px">①</span>
+        <div class="modal">
+          <div class="modal__hd">
+            <span class="t ed">RANKING REWARDS</span>
+            <span class="modal__close">✕</span>
+          </div>
+          <div class="modal__bd">
+            <div class="mrow">
+              <div class="mrow__title">
+                <span class="blk" style="left:-14px;top:-8px">②</span>
+                <div class="ph"></div>
+              </div>
+              <div class="mrow__rewards">
+                <div class="reward">
+                  <div class="photo pic"></div>
+                  <span class="nm ed">Dias</span>
+                </div>
+                <div class="reward">
+                  <div class="photo pic"></div>
+                  <span class="nm ed">Crown</span>
+                </div>
+                <div class="reward">
+                  <div class="photo pic"></div>
+                  <span class="nm ed">Broadcast</span>
+                </div>
+              </div>
+            </div>
+            <div class="mrow">
+              <div class="mrow__title"><div class="ph" style="width:92px"></div></div>
+              <div class="mrow__rewards">
+                <div class="reward">
+                  <div class="photo pic"></div>
+                  <span class="nm ed">Dias</span>
+                </div>
+                <div class="reward">
+                  <div class="photo pic"></div>
+                  <span class="nm ed">Frame</span>
+                </div>
+              </div>
+            </div>
+            <div class="mrow">
+              <div class="mrow__title"><div class="ph" style="width:92px"></div></div>
+              <div class="mrow__rewards">
+                <div class="reward">
+                  <div class="photo pic"></div>
+                  <span class="nm ed">Dias</span>
+                </div>
+                <div class="reward">
+                  <div class="photo pic"></div>
+                  <span class="nm ed">Badge</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <span class="dim" style="right:6px;top:6px">画布 375×812</span>
+
+    <div class="note" style="left:8px;top:120px;max-width:130px">
+      ① 弹窗挂在<strong>固定外壳层</strong>，不放进滚动容器 —— 否则滚动后会锚到内容原点跑出屏幕（现版踩过的坑）。
+    </div>
+    <div class="note" style="right:8px;bottom:150px;max-width:120px">
+      ② 标题图 <code>title_top_1/2/3</code>（~384×116）。TOP3 具体奖励待运营补齐。
+    </div>
+    <div class="note" style="left:8px;bottom:60px;max-width:132px">
+      现版接口返空时仍会弹出空白弹窗。<strong>本版补空态</strong>：无数据时显示「暂未配置」。
+    </div>
+  </div>
+
+  <div class="screen-desc">
+    <h4>本屏要点</h4>
+    <ul>
+      <li>弹窗 z-index 高于吸底 CTA 与「我的排名」</li>
+      <li>标题图按名次切换（1 / 2 / 3 三张）</li>
+      <li>奖励卡比例与宝箱 Tab 一致，<strong>同一套规则</strong></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================
+     S5 · 状态变体
+     ============================================================ -->
+<div class="screen-wrap">
+  <div class="screen-cap"><b>S5 · 状态变体</b> <span>｜ TOP1 空框 / 未解锁 / 空态 / 全解锁</span></div>
+
+  <!-- 5A TOP1 空框态 -->
+  <div class="canvas" contenteditable="true" style="height:340px">
+    <div class="hero">
+      <div class="hero__art">
+        <div class="photo art-bg"></div>
+        <span class="blk" style="left:6px;top:6px">①</span>
+        <span class="hero__eyebrow ed">Oct 31 · Ends 23:59</span>
+        <h2 class="hero__title ed">HALLOWEEN</h2>
+        <p class="hero__sub ed">万圣寻宝夜</p>
+      </div>
+      <div class="dock" style="bottom:var(--sp-6)">
+        <div class="top1 top1--empty">
+          <span class="blk" style="left:-16px;top:-8px">②</span>
+          <div class="av" style="background:var(--g-200)"></div>
+          <span class="crown" style="color:var(--g-400)">👑</span>
+          <span class="id" style="color:var(--g-400)">—</span>
+        </div>
+      </div>
+    </div>
+    <span class="dim" style="right:6px;top:6px">变体 A · TOP1 空框</span>
+    <div class="note" style="left:8px;bottom:64px;max-width:152px">
+      ② <strong>TOP1 无数据时展示空框</strong>：保留外框（虚线）、头像与 ID 置空为「—」，<strong>不隐藏整卡</strong>（用户已确认此口径）。
+    </div>
+  </div>
+
+  <!-- 5B 未解锁 -->
+  <div class="canvas" contenteditable="true" style="height:520px">
+    <div class="body">
+      <div class="scroll">
+        <div class="prog">
+          <div class="prog__head">
+            <span class="prog__title ed">Witch's Brew</span>
+            <span class="prog__amt"><b>$<span class="ed">32</span></b> / $<span class="ed">120</span></span>
+          </div>
+          <div class="brew">
+            <div class="photo cauldron"></div>
+            <div class="trough">
+              <div class="potion" style="width:27%"></div>
+              <span class="trough__cap ed">27%</span>
+            </div>
+          </div>
+          <div class="prog__need ed">再充 <b>$88</b> 即可解锁 <b>LV3</b></div>
+        </div>
+        <div class="rw">
+          <div class="rw__top">
+            <div class="photo rw__ic"></div>
+            <span class="rw__name ed">LV3 CHEST REWARDS</span>
+            <span class="rw__tag ed">Locked</span>
+          </div>
+          <div class="rw__grid">
+            <div class="rw__v">
+              <div class="reward">
+                <div class="photo pic"></div>
+                <span class="nm ed">Diamonds</span>
+              </div>
+            </div>
+            <div class="rw__col">
+              <div class="reward">
+                <div class="photo pic"></div>
+                <span class="nm ed">Ghost Bouquet</span>
+              </div>
+              <div class="reward">
+                <div class="photo pic"></div>
+                <span class="nm ed">Night Walker</span>
+              </div>
+            </div>
+          </div>
+          <!-- 未解锁蒙层 -->
+          <div class="lockcover">
+            <span class="blk" style="left:-14px;top:-8px">①</span>
+            <div class="lockcover__lock"></div>
+            <span class="lockcover__t ed">Chest locked</span>
+            <span class="lockcover__go ed">$88 to go</span>
+          </div>
+        </div>
+        <div class="cta">
+          <button class="cta__btn">
+            <span class="l1 ed">Go Recharge</span>
+            <span class="l2 ed">· only $88 to unlock LV3</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <span class="dim" style="right:6px;top:6px">变体 B · 未解锁</span>
+    <div class="note" style="left:8px;top:200px;max-width:132px">
+      ① 未解锁面板：整面板蒙灰 + 中央锁标 + <strong>$88 to go</strong>。现版只置灰、不告诉用户差多少。
+    </div>
+  </div>
+
+  <!-- 5B 空态 -->
+  <div class="canvas" contenteditable="true" style="height:300px">
+    <div class="body">
+      <div class="scroll">
+        <div class="prog" style="text-align:center;padding:var(--sp-6) var(--sp-3)">
+          <span class="blk" style="left:-14px;top:-8px">②</span>
+          <div style="font-size:26px;margin-bottom:var(--sp-2)">🕸️</div>
+          <div class="prog__title ed" style="justify-content:center">暂无榜单数据</div>
+          <div class="prog__need ed">月末结算后自动展示前三名</div>
+        </div>
+        <div class="board">
+          <div>
+            <div class="board__t ed">Party Contribution Board</div>
+            <div class="board__s ed">按充值金额排名 · 月末为前三名加冕</div>
+          </div>
+          <div class="board__cd">
+            <div class="v ed">21d 04h</div>
+            <div class="k ed">距离截止</div>
+          </div>
+        </div>
+        <div class="ranklist">
+          <div class="rankrow placeholder">
+            <span class="rankrow__rk ed">1</span>
+            <div class="av"></div>
+            <span class="rankrow__nm ed">???</span>
+            <span class="rankrow__val ed">$0</span>
+          </div>
+          <div class="rankrow placeholder">
+            <span class="rankrow__rk ed">2</span>
+            <div class="av"></div>
+            <span class="rankrow__nm ed">???</span>
+            <span class="rankrow__val ed">$0</span>
+          </div>
+          <div class="rankrow placeholder">
+            <span class="rankrow__rk ed">3</span>
+            <div class="av"></div>
+            <span class="rankrow__nm ed">???</span>
+            <span class="rankrow__val ed">$0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="dim" style="right:6px;top:6px">变体 C · 空态</span>
+    <div class="note" style="left:8px;top:120px;max-width:138px">
+      ② 现版补 3 条 ??? 领奖台 + 7 条占位行，<strong>永不空白</strong>。本版沿用占位策略，另加一条"月末结算"说明。
+    </div>
+  </div>
+
+  <!-- 5C 全解锁 -->
+  <div class="canvas" contenteditable="true" style="height:250px">
+    <div class="body">
+      <div class="scroll">
+        <div class="prog">
+          <div class="prog__head">
+            <span class="prog__title ed">Witch's Brew</span>
+            <span class="prog__amt"><b>$<span class="ed">620</span></b> / $<span class="ed">600</span></span>
+          </div>
+          <div class="brew">
+            <div class="photo cauldron"></div>
+            <div class="trough">
+              <div class="potion" style="width:100%"></div>
+              <span class="trough__cap ed">100%</span>
+            </div>
+          </div>
+          <div class="prog__need ed">已达最高档 · 冲击月榜拿 7% 钻石</div>
+        </div>
+      </div>
+    </div>
+    <div class="cta" style="position:static;padding:var(--sp-3) var(--sp-4)">
+      <button class="cta__btn">
+        <span class="l1 ed">Go Recharge</span>
+        <span class="l2 ed">· All chests unlocked · Climb the ranking</span>
+      </button>
+    </div>
+    <span class="dim" style="right:6px;top:6px">变体 D · 全解锁</span>
+    <div class="note" style="left:8px;bottom:20px;max-width:150px">
+      ③ 全部解锁后 CTA 改为<strong>引导冲榜</strong>，不再显示"还差 $X"，避免出现"差 $0"的尴尬。
+    </div>
+  </div>
+
+  <div class="screen-desc" style="width:375px">
+    <h4>状态变体说明</h4>
+    <ul>
+      <li><strong>A TOP1 空框</strong>：榜单无数据时 TOP1 卡保留虚线外框、内容置空为「—」（用户确认口径：<strong>不隐藏</strong>）</li>
+      <li><strong>B 未解锁</strong>：蒙层 + 差额，是最常用的转化态</li>
+      <li><strong>C 空态</strong>：月初/无数据时的榜单表现</li>
+      <li><strong>D 全解锁</strong>：高价值用户的留存态，转向冲榜</li>
+      <li>另有「最后 24h 倒计时变橙」与「低端机关闭动效」两态，需真机验证，此处不画</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================
+     S6 · 规则页（头图左侧规则按钮进入）
+     ============================================================ -->
+<div class="screen-wrap">
+  <div class="screen-cap"><b>S6 · 规则页</b> <span>｜ 由头图左侧「Rules」进入 · 分宝箱 / 榜单两个 Tab</span></div>
+
+  <!-- 6A 宝箱规则 -->
+  <div class="canvas" contenteditable="true" style="height:600px">
+    <div class="rulespage">
+      <div class="rulespage__hd">
+        <span class="blk" style="left:-2px;top:-8px">①</span>
+        <span class="t ed">Event Rules</span>
+        <span class="x">✕</span>
+      </div>
+
+      <!-- Tab：宝箱 / 榜单 -->
+      <div class="tabs">
+        <span class="blk" style="left:10px;top:-8px">②</span>
+        <button class="tab on">🎃 <span class="ed">Chest Rules</span> <span class="tab__zh ed">宝箱规则</span></button>
+        <button class="tab">🦇 <span class="ed">Ranking Rules</span> <span class="tab__zh ed">榜单规则</span></button>
+      </div>
+
+      <div class="rulespage__body">
+        <span class="blk" style="left:-14px;top:6px">③</span>
+        <p class="ed">Runs from launch until the last day of every month. Rewards are sent automatically at 7pm Saudi time (6pm Egypt time) on that day.</p>
+        <ol>
+          <li class="ed">Open to regular users only — resellers are not eligible to participate.</li>
+          <li class="ed">Recharges made through Google Pay, Apple In-App Purchase and in-app third-party payment methods are counted directly toward the event total.</li>
+          <li class="ed">Diamonds bought by a reseller for himself do not count. Diamonds bought from a reseller are counted at the platform price.</li>
+          <li class="ed">Rewards are distributed automatically as soon as the eligibility conditions are met.</li>
+          <li class="ed">Any form of cheating, abuse or fraudulent behaviour is strictly prohibited. Detected users are disqualified immediately and all rewards are revoked.</li>
+        </ol>
+      </div>
+    </div>
+    <span class="dim" style="right:6px;top:6px">变体 A · 宝箱规则</span>
+    <div class="note" style="right:8px;top:120px;max-width:128px">
+      ① 规则页为<strong>独立页面</strong>（非弹窗、非折叠），右上有 ✕ 返回。<br>
+      ② <strong>分两个 Tab</strong>：宝箱规则 / 榜单规则。
+    </div>
+    <div class="note" style="left:8px;bottom:16px;max-width:152px">
+      ③ 规则正文<strong>直接展开、不做折叠</strong>（原版是正文里的折叠区，已移除）。文案原文照搬，不得改写。
+    </div>
+  </div>
+
+  <!-- 6B 榜单规则 -->
+  <div class="canvas" contenteditable="true" style="height:600px">
+    <div class="rulespage">
+      <div class="rulespage__hd">
+        <span class="t ed">Event Rules</span>
+        <span class="x">✕</span>
+      </div>
+      <div class="tabs">
+        <button class="tab">🎃 <span class="ed">Chest Rules</span> <span class="tab__zh ed">宝箱规则</span></button>
+        <button class="tab on">🦇 <span class="ed">Ranking Rules</span> <span class="tab__zh ed">榜单规则</span></button>
+      </div>
+      <div class="rulespage__body">
+        <ol>
+          <li class="ed">The event starts at 6:00 PM (Egypt time) and 7:00 PM (Saudi time) on the last day of the previous month, and ends at the same time on the last day of the current month.</li>
+          <li class="ed">All rewards will be automatically distributed when the month ends.</li>
+          <li class="ed">TOP 1 user will receive Dias equal to 7% of the total recharge; TOP 2 will receive Dias equal to 3% of the total recharge.</li>
+          <li class="ed">Reseller buying diamonds himself is not counted. Buying diamonds from resellers is counted based on the price he got from the platform.</li>
+          <li class="ed">Salary recharge is not counted.</li>
+        </ol>
+      </div>
+    </div>
+    <span class="dim" style="right:6px;top:6px">变体 B · 榜单规则</span>
+    <div class="note" style="left:8px;top:120px;max-width:150px">
+      ⚠️ 规则原文只写了 <strong>TOP1 = 7% / TOP2 = 3%</strong>，<strong>未写 TOP3</strong>，但接口与组件都渲染第 3 名 —— 待运营补齐（PRD §11.3）。
+    </div>
+  </div>
+
+  <div class="screen-desc" style="width:375px">
+    <h4>本屏要点</h4>
+    <ul>
+      <li>入口：<strong>头图左侧「Rules」按钮</strong>（与右侧头像对称），见 S1 ②</li>
+      <li>形态：<strong>独立规则页</strong>，不是折叠区、不是弹窗</li>
+      <li><strong>分两个 Tab</strong>：宝箱规则 / 榜单规则</li>
+      <li>正文直接展开，<strong>不做折叠</strong></li>
+      <li>文案原文照搬自线上 i18n，<strong>不得改写</strong>；EN / AR 两套</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /.screens -->
+
+<!-- ============================================================
+     图例 + 使用说明
+     ============================================================ -->
+<div style="max-width:1200px;margin:var(--sp-7) auto 0;background:var(--g-000);border-radius:var(--r-md);padding:var(--sp-5)">
+  <h3 style="font-size:var(--fs-h2);color:var(--g-900);margin-bottom:var(--sp-3)">怎么用这份线框图</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--sp-5);font-size:var(--fs-small);color:var(--g-700);line-height:1.65">
+    <div>
+      <h4 style="color:var(--g-900);margin-bottom:var(--sp-2)">✎ 改文字</h4>
+      <p>画布内<strong>带虚下划线</strong>的文字都能改：点一下直接输入。<br>
+      鼠标悬停会变粉底，聚焦变蓝底。<br>
+      顶部「✎ 文字可编辑」按钮可整体开关。</p>
+    </div>
+    <div>
+      <h4 style="color:var(--g-900);margin-bottom:var(--sp-2)">📐 尺寸标注</h4>
+      <p>红色小标签是布局尺寸提示（对应 750 设计稿的 rem 值）。<br>顶部「📐 尺寸标注」可隐藏。</p>
+    </div>
+    <div>
+      <h4 style="color:var(--g-900);margin-bottom:var(--sp-2)">💬 设计批注</h4>
+      <p>蓝色小卡片是设计意图与已知风险，包括"现版坑在哪、本版怎么修"。<br>顶部「✎ 设计批注」可隐藏。</p>
+    </div>
+    <div>
+      <h4 style="color:var(--g-900);margin-bottom:var(--sp-2)">🎨 调间距字号</h4>
+      <p>所有间距 / 字号 / 灰阶 / 圆角集中在文件顶部 <code>:root</code> 的 CSS 变量里，<strong>改一处全局生效</strong>。</p>
+    </div>
+    <div>
+      <h4 style="color:var(--g-900);margin-bottom:var(--sp-2)">🖨 打印 / 转 PDF</h4>
+      <p>直接 Ctrl+P（Mac: Cmd+P），已配好打印样式：工具栏隐藏、文字转深色。</p>
+    </div>
+    <div>
+      <h4 style="color:var(--g-900);margin-bottom:var(--sp-2)">⚠️ 注意</h4>
+      <p>灰阶<strong>只表达层级，不代表最终配色</strong>。<br>
+      本版<strong>无任何交互</strong>：不点击、不跳转、不切 Tab，全部状态并列展示。</p>
+    </div>
+  </div>
+
+  <div style="margin-top:var(--sp-5);padding-top:var(--sp-4);border-top:var(--bd-solid);font-size:var(--fs-small);color:var(--g-500)">
+    <strong style="color:var(--g-700)">对应 PRD</strong>：<code>00_会话\2026-10-12-18-24-19\万圣节充值活动换皮_PRD_v1.0.md</code>
+    <br>线框图 = PRD §5 信息架构 + §6 功能细则的可视化。如结构与 PRD 冲突，以双方确认后的结论为准。
+  </div>
+</div>
+
+<script>
+(function(){
+  var body = document.body;
+  var btnEdit   = document.getElementById('btnEdit');
+  var btnGuides = document.getElementById('btnGuides');
+  var btnNotes  = document.getElementById('btnNotes');
+  var btnLockAll= document.getElementById('btnLockAll');
+  var canvases  = document.querySelectorAll('.canvas');
+
+  function setEditable(on){
+    canvases.forEach(function(c){ c.setAttribute('contenteditable', on ? 'true' : 'false'); });
+    btnEdit.classList.toggle('on', on);
+    btnEdit.textContent = on ? '✎ 文字可编辑' : '🔒 编辑已关';
+  }
+  function setGuides(on){
+    body.classList.toggle('guides-on', on);
+    body.classList.toggle('guides-off', !on);
+    btnGuides.classList.toggle('on', on);
+  }
+  function setNotes(on){
+    body.classList.toggle('notes-on', on);
+    body.classList.toggle('notes-off', !on);
+    btnNotes.classList.toggle('on', on);
+  }
+
+  btnEdit.addEventListener('click', function(){
+    setEditable(btnEdit.classList.contains('on') ? false : true);
+  });
+  btnGuides.addEventListener('click', function(){ setGuides(!btnGuides.classList.contains('on')); });
+  btnNotes.addEventListener('click',  function(){ setNotes(!btnNotes.classList.contains('on')); });
+  btnLockAll.addEventListener('click', function(){ setEditable(false); });
+
+  /* Esc 失焦，避免误触 */
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && document.activeElement) document.activeElement.blur();
+  });
+
+  /* 禁止把批注/标注拖进画布 */
+  document.querySelectorAll('.note,.dim,.blk').forEach(function(el){
+    el.setAttribute('draggable','false');
+  });
+
+  setEditable(true);
+})();
+</script>
+</body>
+</html>
