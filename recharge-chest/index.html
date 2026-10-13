@@ -303,17 +303,7 @@ body[data-sub="ruleRanking"] #ovRule .anno[data-leg="16"]{ display:block; }
   position:absolute; left:0; right:0; bottom:0; z-index:20; text-align:center;
   font-size:9px; color:var(--ink3); padding-bottom:5px;
 }
-/* 真实的“下滑”提示：规范允许的线框转译（一个窄条 + 文本），不是装饰图 */
-.scrollCue{
-  position:absolute; left:50%; transform:translateX(-50%); bottom:62px; z-index:21;
-  display:flex; flex-direction:column; align-items:center; gap:3px;
-  background:none; border:0; cursor:pointer; font:inherit;
-}
-.scrollCue .sc1{ font-size:9px; color:var(--ink3); }
-.scrollCue .sc2{
-  width:16px; height:16px; border-right:2px solid var(--ink3); border-bottom:2px solid var(--ink3);
-  transform:rotate(45deg);
-}
+/* 下滑提示（Scroll to enter）已按用户要求移除（2026-10-13）：Hero 底部不再放任何下滑引导 */
 
 /* ============================================================================
    正文
@@ -706,11 +696,6 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                 <div class="heroTag" data-tkey="hero.tag">每充一笔，城堡里的南瓜灯就亮一盏</div>
               </div>
 
-              <button class="scrollCue" id="btnScrollDown" title="下滑进入活动">
-                <span class="sc1" data-tkey="hero.scroll">下滑进入活动</span>
-                <span class="sc2"></span>
-              </button>
-
               <div class="heroBar">
                 <button class="rulesBtn mod" data-mod="2" id="btnOpenRule">
                   <span class="ph ri"></span>
@@ -997,7 +982,6 @@ const I18N = {
     "hero.sub2":"RECHARGE · TREASURE NIGHT",
     "hero.tag":"Every recharge lights one more pumpkin.",
     "hero.foot":"RoStar · Halloween Treasure Night",
-    "hero.scroll":"Scroll to enter",
     "rules.btn":"Rules",
     "unit.d":"d", "unit.h":"h", "unit.m":"m",
     "body.title":"Halloween",
@@ -1080,7 +1064,6 @@ const I18N = {
     "hero.sub2":"شحن · ليلة الكنز",
     "hero.tag":"كل عملية شحن تضيء قرعًا إضافيًا.",
     "hero.foot":"روستار · ليلة كنز الهالوين",
-    "hero.scroll":"اسحب للدخول",
     "rules.btn":"القواعد",
     "unit.d":"ي", "unit.h":"س", "unit.m":"د",
     "body.title":"ليلة كنز الهالوين",
@@ -1651,7 +1634,7 @@ function boot(){
     const inBody = $("#page").scrollTop > 160;
     if (inBody !== S.inBody) { S.inBody = inBody; renderVisibility(); updateBadge(); }
   });
-  $("#btnScrollDown").addEventListener("click", function (){ setInBody(true, true, true); });
+  /* Hero → 正文：只靠真实滚动（下滑提示已移除，见 .heroFoot 上方注释） */
 
   /* 轮播：滑停即选中（真实 swipe） */
   const deck = $("#deck");
