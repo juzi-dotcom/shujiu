@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Litchat CP排行榜 · 万圣节换皮 · 线框图 v2.1（可编辑）</title>
+<title>Litchat CP排行榜 · 万圣节换皮 · 线框图 v2.2（可编辑）</title>
 <!--
   ═══════════════════════════════════════════════════════════════════
   Litchat H5 「CP 亲密排行榜」万圣节换皮 · 纯静态线框原型 v1.0
@@ -236,11 +236,6 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
 .pod.p1 .avatar{border-color:var(--ink); box-shadow:0 0 0 2px #fff}
 .pod.p2 .base{height:44px}
 .pod.p3 .base{height:30px}
-.rankNo{
-  position:absolute; width:22px; height:22px; border-radius:50%; background:#2f2f36; color:#fff;
-  font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center;
-  border:2px solid #fff; z-index:4;
-}
 /* ⑤ 列表 4+ */
 #mList{margin-top:14px; display:flex; flex-direction:column; gap:8px; position:relative}
 .row{
@@ -460,7 +455,7 @@ body.show-anno .anno{display:flex}
 <div id="topbar">
   <button id="panelToggle">☰ 面板</button>
   <button id="mStateBtn">☰ 状态</button>
-  <b>Ghost CP Ranking · 线框</b><span class="ver" id="verLabel">v2.1</span><span class="sep">|</span>
+  <b>Ghost CP Ranking · 线框</b><span class="ver" id="verLabel">v2.2</span><span class="sep">|</span>
   <span>纯静态线框 · 可编辑</span><span class="sep">|</span>
   <span id="stateLabel">S1 本周榜·有数据</span>
   <div id="zoomRow">
@@ -573,21 +568,18 @@ body.show-anno .anno{display:flex}
       <!-- ④ 领奖台（JS 动态渲染） -->
       <div id="mPodium" class="stateBlock" data-show="s1 s3 s5">
         <div class="pod p2" data-pod="2">
-          <div class="rankNo" style="top:-8px; inset-inline-start:6px">2</div>
           <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
           <div class="names">—</div>
           <div class="val">—</div>
           <div class="base">TOP 2</div>
         </div>
         <div class="pod p1" data-pod="1">
-          <div class="rankNo" style="top:-8px; inset-inline-start:38px">1</div>
           <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
           <div class="names">—</div>
           <div class="val">—</div>
           <div class="base">TOP 1</div>
         </div>
         <div class="pod p3" data-pod="3">
-          <div class="rankNo" style="top:-8px; inset-inline-start:6px">3</div>
           <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
           <div class="names">—</div>
           <div class="val">—</div>
@@ -955,7 +947,7 @@ document.addEventListener("click", e=>{
 /* ── 导出 / 导入 / 还原 ── */
 function snapshot(){
   return JSON.stringify({
-    _meta:{doc:"Ghost CP Ranking wireframe", v:"2.1", stage:"v2.1", exportedAt:new Date().toISOString()},
+    _meta:{doc:"Ghost CP Ranking wireframe", v:"2.2", stage:"v2.2", exportedAt:new Date().toISOString()},
     state:cfg.state, sub:cfg.sub, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts
   }, null, 2);
 }
