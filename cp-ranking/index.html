@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Litchat CP排行榜 · 万圣节换皮 · 线框图 v1.0（可编辑）</title>
+<!--
+  ═══════════════════════════════════════════════════════════════════
+  Litchat H5 「CP 亲密排行榜」万圣节换皮 · 纯静态线框原型 v1.0
+  ───────────────────────────────────────────────────────────────────
+  依据：《Litchat-CP排行榜-万圣节换皮-PRD.docx》v1.0 第 5 章原型范围
+  覆盖 6 状态：S1 本周榜·有数据 / S2 无CP空态 / S3 解除CP / S4 奖励页
+              S5 上周榜 / S6 我的排名弹层 + 规则弹窗
+  尺寸来源：线上 ranking.css / act-halloween.css 实测（375 设计稿，1vw=3.75px）
+  可编辑：  双击画布文字直接改 · 右侧栏切状态/开关模块/EN⇄AR(RTL) ·
+            标注模式一键唤出尺寸与 PRD 条目 · 配置可导出/导入 JSON
+  ═══════════════════════════════════════════════════════════════════
+-->
+<style>
+:root{
+  /* 线框灰阶 */
+  --ink:#3a3a3a; --ink2:#6d6d6d; --ink3:#9a9a9a;
+  --line:#a8a8a8; --line2:#c9c9c9;
+  --box:#ededed; --box2:#f6f6f6; --paper:#fbfbfb;
+  --bezel:#26262b;
+  /* 标注色（非线框本体） */
+  --anno:#c0392b; --chip:#1a5fb4; --chipbg:#eaf1fb;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+  background:#e8e8ec; color:var(--ink); display:flex; flex-direction:column; overflow:hidden;
+}
+/* ───────────── 顶栏 ───────────── */
+#topbar{
+  flex:0 0 46px; background:#1f1f24; color:#eee; display:flex; align-items:center;
+  gap:14px; padding:0 16px; font-size:13px;
+}
+#topbar b{font-size:13.5px; letter-spacing:.3px}
+#topbar .sep{opacity:.35}
+#zoomRow{display:flex;align-items:center;gap:6px;margin-left:auto}
+#zoomRow input{width:110px;accent-color:#e67e22}
+#zoomVal{min-width:38px;text-align:right;font-variant-numeric:tabular-nums}
+#fitBtn{
+  border:1px solid #55555e; background:#3a3a42; color:#eee; border-radius:6px;
+  padding:3px 9px; font-size:11.5px; cursor:pointer;
+}
+/* ───────────── 主布局 ───────────── */
+#wrap{flex:1; display:flex; min-height:0}
+/* ───────────── 左侧控制面板 ───────────── */
+#panel{
+  flex:0 0 316px; background:#fff; border-right:1px solid #d5d5dc;
+  overflow-y:auto; padding:14px 14px 40px;
+}
+#panel h3{
+  font-size:12px; color:#8b8b93; letter-spacing:1px; margin:18px 0 8px;
+  text-transform:uppercase; display:flex; align-items:center; gap:6px;
+}
+#panel h3:first-child{margin-top:2px}
+#panel h3::after{content:"";flex:1;height:1px;background:#e6e6ec}
+.seg{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+.seg button, .btnrow button{
+  border:1px solid #cfcfd8; background:#fff; border-radius:7px; padding:7px 6px;
+  font-size:12.5px; cursor:pointer; color:#444; text-align:center; line-height:1.25;
+}
+.seg button small{display:block;font-size:10px;color:#98989f;margin-top:1px}
+.seg button.on{background:#2d1956; border-color:#2d1956; color:#fff}
+.seg button.on small{color:#cbb8ff}
+.btnrow{display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px}
+.btnrow button:active{transform:translateY(1px)}
+.tgl{display:flex; align-items:center; gap:8px; padding:5px 2px; font-size:13px; cursor:pointer; user-select:none}
+.tgl input{accent-color:#2d1956; width:15px; height:15px}
+.tgl .dim{color:#9a9aa2; font-size:11px; margin-left:auto}
+.subRadio{display:flex; gap:6px; margin-top:6px}
+.subRadio button{flex:1}
+.hint{
+  font-size:11.5px; color:#8a8a92; background:#f6f6fa; border:1px dashed #d8d8e2;
+  border-radius:8px; padding:8px 10px; line-height:1.55; margin-top:6px;
+}
+.hint b{color:#5b4a8a}
+.prdRef{font-size:11.5px; line-height:1.6; color:#555; padding:6px 2px}
+.prdRef .tag{
+  display:inline-block; background:#fdeeea; color:#c0392b; border-radius:4px;
+  padding:0 5px; font-size:10.5px; margin-right:4px; font-weight:600;
+}
+#ioArea{
+  width:100%; height:74px; border:1px solid #d5d5dc; border-radius:8px;
+  font-size:10.5px; padding:6px; font-family:Consolas,monospace; color:#555; resize:vertical;
+}
+/* ───────────── 舞台 ───────────── */
+#stage{flex:1; display:flex; align-items:flex-start; justify-content:center; overflow:auto; padding:20px 18px; gap:18px; min-width:0}
+#phoneWrap{transform-origin:top center; flex:0 0 auto}
+/* 左面板折叠 */
+#panel.collapsed{display:none}
+#panelToggle{
+  border:1px solid #cfcfd8; background:#fff; border-radius:7px; padding:4px 10px;
+  font-size:12px; cursor:pointer; color:#444;
+}
+/* 图例面板：不再被裁切，窄屏时横向收缩 */
+#legendWrap{flex:0 1 300px; min-width:230px; align-self:flex-start;
+  background:#fff; border:1px solid #d5d5dc;
+  border-radius:12px; padding:12px 12px 10px; max-height:calc(100vh - 70px); overflow-y:auto;}
+#phone{
+  width:375px; height:812px; background:var(--bezel); border-radius:38px; padding:10px;
+  box-shadow:0 24px 60px rgba(30,30,40,.35), inset 0 0 0 2px #3a3a42;
+  position:relative;
+}
+#phone::before{ /* 刘海 */
+  content:""; position:absolute; top:10px; left:50%; transform:translateX(-50%);
+  width:120px; height:24px; background:var(--bezel); border-radius:0 0 14px 14px; z-index:60;
+}
+#screen{
+  width:100%; height:100%; background:var(--paper); border-radius:28px; overflow:hidden;
+  position:relative; font-size:13px;
+}
+#screen[data-lang="ar"]{direction:rtl}
+#notchPad{height:34px}
+/* ───────────── 状态可见性 ───────────── */
+/* 状态显隐：!important 压过所有 ID 级 display（#mPodium{display:flex} 等） */
+.stateBlock{display:none!important}
+body[data-state="s1"] .stateBlock[data-show~="s1"],
+body[data-state="s2"] .stateBlock[data-show~="s2"],
+body[data-state="s3"] .stateBlock[data-show~="s3"],
+body[data-state="s4"] .stateBlock[data-show~="s4"],
+body[data-state="s5"] .stateBlock[data-show~="s5"],
+body[data-state="s6"] .stateBlock[data-show~="s6"]{display:block!important}
+/* S6 子态 */
+body[data-sub="sheet"] #ovRule{display:none!important}
+body[data-sub="rule"]  #ovSheet{display:none!important}
+body[data-state="s6"] #ovSheet, body[data-state="s6"] #ovRule{display:block}
+/* ───────────── 模块开关 ───────────── */
+body.no-banner  #mBanner{display:none!important}
+body.no-tabs    #mTabs{display:none!important}
+body.no-count   #mCount{display:none!important}
+body.no-podium  #mPodium{display:none!important}
+body.no-list    #mList{display:none!important}
+body.no-myrank  #mMyRank{display:none!important}
+body.no-anno    .anno{display:none!important}
+/* ───────────── 线框通用元件 ───────────── */
+.ph{ /* 图片占位：灰块 + 交叉 */
+  background:
+    linear-gradient(to top right, transparent calc(50% - .5px), var(--line2) 50%, transparent calc(50% + .5px)),
+    linear-gradient(to top left,  transparent calc(50% - .5px), var(--line2) 50%, transparent calc(50% + .5px)),
+    var(--box);
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  color:var(--ink3); text-align:center; font-size:10.5px; line-height:1.5;
+}
+.avatar{
+  width:52.5px; height:52.5px; border-radius:50%; background:var(--box);
+  border:2px solid var(--line); flex:0 0 auto;
+  background-image:linear-gradient(to top right,transparent calc(50% - .5px),var(--line2) 50%,transparent calc(50% + .5px)),
+                   linear-gradient(to top left,transparent calc(50% - .5px),var(--line2) 50%,transparent calc(50% + .5px));
+  background-color:var(--box);
+}
+.pair{display:flex}
+.pair .avatar + .avatar{margin-inline-start:-14px}
+.pair.sm .avatar{width:34px;height:34px;border-width:1.5px}
+.box{background:var(--box2); border:1px solid var(--line2); border-radius:8px}
+.txt{color:var(--ink); font-size:13px}
+.txtSub{color:var(--ink2); font-size:11px}
+/* 可编辑文字 */
+[data-tkey]{cursor:text; border-radius:3px; transition:background .12s}
+body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed #e0b93c}
+[contenteditable="true"]{background:#fff8d6!important; outline:2px solid #e0a53c!important}
+/* ───────────── 页面骨架（375 基准，px=vw*3.75）───────────── */
+.page{
+  height:100%; display:flex; flex-direction:column; position:relative;
+  background:
+    linear-gradient(180deg,#f1f1f4 0%, #f1f1f4 399px, #fbfbfb 399px);
+}
+/* ① Banner 106.4vw=399px */
+#mBanner{height:399px; position:relative; flex:0 0 auto}
+#bannerImg{position:absolute; inset:0; border:none; border-bottom:none; border-radius:0}
+#bannerTitle{
+  position:absolute; top:150px; left:0; right:0; text-align:center;
+}
+#bannerTitle .t1{font-size:24px; font-weight:800; color:#4a4a52; letter-spacing:1px}
+#bannerTitle .t2{font-size:11px; color:#8f8f96; margin-top:4px; letter-spacing:2px}
+#btnRule{
+  position:absolute; top:260px; right:0; height:31px; min-width:60px;
+  border:1.5px solid var(--ink2); border-right:none;
+  border-radius:31px 0 0 31px; background:#e3e3e6; color:var(--ink);
+  font-size:13px; font-weight:700; padding:0 12px; display:flex; align-items:center;
+}
+#screen[dir="rtl"] #btnRule{right:auto; left:0; border-radius:0 31px 31px 0; border-left:none; border-right:1.5px solid var(--ink2)}
+/* ② Tabs 31.87×14.27vw → 119.5×53.5px */
+#mTabs{display:flex; justify-content:center; gap:8px; margin-top:-20px; position:relative; z-index:5; flex:0 0 auto}
+.tabBtn{
+  width:119.5px; height:53.5px; border:1.5px solid var(--line); background:#e6e6ea;
+  border-radius:10px 10px 4px 4px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; font-size:15px; font-weight:700; color:var(--ink2);
+  cursor:pointer; transition:filter .15s;
+}
+.tabBtn:hover{filter:brightness(1.05)}
+.tabBtn:active{transform:translateY(1px)}
+.tabBtn small{font-size:9px; color:#a5a5ad; font-weight:400; margin-top:2px}
+.tabBtn.on{background:#d9d9df; color:#1f1f26; border-color:var(--ink); box-shadow:0 0 0 1.5px var(--ink)}
+/* ③ 倒计时 */
+#mCount{display:flex; justify-content:center; gap:10px; padding:14px 0 4px; flex:0 0 auto; position:relative}
+.cdItem{min-width:45px; text-align:center}
+.cdNum{
+  height:30px; border:1.5px solid var(--ink2); border-radius:7px; background:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+.cdNum::before{content:"🎃"; font-size:9px; margin-inline-end:3px; filter:grayscale(1); opacity:.55}
+.cdLab{font-size:11px; color:var(--ink2); margin-top:4px}
+/* 榜单区滚动容器 */
+#rankScroll{flex:1; overflow-y:auto; padding:6px 12px 120px}
+/* ④ 领奖台 Top3 */
+#mPodium{display:flex; align-items:flex-end; justify-content:center; gap:8px; padding-top:16px; position:relative}
+.pod{display:flex; flex-direction:column; align-items:center; width:104px}
+.pod .pair{margin-bottom:6px}
+.pod .names{font-size:10.5px; color:var(--ink2); margin-bottom:3px; white-space:nowrap}
+.pod .val{
+  min-width:85px; height:23px; border-radius:12px; background:#fff; border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800;
+}
+.pod .base{
+  width:100%; margin-top:8px; border:1.5px solid var(--ink2); background:repeating-linear-gradient(45deg,#e9e9ec,#e9e9ec 6px,#e0e0e4 6px,#e0e0e4 12px);
+  display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--ink2);
+}
+.pod.p1 .base{height:64px; border-width:2px; box-shadow:0 0 0 3px #fff, 0 0 0 4.5px var(--ink2)}
+.pod.p1 .base::before{content:"🦇"; filter:grayscale(1); opacity:.5; font-size:12px; margin-inline-end:4px}
+.pod.p1{order:2}
+.pod.p2{order:1}
+.pod.p3{order:3}
+.pod.p1 .avatar{border-color:var(--ink); box-shadow:0 0 0 2px #fff}
+.pod.p2 .base{height:44px}
+.pod.p3 .base{height:30px}
+.rankNo{
+  position:absolute; width:22px; height:22px; border-radius:50%; background:#2f2f36; color:#fff;
+  font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center;
+  border:2px solid #fff; z-index:4;
+}
+/* ⑤ 列表 4+ */
+#mList{margin-top:14px; display:flex; flex-direction:column; gap:8px; position:relative}
+.row{
+  display:flex; align-items:center; gap:9px; background:#fff; border:1px solid var(--line2);
+  border-radius:10px; padding:9px 10px; position:relative;
+}
+.row .rk{width:24px; text-align:center; font-weight:800; font-size:14px; color:var(--ink2); flex:0 0 auto}
+.row .names{flex:1; min-width:0}
+.row .names .n1{font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.row .names .n2{font-size:10.5px; color:var(--ink3); margin-top:1px}
+.row .val{font-size:14px; font-weight:800; display:flex; align-items:center; gap:3px}
+.row .val::before{content:"🔥"; font-size:11px; filter:grayscale(1); opacity:.6}
+/* 解除CP（S3） */
+.broken .avatar{opacity:.38; filter:grayscale(1)}
+.broken .val{opacity:.6}
+.bondTag{
+  display:inline-block; font-size:9.5px; font-weight:700; color:#fff; background:#8a8a92;
+  border-radius:4px; padding:1px 6px; margin-top:3px; letter-spacing:.3px;
+}
+/* 空态（S2） */
+#mEmpty{padding:34px 22px 0; text-align:center; position:relative}
+#emptyGhost{width:170px; height:150px; margin:0 auto; border-radius:14px}
+#emptyTitle{font-size:16px; font-weight:800; margin-top:16px}
+#emptyDesc{font-size:12.5px; color:var(--ink2); line-height:1.6; margin-top:8px}
+#btnCta{
+  margin:18px auto 0; height:44px; min-width:210px; border-radius:22px;
+  border:2px solid var(--ink); background:#dcdce2; font-size:15px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; color:#1f1f26;
+  cursor:pointer; transition:filter .15s;
+}
+#btnCta:hover{filter:brightness(1.06)}
+#btnCta:active{transform:translateY(1px)}
+#mMyRank{cursor:pointer}
+.row{cursor:pointer; transition:background .15s}
+.row:hover{background:#f4f4f7}
+#btnRule{cursor:pointer}
+#btnRule:active{transform:translateY(1px)}
+/* 交互反馈提示条 */
+#toast{
+  position:absolute; left:50%; bottom:96px; transform:translateX(-50%);
+  background:#2f2f36; color:#fff; font-size:11.5px; padding:8px 16px; border-radius:16px;
+  z-index:80; opacity:0; transition:opacity .25s; pointer-events:none; max-width:80%;
+  text-align:center; line-height:1.5;
+}
+#toast.show{opacity:.95}
+#sealedNote{
+  margin:14px auto 0; font-size:11px; color:var(--ink2); border:1px dashed var(--line);
+  border-radius:8px; padding:6px 10px; display:inline-block; background:#fff;
+}
+/* 奖励页（S4） */
+#rewardWrap{padding:8px 8px 0; display:flex; flex-direction:column; gap:12px; position:relative}
+.rwCard{
+  width:371px; margin:0 auto; border:1.5px solid var(--line); border-radius:14px;
+  background:#fff; overflow:hidden; min-height:120px; /* PRD 4.3：min-height 替代固定 325px */
+}
+.rwCard .rwTitle{
+  height:34px; display:flex; align-items:center; justify-content:center; gap:6px;
+  background:repeating-linear-gradient(-45deg,#ececef,#ececef 8px,#e4e4e8 8px,#e4e4e8 16px);
+  border-bottom:1.5px solid var(--line); font-size:18px; font-weight:800; color:#2c2c33;
+}
+.rwCard .rwTitle::before{content:"📖"; filter:grayscale(1); opacity:.55; font-size:13px}
+.rwCard.top1 .rwTitle{box-shadow:inset 0 0 0 2px #fff, 0 0 0 2px var(--ink2)} /* TOP1 发光→双描边表达 */
+.rwGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:10px}
+.rwItem{display:flex; flex-direction:column; align-items:center; gap:5px}
+.rwItem .ph{width:100%; height:58px; border-radius:8px}
+.rwItem .nm{
+  font-size:10.5px; color:var(--ink2); max-width:100%;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; /* PRD 4.3：单行省略 */
+}
+/* 上周（S5）：无倒计时，副标题 */
+#lwHeader{text-align:center; padding:14px 0 2px}
+#lwHeader .t{font-size:17px; font-weight:800}
+#lwHeader .s{font-size:10.5px; color:var(--ink3); margin-top:3px}
+/* 我的排名条（固定底） */
+#mMyRank{
+  position:absolute; left:0; right:0; bottom:0; z-index:20;
+  border-top:4px solid var(--ink2); background:#e8e8ec; padding:10px 14px 18px;
+  display:flex; align-items:center; gap:10px;
+}
+#mMyRank .pair .avatar{width:38px;height:38px}
+#mMyRank .mr{font-size:13px; font-weight:800}
+#mMyRank .mv{font-size:13px; color:var(--ink2); display:flex; align-items:center; gap:3px; margin-inline-start:auto}
+#mMyRank .mv::before{content:"🔥"; font-size:10px; filter:grayscale(1); opacity:.6}
+#mMyRank .chev{font-size:11px; color:var(--ink2)}
+/* ───────────── 覆盖层：S6 ───────────── */
+.overlay{position:absolute; inset:0; z-index:40}
+.overlay .mask{position:absolute; inset:0; background:rgba(40,40,46,.45)}
+#ovSheet .sheet{
+  position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:18px 18px 0 0;
+  border-top:4px solid var(--ink2); padding:16px 14px 24px; max-height:62%;
+  display:flex; flex-direction:column;
+}
+#ovSheet h4{font-size:15px; font-weight:800}
+#ovSheet .sum{font-size:11.5px; color:var(--ink2); margin:4px 0 12px}
+.bondRow{
+  display:flex; align-items:center; gap:9px; border:1px solid var(--line2); border-radius:10px;
+  padding:9px 10px; margin-bottom:8px; background:#fff;
+}
+.bondRow.active{border:2px solid var(--ink); background:#f2f2f5; order:-1} /* PRD 4.4：生效中置顶高亮 */
+.bondRow .info{flex:1; min-width:0}
+.bondRow .info .n{font-size:13px; font-weight:700}
+.bondRow .info .d{font-size:10.5px; color:var(--ink2); margin-top:1px}
+.bondRow .pos{font-size:14px; font-weight:800}
+#ovRule .dialog{
+  position:absolute; left:22px; right:22px; top:120px; background:#fff;
+  border:1.5px solid var(--ink); border-radius:14px; padding:16px 16px 14px; max-height:520px; overflow:auto;
+}
+#ovRule h4{font-size:16px; font-weight:800; text-align:center; margin-bottom:10px}
+#ovRule ol{padding-inline-start:18px; display:flex; flex-direction:column; gap:7px}
+#ovRule li{font-size:11.5px; color:var(--ink2); line-height:1.55}
+#ovRule .fog{ /* PRD 4.6：弹窗雾气氛围层（P2，线框以虚线示意） */
+  border:1px dashed var(--line); border-radius:10px; padding:5px 8px; margin-top:10px;
+  font-size:9.5px; color:var(--ink3); text-align:center;
+}
+/* 关闭按钮 */
+.xBtn{
+  position:absolute; top:10px; inset-inline-end:10px; width:26px; height:26px; border-radius:50%;
+  border:1.5px solid var(--ink2); background:#fff; color:var(--ink2); font-weight:800;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+}
+/* ───────────── 标注层 v2：编号角标 + 侧边图例 ───────────── */
+body.no-anno .anno{display:none!important}
+body.show-anno .anno{display:flex}
+.anno{ /* 编号角标：画布内小圆点，仅编号不写字，杜绝叠字 */
+  position:absolute; z-index:50; align-items:center; justify-content:center;
+  width:17px; height:17px; border-radius:50%; padding:0;
+  background:var(--anno); color:#fff; font-size:9.5px; font-weight:800;
+  box-shadow:0 0 0 2px #fff; pointer-events:auto; cursor:help;
+}
+.anno.hot{transform:scale(1.4); background:#e74c3c; z-index:56; box-shadow:0 0 0 3px #fff}
+/* 图例面板：手机右侧，承载全部标注文字 */
+#legendWrap h4{font-size:12px; color:#8b8b93; letter-spacing:1px; text-transform:uppercase;
+  margin:2px 0 8px; display:flex; align-items:center; gap:6px}
+#legendWrap h4::after{content:""; flex:1; height:1px; background:#e6e6ec}
+#legendWrap h4 .cnt{background:var(--anno); color:#fff; border-radius:8px; padding:0 7px; font-size:10px}
+.legRow{display:flex; gap:8px; padding:6px 6px; border-radius:8px; cursor:default; align-items:flex-start}
+.legRow:hover{background:#fdf1ef}
+.legRow .no{
+  flex:0 0 20px; width:20px; height:20px; border-radius:50%; background:var(--anno); color:#fff;
+  font-size:10.5px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.legRow .tx{font-size:11.5px; line-height:1.55; color:#444}
+.legRow .tx b{color:#c0392b}
+.legRow .prd{display:inline-block; background:#fdeeea; color:#c0392b; border-radius:4px;
+  padding:0 4px; font-size:9.5px; font-weight:700; margin-right:3px}
+.legEmpty{font-size:11.5px; color:#9a9a9a; padding:8px 6px; line-height:1.6}
+/* 状态角标（画布外，屏幕右上） */
+#stateBadge{
+  position:absolute; top:40px; inset-inline-start:12px; z-index:55;
+  background:#2f2f36; color:#fff; font-size:10.5px; font-weight:700;
+  border-radius:6px; padding:3px 9px; opacity:.92; letter-spacing:.4px;
+}
+#footnote{
+  position:absolute; bottom:6px; left:0; right:0; text-align:center;
+  font-size:8.5px; color:#b5b5bd; letter-spacing:.5px; z-index:5; pointer-events:none;
+}
+/* ───────────── 移动端适配 ───────────── */
+/* 手机/窄屏：默认收起左右两栏，画布占满；浮层抽屉打开 */
+@media (max-width: 820px){
+  #topbar{gap:8px; padding:0 10px; flex-wrap:nowrap}
+  #topbar b{font-size:12px}
+  /* 顶栏文字收纳：副标题与状态名隐藏，保留标题+缩放+按钮 */
+  #topbar .sep, #topbar span:not(#zoomVal){display:none}
+  #zoomRow input{width:84px}
+  #fitBtn{padding:4px 8px}
+  /* 左右两栏改为浮层抽屉 */
+  #panel, #legendWrap{
+    position:fixed; top:46px; bottom:0; z-index:120;
+    max-height:none; box-shadow:-6px 0 24px rgba(0,0,0,.25);
+    transition:transform .25s ease;
+  }
+  #panel{left:0; width:min(316px, 86vw); transform:translateX(-105%)}
+  #panel.mobile-open{transform:translateX(0)}
+  #legendWrap{right:0; width:min(300px, 86vw); transform:translateX(105%);
+    border-radius:12px 0 0 12px}
+  #legendWrap.mobile-open{transform:translateX(0)}
+  #stage{padding:10px 6px}
+  /* 触摸优化：角标点击目标加大 */
+  .anno{width:22px; height:22px; font-size:11px}
+}
+@media (max-width: 820px) and (orientation: landscape){
+  #panel{width:min(316px, 60vw)}
+  #legendWrap{width:min(300px, 60vw)}
+}
+/* 抽屉遮罩 */
+#drawerMask{position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:110; display:none}
+#drawerMask.show{display:block}
+/* 图例浮层关闭按钮（仅移动端显示） */
+.legClose{
+  display:none; position:absolute; top:8px; inset-inline-end:8px; z-index:5;
+  width:28px; height:28px; border-radius:50%; border:1.5px solid var(--ink2);
+  background:#fff; color:var(--ink2); font-weight:800; font-size:14px;
+  align-items:center; justify-content:center; cursor:pointer;
+}
+/* 状态角标按钮（移动端打开左侧栏） */
+#mStateBtn{
+  display:none; border:1px solid #55555e; background:#3a3a42; color:#eee;
+  border-radius:6px; padding:4px 9px; font-size:12px; cursor:pointer;
+}
+#mLegendBtn{
+  display:none; border:1px solid #55555e; background:#3a3a42; color:#eee;
+  border-radius:6px; padding:4px 9px; font-size:12px; cursor:pointer; margin-left:6px;
+}
+@media (max-width: 820px){
+  #mStateBtn, #mLegendBtn{display:inline-block}
+  .legClose{display:flex}
+}
+::-.webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#c9c9d2;border-radius:5px}
+</style>
+</head>
+<body data-state="s1" data-sub="sheet">
+
+<div id="topbar">
+  <button id="panelToggle">☰ 面板</button>
+  <button id="mStateBtn">☰ 状态</button>
+  <b>Ghost CP Ranking · 线框 v1.0</b><span class="sep">|</span>
+  <span>纯静态线框 · 可编辑</span><span class="sep">|</span>
+  <span id="stateLabel">S1 本周榜·有数据</span>
+  <div id="zoomRow">
+    <span>缩放</span><input type="range" id="zoom" min="50" max="160" value="100"><span id="zoomVal">100%</span>
+    <button id="fitBtn" title="按窗口高度自适应缩放">适应窗口</button>
+    <button id="mLegendBtn">图例</button>
+  </div>
+</div>
+
+<div id="wrap">
+<!-- ═══════════ 左侧控制面板 ═══════════ -->
+<aside id="panel">
+  <h3>状态 State</h3>
+  <div class="seg" id="stateSeg">
+    <button data-s="s1" class="on">S1 本周榜<small>有数据态</small></button>
+    <button data-s="s2">S2 空态<small>无CP引导 P0</small></button>
+    <button data-s="s3">S3 解除CP<small>Bond Broken P0</small></button>
+    <button data-s="s4">S4 奖励页<small>Award 自适应 P0</small></button>
+    <button data-s="s5">S5 上周榜<small>Last week</small></button>
+    <button data-s="s6">S6 弹层组<small>我的排名+规则</small></button>
+  </div>
+  <div id="subRow" style="display:none">
+    <div class="subRadio">
+      <button data-sub="sheet" class="on">我的排名弹层</button>
+      <button data-sub="rule">规则弹窗</button>
+    </div>
+  </div>
+
+  <h3>模块显隐 Modules</h3>
+  <label class="tgl"><input type="checkbox" data-mod="banner" checked>① Banner 头图<span class="dim">399px</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="tabs" checked>② Tab 切换<span class="dim">119.5×53.5</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="count" checked>③ 倒计时<span class="dim">南瓜灯块</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="podium" checked>④ Top3 领奖台<span class="dim">2-1-3</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="list" checked>⑤ 榜单列表 4+<span class="dim">触底加载</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="myrank" checked>⑥ 我的排名条<span class="dim">固定底部</span></label>
+
+  <h3>标注 Annotation</h3>
+  <label class="tgl"><input type="checkbox" id="annoChk" checked>尺寸 + 模块标注层<span class="dim">红=实测值</span></label>
+  <div class="hint">红色标签 = 从线上 <b>ranking.css / act-halloween.css</b> 实测的尺寸（375 设计稿，vw 与 px 双标）；蓝色胶囊 = 模块编号与 PRD 对应条目。</div>
+
+  <h3>语言 / 方向 Language</h3>
+  <div class="seg">
+    <button id="langEn" class="on">EN · English</button>
+    <button id="langAr">AR · العربية (RTL)</button>
+  </div>
+
+  <h3>文字编辑 Editing</h3>
+  <div class="hint"><b>双击</b>画布上任意文字即可直接改（悬停会高亮可编辑区域）。改动会覆盖 i18n 默认文案，可导出留档。</div>
+  <div class="btnrow" style="margin-top:8px">
+    <button id="btnExport">导出 JSON</button>
+    <button id="btnImport">导入 JSON</button>
+    <button id="btnReset">还原文案</button>
+  </div>
+  <input type="file" id="fileIn" accept=".json" style="display:none">
+  <textarea id="ioArea" placeholder="导出的 JSON 会放在这里 + 自动下载；导入可粘贴到此处再点导入，或直接选文件"></textarea>
+
+  <h3>本状态 PRD 对照</h3>
+  <div class="prdRef" id="prdRef"></div>
+</aside>
+
+<!-- ═══════════ 舞台 ═══════════ -->
+<main id="stage">
+<div id="phoneWrap"><div id="phone"><div id="screen" data-lang="en">
+
+  <div id="notchPad"></div>
+  <div id="stateBadge">S1</div>
+
+  <div class="page">
+
+    <!-- ① Banner -->
+    <div id="mBanner">
+      <div id="bannerImg" class="ph">BANNER PLACEHOLDER<br>城堡 / 满月 / 蝙蝠剪影<br>375 × 399px（106.4vw）</div>
+      <div id="bannerTitle">
+        <div class="t1" data-tkey="title.main">Ghost CP Ranking</div>
+        <div class="t2" data-tkey="title.sub">PHANTOM COUPLE LEADERBOARD</div>
+      </div>
+      <button id="btnRule"><span data-tkey="buttons.rule">Rule</span></button>
+      <div class="anno" data-leg="n1" style="top:6px; left:8px">1</div>
+      <div class="anno" data-leg="n2" style="top:258px; right:6px">2</div>
+    </div>
+
+    <!-- ② Tabs -->
+    <div id="mTabs">
+      <div class="tabBtn on"><span data-tkey="tabs.thisWeek">This week</span><small>tab 0</small></div>
+      <div class="tabBtn"><span data-tkey="tabs.award">Award</span><small>tab 1</small></div>
+      <div class="tabBtn"><span data-tkey="tabs.lastWeek">Last week</span><small>tab 2</small></div>
+      <div class="anno" data-leg="n3" style="top:-24px; left:50%; margin-left:-8px">3</div>
+    </div>
+
+    <!-- ③ 倒计时 -->
+    <div id="mCount">
+      <div class="cdItem"><div class="cdNum">02</div><div class="cdLab" data-tkey="labels.day">Day</div></div>
+      <div class="cdItem"><div class="cdNum">14</div><div class="cdLab" data-tkey="labels.hour">Hour</div></div>
+      <div class="cdItem"><div class="cdNum">36</div><div class="cdLab" data-tkey="labels.minute">Min</div></div>
+      <div class="cdItem"><div class="cdNum">51</div><div class="cdLab" data-tkey="labels.second">Sec</div></div>
+      <div class="anno" data-leg="n4" style="top:6px; left:50%; margin-left:64px">4</div>
+    </div>
+
+    <!-- ══ S1/S3/S5 共用榜单区 ══ -->
+    <div id="rankScroll">
+
+      <!-- ④ 领奖台（JS 动态渲染） -->
+      <div id="mPodium" class="stateBlock" data-show="s1 s3 s5">
+        <div class="pod p2" data-pod="2">
+          <div class="rankNo" style="top:-8px; inset-inline-start:6px">2</div>
+          <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
+          <div class="names">—</div>
+          <div class="val">—</div>
+          <div class="base">TOP 2</div>
+        </div>
+        <div class="pod p1" data-pod="1">
+          <div class="rankNo" style="top:-8px; inset-inline-start:38px">1</div>
+          <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
+          <div class="names">—</div>
+          <div class="val">—</div>
+          <div class="base">TOP 1</div>
+        </div>
+        <div class="pod p3" data-pod="3">
+          <div class="rankNo" style="top:-8px; inset-inline-start:6px">3</div>
+          <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
+          <div class="names">—</div>
+          <div class="val">—</div>
+          <div class="base">TOP 3</div>
+        </div>
+        <div class="anno" data-leg="n5" style="top:0; left:4px">5</div>
+      </div>
+
+      <!-- ⑤ 列表（JS 动态渲染，rank 4+） -->
+      <div id="mList" class="stateBlock" data-show="s1 s3 s5">
+        <div id="listRows"></div>
+        <div class="box" style="padding:8px; text-align:center; font-size:10.5px; color:#9a9a9a" data-tkey="list.loadMore">— scroll for more · 触底加载 limit=30 —</div>
+        <div class="anno" data-leg="n6" style="top:-2px; left:-6px">6</div>
+      </div>
+
+      <!-- S2 空态 -->
+      <div id="mEmpty" class="stateBlock" data-show="s2">
+        <div id="emptyGhost" class="ph">GHOST ILLUSTRATION<br>落单幽灵插画<br>170×150px</div>
+        <div id="emptyTitle" data-tkey="empty.title">You're a lone ghost…</div>
+        <div id="emptyDesc" data-tkey="empty.desc">Find your CP to light the pumpkin!<br>结成 CP 后即可参与本周魂榜争夺</div>
+        <div id="btnCta" data-tkey="empty.cta">Find Your CP</div>
+        <div class="anno" data-leg="n7" style="top:96px; right:6px">7</div>
+        <div id="sealedNote" data-tkey="empty.hint">Rewards preview is still available below ↓</div>
+      </div>
+
+      <!-- S4 奖励页（可领取交互） -->
+      <div id="rewardWrap" class="stateBlock" data-show="s4">
+        <div class="anno" data-leg="n8" style="top:-2px; right:0">8</div>
+        <div class="rwCard top1">
+          <div class="rwTitle" data-tkey="rw.top1">TOP 1</div>
+          <div class="rwGrid">
+            <div class="rwItem"><div class="ph">ICON<br>Cursed Frame</div><div class="nm">Cursed Frame</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Pumpkin Balloon</div><div class="nm">Pumpkin Balloon</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>80 Diamonds</div><div class="nm">80 Diamonds</div></div>
+          </div>
+        </div>
+        <div class="rwCard">
+          <div class="rwTitle" data-tkey="rw.top25">TOP 2 ~ 5</div>
+          <div class="rwGrid">
+            <div class="rwItem"><div class="ph">ICON<br>Bat Wings</div><div class="nm">Bat Wings Avatar</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Ghost Bubble</div><div class="nm">Ghost Bubble</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>30 Diamonds</div><div class="nm">30 Diamonds</div></div>
+          </div>
+        </div>
+        <div class="rwCard">
+          <div class="rwTitle" data-tkey="rw.top610">TOP 6 ~ 10</div>
+          <div class="rwGrid">
+            <div class="rwItem"><div class="ph">ICON<br>Witch Hat</div><div class="nm">Witch Hat</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Candy ×5</div><div class="nm">Candy ×5</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>10 Diamonds</div><div class="nm">10 Diamonds</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S5 头 -->
+      <div class="stateBlock" data-show="s5" id="lwHeader">
+        <div class="t" data-tkey="lw.title">Last Week's Sealed Ranking</div>
+        <div class="s" data-tkey="lw.sub">Winners were announced &amp; rewarded on Monday</div>
+      </div>
+
+      <!-- S5 sealed 说明（若倒计时关闭） -->
+      <div class="stateBlock" data-show="s5" style="text-align:center">
+        <div id="sealedNote2" class="box" style="display:inline-block; padding:6px 12px; font-size:10.5px; color:#8a8a92" data-tkey="lw.sealed">Ranking sealed · 榜单已封印</div>
+      </div>
+    </div><!-- /rankScroll -->
+
+    <!-- ⑥ 我的排名条（JS 动态渲染） -->
+    <div id="mMyRank" class="stateBlock" data-show="s1 s3 s5">
+      <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
+      <div>
+        <div class="mr"><span data-tkey="myrank.label">My Rank</span> <span id="mrPos">—</span></div>
+        <div class="txtSub" data-tkey="myrank.tap">Tap to view all my CP bonds</div>
+      </div>
+      <div class="mv"><span id="mrVal">—</span></div>
+      <div class="chev">▼</div>
+      <div class="anno" data-leg="n9" style="top:-22px; left:10px">9</div>
+    </div>
+
+    <!-- ══ S6 覆盖层 ══ -->
+    <div id="ovSheet" class="overlay stateBlock" data-show="s6">
+      <div class="mask"></div>
+      <div class="sheet">
+        <button class="xBtn">×</button>
+        <div class="anno" data-leg="n10" style="top:12px; left:40px">10</div>
+        <h4 data-tkey="sheet.title">My CP Bonds</h4>
+        <div class="sum" data-tkey="sheet.sum">You have 3 CP bonds · Best #4 this week · 9,100 🔥</div>
+        <div class="bondRow active">
+          <div class="pair sm"><div class="avatar"></div><div class="avatar"></div></div>
+          <div class="info"><div class="n">Ro****</div><div class="d" data-tkey="sheet.active">ACTIVE · 当前生效组合</div></div>
+          <div class="pos">#4</div>
+        </div>
+
+        <div class="bondRow">
+          <div class="pair sm"><div class="avatar"></div><div class="avatar"></div></div>
+          <div class="info"><div class="n">Da****</div><div class="d">2,300 🔥</div></div>
+          <div class="pos">#15</div>
+        </div>
+        <div class="bondRow">
+          <div class="pair sm"><div class="avatar"></div><div class="avatar"></div></div>
+          <div class="info"><div class="n">Sa****</div><div class="d" data-tkey="sheet.broken">Bond Broken · 已解除</div></div>
+          <div class="pos">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ovRule" class="overlay stateBlock" data-show="s6">
+      <div class="mask"></div>
+      <div class="dialog">
+        <button class="xBtn">×</button>
+        <div class="anno" data-leg="n11" style="top:-8px; left:50%; margin-left:-8px">11</div>
+        <h4 data-tkey="rule.title">Ritual Rules · 玩法规则</h4>
+        <ol>
+          <li data-tkey="rule.r1">Send special CP gifts and invite users to become your CP. Once bonded, your souls enter the ranking.</li>
+          <li data-tkey="rule.r2">The top 10 bonds each week will claim rewards from the pumpkin altar.</li>
+          <li data-tkey="rule.r3">Bonds are ranked by the value of CP gifts given weekly between CPs.</li>
+          <li data-tkey="rule.r4">The leaderboard is refreshed every week.</li>
+          <li data-tkey="rule.r5">Ritual hours: every Monday 00:00 – Sunday 23:59.</li>
+          <li data-tkey="rule.r6">Rewards are delivered every Monday.</li>
+        </ol>
+        <div class="fog" data-tkey="rule.fog">— 月光 / 雾气氛围层（P2-4.6，此处以虚线示意） —</div>
+      </div>
+    </div>
+
+  </div><!-- /.page -->
+
+  <div id="toast"></div>
+
+  <div id="footnote">GHOST CP RANKING · WIREFRAME v1.0 · 375×812 · CORE GAMEPLAY UNCHANGED</div>
+</div></div></div>
+
+<!-- ═══════════ 标注图例（手机右侧，全部文字在这里，画布内只留编号）═══════════ -->
+<aside id="legendWrap">
+  <button class="legClose" id="legClose">×</button>
+  <h4>标注图例 Annotations <span class="cnt" id="legCnt">0</span></h4>
+  <div id="legendList"></div>
+</aside>
+</main>
+<div id="drawerMask"></div>
+</div>
+
+<script>
+/* ═══════════════ i18n 字典（沿用原版 localePrefix=ranking.couple 的键结构）═══════════════ */
+const I18N = {
+  en: {
+    "title.main":"Ghost CP Ranking","title.sub":"PHANTOM COUPLE LEADERBOARD",
+    "buttons.rule":"Rule",
+    "tabs.thisWeek":"This week","tabs.award":"Award","tabs.lastWeek":"Last week",
+    "labels.day":"Day","labels.hour":"Hour","labels.minute":"Min","labels.second":"Sec",
+    "list.cpBond":"CP Bond","list.loadMore":"— scroll for more · 触底加载 limit=30 —",
+    "bond.broken":"Bond Broken · 羁绊已断",
+    "empty.title":"You're a lone ghost…",
+    "empty.desc":"Find your CP to light the pumpkin!<br>结成 CP 后即可参与本周魂榜争夺",
+    "empty.cta":"Find Your CP","empty.hint":"Rewards preview is still available below ↓",
+    "rw.top1":"TOP 1","rw.top25":"TOP 2 ~ 5","rw.top610":"TOP 6 ~ 10",
+    "lw.title":"Last Week's Sealed Ranking","lw.sub":"Winners were announced & rewarded on Monday","lw.sealed":"Ranking sealed · 榜单已封印",
+    "myrank.label":"My Rank","myrank.tap":"Tap to view all my CP bonds",
+    "sheet.title":"My CP Bonds","sheet.sum":"You have 3 CP bonds · Best #4 this week · 9,100 🔥",
+    "sheet.active":"ACTIVE · 当前生效组合","sheet.broken":"Bond Broken · 已解除",
+    "rule.title":"Ritual Rules · 玩法规则",
+    "rule.r1":"Send special CP gifts and invite users to become your CP. Once bonded, your souls enter the ranking.",
+    "rule.r2":"The top 10 bonds each week will claim rewards from the pumpkin altar.",
+    "rule.r3":"Bonds are ranked by the value of CP gifts given weekly between CPs.",
+    "rule.r4":"The leaderboard is refreshed every week.",
+    "rule.r5":"Ritual hours: every Monday 00:00 – Sunday 23:59.",
+    "rule.r6":"Rewards are delivered every Monday.",
+    "rule.fog":"— 月光 / 雾气氛围层（P2-4.6，此处以虚线示意） —",
+    "pick.title":"Choose a CP Partner","pick.sub":"Pick a user to bond with — you'll enter this week's ranking together",
+    "pick.online":"Online now · nearby","pick.last":"Last online 2h ago",
+    "gift.title":"Send a CP Gift","gift.sub":"Gift value converts to soul power (loveValue) for your bond",
+    "gift.candy":"Candy","gift.candle":"Candle","gift.pumpkin":"Pumpkin","gift.send":"Send Gift",
+    "break.title":"Break this bond?","break.sub":"Once broken, this CP no longer counts toward this week's ranking. This cannot be undone.",
+    "break.cancel":"Cancel","break.confirm":"Break Bond",
+    "sheet.breakBtn":"Break this bond"
+  },
+  ar: {
+    "title.main":"قائمة الشركاء المسكونة","title.sub":"لوحة ترتيب الشركاء · الهالوين",
+    "buttons.rule":"القواعد",
+    "tabs.thisWeek":"هذا الأسبوع","tabs.award":"الجوائز","tabs.lastWeek":"الأسبوع الماضي",
+    "labels.day":"يوم","labels.hour":"ساعة","labels.minute":"دقيقة","labels.second":"ثانية",
+    "list.cpBond":"رابطة الشريك","list.loadMore":"— مرّر للمزيد —",
+    "bond.broken":"انقطعت الرابطة",
+    "empty.title":"أنت شبح وحيد…",
+    "empty.desc":"ابحث عن شريكك لإضاءة القرع!<br>بعد الترابط يمكنك دخول قائمة هذا الأسبوع",
+    "empty.cta":"ابحث عن شريكك","empty.hint":"معاينة الجوائز لا تزال متاحة بالأسفل ↓",
+    "rw.top1":"الأول","rw.top25":"الثاني ~ الخامس","rw.top610":"السادس ~ العاشر",
+    "lw.title":"قائمة الأسبوع الماضي","lw.sub":"أُعلن الفائزون وجوب مكافآتهم يوم الاثنين","lw.sealed":"القائمة مختومة",
+    "myrank.label":"ترتيبي","myrank.tap":"انقر لعرض كل روابطي",
+    "sheet.title":"روابطي","sheet.sum":"لديك 3 روابط · الأفضل #4 هذا الأسبوع",
+    "sheet.active":"نشطة · التوليفة الحالية","sheet.broken":"انقطعت الرابطة",
+    "rule.title":"قواعد الطقس",
+    "rule.r1":"أرسل هدايا الشركاء وادعُ المستخدمين ليصبحوا شريكك؛ بعد الترابط تدخل أرواحكم القائمة.",
+    "rule.r2":"أفضل 10 روابط أسبوعياً تحصد المكافآت من مذبح القرع.",
+    "rule.r3":"يُرتَّب الترتيب حسب قيمة هدايا الشركاء المتبادلة أسبوعياً.",
+    "rule.r4":"تُحدَّث القائمة كل أسبوع.",
+    "rule.r5":"وقت الطقس: الاثنين 00:00 – الأحد 23:59.",
+    "rule.r6":"تُسلَّم المكافآت كل يوم اثنين.",
+    "rule.fog":"— طبقة ضباب وقمر (زخرفة) —",
+    "pick.title":"اختر شريكك","pick.sub":"اختر مستخدماً للترابط معه — ستدخلان قائمة هذا الأسبوع معاً",
+    "pick.online":"متصل الآن · قريب","pick.last":"آخر ظهور قبل ساعتين",
+    "gift.title":"أرسل هدية شريك","gift.sub":"تتحول قيمة الهدية إلى قوة روح لرباطكما",
+    "gift.candy":"حلوى","gift.candle":"شمعة","gift.pumpkin":"قرعة","gift.send":"أرسل",
+    "break.title":"فك الرباط؟","break.sub":"بعد الفك لن يُحتسب هذا الرباط في قائمة هذا الأسبوع. لا يمكن التراجع.",
+    "break.cancel":"إلغاء","break.confirm":"فك الرباط",
+    "sheet.breakBtn":"فك هذا الرباط"
+  }
+};
+/* ═══════════════ 全局配置态 ═══════════════ */
+const cfg = {
+  state:"s1", sub:"sheet", lang:"en", anno:true,
+  mods:{banner:true, tabs:true, count:true, podium:true, list:true, myrank:true},
+  texts:{}   // tkey -> 用户改写
+};
+const STATE_LABELS = {s1:"S1 本周榜·有数据", s2:"S2 空态·无CP引导", s3:"S3 解除CP·Bond Broken", s4:"S4 奖励页·Award", s5:"S5 上周榜·Last week", s6:"S6 弹层组"};
+const PRD_REFS = {
+  s1:`<span class="tag">S1</span>主参照态：Banner + Tabs + 倒计时 + 领奖台(2-1-3) + 列表4+ + 我的排名条。<br><span class="tag">P1</span>4.5 倒计时最后24h变暗红闪烁（本态为常规态）。`,
+  s2:`<span class="tag">P0-4.1</span>空态引导：本周榜 rows 为空且无 currentMyRank → 落单幽灵插画 + Find Your CTA（沿用现有CP引导路由，不新增页面）；倒计时与奖励预览保留，避免页面显得"坏了"。`,
+  s3:`<span class="tag">P0-4.2</span>解除CP解释：status=0 → 头像置灰38% + 分值不透明度降至60% + 「Bond Broken · 羁绊已断」标签；点击弹轻提示"Bond no longer counts toward this week's ranking."（本线框以标签示意）。`,
+  s4:`<span class="tag">P0-4.3</span>奖励页：卡片固定325px高 → min-height 自适应；奖品名长按/hover tooltip；TOP1 档位发光+缓浮（线框以双描边示意）；数据源 type=2。`,
+  s5:`<span class="tag">S5</span>上周榜：与本周同构，无倒计时；列表副色转幽蓝；"Ranking sealed"封印文案（P1-4.5 的 duration=0 分支在此态展示）。`,
+  s6:`<span class="tag">P0-4.4</span>我的排名弹层：生效中组合置顶高亮 + 摘要行（N段CP/最高名次）。<span class="tag">P2-4.6</span>规则弹窗雾气氛围层；规则6条业务含义与原版逐条对应。`
+};
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ── 渲染文字：覆盖优先，其次 i18n ── */
+function renderTexts(){
+  $$("[data-tkey]").forEach(el=>{
+    const k = el.dataset.tkey;
+    const v = cfg.texts[k] !== undefined ? cfg.texts[k] : (I18N[cfg.lang][k] ?? I18N.en[k] ?? el.dataset.fallback ?? "");
+    if(el.dataset.editing==="1") return;      // 编辑中不动
+    if(el.innerHTML !== v) el.innerHTML = v;
+    el.dataset.fallback = el.dataset.fallback || el.innerHTML; // 首次兜底
+  });
+}
+/* ── 状态机 ── */
+function applyState(){
+  document.body.dataset.state = cfg.state;
+  document.body.dataset.sub   = cfg.sub;
+  $("#stateBadge").textContent = cfg.state.toUpperCase();
+  $("#stateLabel").textContent = STATE_LABELS[cfg.state];
+  $("#prdRef").innerHTML = PRD_REFS[cfg.state] || "";
+  $("#subRow").style.display = cfg.state==="s6" ? "block" : "none";
+  $$("#stateSeg button").forEach(b=>b.classList.toggle("on", b.dataset.s===cfg.state));
+  $$("#subRow button").forEach(b=>b.classList.toggle("on", b.dataset.sub===cfg.sub));
+}
+function applyMods(){
+  Object.entries(cfg.mods).forEach(([m,on])=>{
+    document.body.classList.toggle("no-"+m, !on);
+    $$(`input[data-mod="${m}"]`).forEach(c=>c.checked=on);
+  });
+}
+function applyLang(){
+  $("#screen").dataset.lang = cfg.lang;
+  $("#screen").setAttribute("dir", cfg.lang==="ar" ? "rtl" : "ltr");
+  $("#langEn").classList.toggle("on", cfg.lang==="en");
+  $("#langAr").classList.toggle("on", cfg.lang==="ar");
+}
+function applyAnno(){
+  document.body.classList.toggle("show-anno", cfg.anno);
+  document.body.classList.toggle("no-anno", !cfg.anno);
+  $("#annoChk").checked = cfg.anno;
+}
+/* ── 事件绑定 ── */
+$$("#stateSeg button").forEach(b=>b.onclick=()=>{cfg.state=b.dataset.s; applyState();});
+$$("#subRow button").forEach(b=>b.onclick=()=>{cfg.sub=b.dataset.sub; applyState();});
+$$("input[data-mod]").forEach(c=>c.onchange=()=>{cfg.mods[c.dataset.mod]=c.checked; applyMods();});
+$("#annoChk").onchange = e=>{cfg.anno=e.target.checked; applyAnno();};
+$("#langEn").onclick = ()=>{cfg.lang="en"; applyLang(); renderTexts();};
+$("#langAr").onclick = ()=>{cfg.lang="ar"; applyLang(); renderTexts();};
+
+/* 双击编辑 */
+document.addEventListener("dblclick", e=>{
+  const el = e.target.closest("[data-tkey]");
+  if(!el) return;
+  el.dataset.editing = "1";
+  el.contentEditable = "true";
+  el.focus();
+  document.execCommand("selectAll", false, null);
+});
+document.addEventListener("focusout", e=>{
+  const el = e.target.closest && e.target.closest("[data-tkey]");
+  if(!el || el.contentEditable!=="true") return;
+  el.contentEditable = "false";
+  el.dataset.editing = "0";
+  cfg.texts[el.dataset.tkey] = el.innerHTML;   // 记录改写
+});
+
+/* 缩放 */
+const PHONE_H = 812;
+function setZoom(v){
+  v = Math.max(50, Math.min(160, Math.round(v)));
+  $("#zoom").value = v;
+  $("#phoneWrap").style.transform = `scale(${v/100})`;
+  $("#phoneWrap").style.height = (PHONE_H * v / 100) + "px"; /* 占位防滚动裁切 */
+  $("#zoomVal").textContent = v + "%";
+}
+$("#zoom").oninput = e=> setZoom(+e.target.value);
+$("#fitBtn").onclick = ()=> setZoom((window.innerHeight - 120) / PHONE_H * 100);
+window.addEventListener("resize", ()=>{ /* 只在用户点适应窗口后跟随 */
+  if(window.__fitMode) setZoom((window.innerHeight - 120) / PHONE_H * 100);
+});
+$("#fitBtn").addEventListener("click", ()=> window.__fitMode = true);
+$("#zoom").addEventListener("input", ()=> window.__fitMode = false);
+setZoom(100);
+
+/* 左面板折叠 */
+$("#panelToggle").onclick = ()=>{
+  const p = $("#panel");
+  p.classList.toggle("collapsed");
+  $("#panelToggle").textContent = p.classList.contains("collapsed") ? "☰ 面板" : "✕ 面板";
+};
+
+/* ═══════════ 移动端抽屉 ═══════════ */
+const isMobile = ()=> window.matchMedia("(max-width: 820px)").matches;
+function openDrawer(which){
+  if(!isMobile()) return;
+  $("#drawerMask").classList.add("show");
+  (which==="panel" ? $("#panel") : $("#legendWrap")).classList.add("mobile-open");
+}
+function closeDrawers(){
+  $("#drawerMask").classList.remove("show");
+  $("#panel").classList.remove("mobile-open");
+  $("#legendWrap").classList.remove("mobile-open");
+}
+$("#mStateBtn").onclick = ()=> openDrawer("panel");
+$("#mLegendBtn").onclick = ()=> openDrawer("legend");
+$("#legClose").onclick = closeDrawers;
+$("#drawerMask").onclick = closeDrawers;
+/* 移动端初始：收起两栏，缩放按屏宽适配 */
+if(isMobile()){
+  $("#panel").classList.add("collapsed");
+  $("#panelToggle").textContent = "☰ 面板";
+  setZoom(Math.min(100, Math.round((window.innerWidth - 24) / 395 * 100)));
+}
+/* 旋转屏/改窗口尺寸时重算移动端缩放 */
+window.addEventListener("resize", ()=>{
+  if(isMobile() && !window.__fitMode){
+    setZoom(Math.min(100, Math.round((window.innerWidth - 24) / 395 * 100)));
+  }
+});
+/* 移动端点角标 = 弹出该编号的图例文字 */
+document.addEventListener("click", e=>{
+  const badge = e.target.closest(".anno[data-leg]");
+  if(badge && isMobile()){
+    e.stopPropagation();
+    const id = badge.dataset.leg;
+    const row = document.querySelector(`.legRow[data-leg="${id}"]`);
+    if(row){
+      openDrawer("legend");
+      $$(".legRow").forEach(r=>r.style.background="");
+      row.style.background = "#fdf1ef";
+      row.scrollIntoView({block:"center"});
+    }
+  }
+}, true);
+
+/* ── 导出 / 导入 / 还原 ── */
+function snapshot(){
+  return JSON.stringify({
+    _meta:{doc:"Ghost CP Ranking wireframe", v:"1.0", exportedAt:new Date().toISOString()},
+    state:cfg.state, sub:cfg.sub, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts
+  }, null, 2);
+}
+$("#btnExport").onclick = ()=>{
+  const json = snapshot();
+  $("#ioArea").value = json;
+  const blob = new Blob([json], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "ghost-cp-ranking-wireframe-config.json";
+  a.click(); URL.revokeObjectURL(a.href);
+};
+$("#btnImport").onclick = ()=>{
+  const raw = $("#ioArea").value.trim();
+  if(!raw){ $("#fileIn").click(); return; }
+  try{
+    const o = JSON.parse(raw);
+    Object.assign(cfg, {state:o.state||cfg.state, sub:o.sub||cfg.sub, lang:o.lang||cfg.lang});
+    if(typeof o.anno==="boolean") cfg.anno=o.anno;
+    if(o.mods) Object.assign(cfg.mods, o.mods);
+    if(o.texts) cfg.texts = o.texts;
+    applyState(); applyMods(); applyLang(); applyAnno(); renderTexts();
+    alert("已导入：状态/模块/语言/文案改写 已应用。");
+  }catch(err){ alert("JSON 解析失败："+err.message); }
+};
+$("#fileIn").onchange = e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ $("#ioArea").value = r.result; $("#btnImport").click(); };
+  r.readAsText(f);
+};
+$("#btnReset").onclick = ()=>{ cfg.texts={}; renderTexts(); alert("文案已还原为 i18n 默认值。"); };
+
+/* ═══════════════ 标注图例（编号 ↔ 文字，画布零叠字）═══════════════ */
+const LEGEND = [
+  ["n1","① Banner 头图","375×399px（106.4vw）· 原#f7658e粉底 → 暗夜渐变 #1B1B1D→#2D1956；城堡/满月/蝙蝠剪影"],
+  ["n2","Rule 按钮","高31px（8.26vw）· 墓碑切角胶囊 · 原版 top 69.33vw / right:0 贴边"],
+  ["n3","③ Tabs","119.5×53.5px（31.87×14.27vw）· 选中=橙渐变+发光描边 · 三态 This week/Award/Last week"],
+  ["n4","④ 倒计时","南瓜灯数字块 · 服务器 sysTime 校准 · 最后24h变暗红闪烁（P1-4.5）"],
+  ["n5","⑤ Top3 领奖台","头像52.5px（14vw）+2px描边 · 双头像=CP · 底座2-1-3排布+蜘蛛网纹理 · TOP1蝙蝠环绕（P2）"],
+  ["n6","⑥ 榜单列表 4+","行高≈60px · status=0置灰60%+Bond Broken标签（P0-4.2）· 触底加载 limit=30 · 分值 quantile 格式化"],
+  ["n7","空态引导","<span class='prd'>P0-4.1</span>本周榜空且无我的排名时展示 · 落单幽灵170×150px + Find Your CP CTA（h44px）· 沿用现有CP引导路由"],
+  ["n8","奖励卡","<span class='prd'>P0-4.3</span>固定325px高 → min-height自适应 · 奖品名单行省略+tooltip · TOP1双描边=发光 · 数据源 /shop/productRankReward/getByType?type=2"],
+  ["n9","⑥ 我的排名条","固定底部 · 原4px奶油色顶边 → 毛玻璃+橙描边 · 点击→底部弹层（S6）"],
+  ["n10","我的排名弹层","<span class='prd'>P0-4.4</span>生效中组合置顶高亮 · 摘要行：N段CP+最高名次（P1-4.4）· 解除CP段显示 Bond Broken"],
+  ["n11","规则弹窗","6条规则业务含义与原版逐条对应，仅万圣节措辞包装 · 月光/雾气氛围层（P2-4.6，虚线示意）"]
+];
+function renderLegend(){
+  const list = $("#legendList");
+  list.innerHTML = "";
+  LEGEND.forEach(([id,title,tx])=>{
+    const row = document.createElement("div");
+    row.className = "legRow"; row.dataset.leg = id;
+    row.innerHTML = `<div class="no">${id.replace("n","")}</div><div class="tx"><b>${title}</b><br>${tx}</div>`;
+    row.onmouseenter = ()=>{ const a=document.querySelector(`.anno[data-leg="${id}"]`); if(a) a.classList.add("hot"); };
+    row.onmouseleave = ()=>{ const a=document.querySelector(`.anno[data-leg="${id}"]`); if(a) a.classList.remove("hot"); };
+    list.appendChild(row);
+  });
+  $("#legCnt").textContent = LEGEND.length;
+  // 角标悬停 → 高亮图例行
+  $$(".anno[data-leg]").forEach(a=>{
+    a.onmouseenter = ()=>{ const r=document.querySelector(`.legRow[data-leg="${a.dataset.leg}"]`); if(r){ r.style.background="#fdf1ef"; r.scrollIntoView({block:"nearest"});} };
+    a.onmouseleave = ()=>{ const r=document.querySelector(`.legRow[data-leg="${a.dataset.leg}"]`); if(r) r.style.background=""; };
+    a.title = "详见右侧图例 " + a.dataset.leg.replace("n","#");
+  });
+}
+const legendWrap = $("#legendWrap");
+function syncLegendVisibility(){
+  legendWrap.style.display = document.body.classList.contains("show-anno") ? "" : "none";
+}
+// 标注开关同时控制图例面板显隐
+$("#annoChk").addEventListener("change", e=>{
+  legendWrap.style.display = e.target.checked ? "" : "none";
+});
+
+/* 首屏 */
+applyState(); applyMods(); applyLang(); applyAnno(); renderTexts(); renderLegend(); syncLegendVisibility();
+if(!cfg.anno) legendWrap.style.display = "none";
+
+/* ═══════════════ 静态交互（Tab 切换 + 弹层唤起 + 倒计时）═══════════════ */
+const $q = s => document.querySelector(s);
+
+/* toast */
+let toastTimer = null;
+function toast(msg){
+  const el = $q("#toast");
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove("show"), 2200);
+}
+
+/* ── Tab 真实切换（点 Tab 直接换页面视图）── */
+const tabBtns = $$(".tabBtn");
+tabBtns.forEach((btn,i)=>{
+  btn.style.cursor = "pointer";
+  btn.onclick = ()=>{
+    tabBtns.forEach(b=>b.classList.remove("on"));
+    btn.classList.add("on");
+    if(i===1){
+      switchState("s4");
+      toast("Rewards page");
+    } else {
+      switchState(i===0 ? "s1" : "s5");
+      if(cfg.state!=="s6") renderRanking();
+      toast(i===0 ? "This week's ranking" : "Last week's sealed ranking");
+    }
+  };
+});
+function switchState(s){
+  cfg.state = s;
+  document.body.dataset.state = s;
+  $("#stateBadge").textContent = s.toUpperCase();
+  $("#stateLabel").textContent = STATE_LABELS[s];
+  $("#prdRef").innerHTML = PRD_REFS[s] || "";
+  $$("#stateSeg button").forEach(b=>b.classList.toggle("on", b.dataset.s===s));
+}
+
+/* ── 静态榜单数据（原位数据，不重排）── */
+const BONDS = [
+  {rank:1,  n1:"Ro****", n2:"Ya****", love:12800, pod:1},
+  {rank:2,  n1:"Da****", n2:"So****", love:10240, pod:2},
+  {rank:3,  n1:"Em****", n2:"Ri****", love:9100,  pod:3},
+  {rank:4,  n1:"An****", n2:"Lu****", love:8540},
+  {rank:5,  n1:"Ka****", n2:"Sa****", love:7120},
+  {rank:6,  n1:"Mi****", n2:"Jo****", love:6890},
+  {rank:7,  n1:"Za****", n2:"Ha****", love:4455},
+  {rank:8,  n1:"Ol****", n2:"Em****", love:3980},
+  {rank:9,  n1:"Li****", n2:"Ch****", love:2610},
+  {rank:10, n1:"As****", n2:"Ni****", love:1240}
+];
+const fmt = n => n.toLocaleString("en-US");
+
+function renderRanking(){
+  // 领奖台
+  [1,2,3].forEach(r=>{
+    const pod = document.querySelector('[data-pod="'+r+'"]');
+    const b = BONDS.find(x=>x.rank===r);
+    if(pod && b){
+      pod.querySelector(".names").textContent = b.n1 + " + " + b.n2;
+      pod.querySelector(".val").textContent = fmt(b.love);
+    }
+  });
+  // 列表 rank 4+
+  const listEl = $q("#listRows");
+  if(!listEl) return;
+  listEl.innerHTML = "";
+  BONDS.filter(b=>b.rank>3).forEach(b=>{
+    const div = document.createElement("div");
+    div.className = "row";
+    div.innerHTML =
+      '<div class="rk">' + b.rank + '</div>' +
+      '<div class="pair sm"><div class="avatar"></div><div class="avatar"></div></div>' +
+      '<div class="names"><div class="n1">' + b.n1 + ' + ' + b.n2 + '</div>' +
+      '<div class="n2" data-tkey="list.cpBond">CP Bond</div></div>' +
+      '<div class="val">' + fmt(b.love) + '</div>';
+    div.onclick = ()=> toast(b.n1 + " + " + b.n2 + " · " + fmt(b.love));
+    listEl.appendChild(div);
+  });
+  renderTexts();
+}
+
+/* ── 我的排名条 & 快捷按钮 → 弹层 ── */
+function openSheet(){
+  switchState("s6");
+  document.body.dataset.sub = "sheet";
+  applySub();
+}
+function openRule(){
+  switchState("s6");
+  document.body.dataset.sub = "rule";
+  applySub();
+}
+function applySub(){
+  $("#subRow").style.display = cfg.state==="s6" ? "block" : "none";
+  $$("#subRow button").forEach(b=>b.classList.toggle("on", b.dataset.sub===cfg.sub));
+}
+const mr = $q("#mMyRank");
+if(mr) mr.onclick = openSheet;
+const ruleBtn = $q("#btnRule");
+if(ruleBtn) ruleBtn.onclick = openRule;
+
+/* S6 内 × 关闭 → 回到本周榜 */
+$$(".overlay .xBtn").forEach(b=>{
+  b.onclick = ()=>{ switchState("s1"); document.body.dataset.sub = "sheet"; applySub(); renderRanking(); };
+});
+/* S6 遮罩点击关闭 */
+$$("#ovSheet .mask, #ovRule .mask").forEach(m=>{
+  m.onclick = ()=>{ switchState("s1"); document.body.dataset.sub = "sheet"; applySub(); renderRanking(); };
+});
+
+/* ── 倒计时（静态起点，纯展示走秒）── */
+let cd = (2*86400 + 14*3600 + 36*60 + 51);
+setInterval(()=>{
+  const nums = $$(".cdNum");
+  if(nums.length!==4) return;
+  const d = Math.floor(cd/86400), h = Math.floor(cd%86400/3600),
+        m = Math.floor(cd%3600/60), s = cd%60;
+  const pad = n => String(n).padStart(2,"0");
+  nums[0].textContent=pad(d); nums[1].textContent=pad(h); nums[2].textContent=pad(m); nums[3].textContent=pad(s);
+  cd = cd > 0 ? cd - 1 : 0;
+}, 1000);
+
+/* 首次渲染 */
+renderRanking();
+</script>
+</body>
+</html>
