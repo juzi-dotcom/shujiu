@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>万圣节充值活动 · 可交互灰盒 v2.0</title>
+<title>万圣节充值活动 · 可交互灰盒 v2.2</title>
 <style>
 /* ============================================================================
-   可交互灰盒 v2.0 · 万圣节充值活动
+   可交互灰盒 v2.2 · 万圣节充值活动
    遵循《可编辑线框原型 · 输出标准规范 v1.0》
    —— 阶段：规范 §11 的 v2.x「可交互灰盒（数据写入 + 流程联动）」
    —— §2 灰盒红线在 v2 沿用：页面本体零彩色、零图片、零渐变装饰
@@ -179,7 +179,7 @@ body.inBody[data-tab="ranking"] .myBarLayer{ display:block; }
 body.inBody[data-tab="chest"] .scroll.paneChest{ padding-bottom:88px; }
 body.inBody[data-tab="ranking"] .scroll.paneRank{ padding-bottom:78px; }
 
-/* 模块显隐 */
+/* 模块显隐（⑤ 顶部活动条已按用户要求移除，编号重排为连续 1~15） */
 body.no-m1  .mod[data-mod="1"]{ display:none !important; }
 body.no-m2  .mod[data-mod="2"]{ display:none !important; }
 body.no-m3  .mod[data-mod="3"]{ display:none !important; }
@@ -195,17 +195,16 @@ body.no-m12 .mod[data-mod="12"]{ display:none !important; }
 body.no-m13 .mod[data-mod="13"]{ display:none !important; }
 body.no-m14 .mod[data-mod="14"]{ display:none !important; }
 body.no-m15 .mod[data-mod="15"]{ display:none !important; }
-body.no-m16 .mod[data-mod="16"]{ display:none !important; }
 
 /* 标注层 */
 body.no-anno .anno{ display:none !important; }
 /* 角标随所在容器显隐：Hero 角标只在未进正文时出现，正文角标只在进正文后出现 */
 body.inBody .heroScreen .anno{ display:none !important; }
 body:not(.inBody) .bodyScreen .anno{ display:none !important; }
-.anno[data-leg="15"],.anno[data-leg="16"]{ display:none; }
-body[data-sub="reward"] #ovReward .anno[data-leg="15"]{ display:block; }
-body[data-sub="ruleChest"] #ovRule .anno[data-leg="16"],
-body[data-sub="ruleRanking"] #ovRule .anno[data-leg="16"]{ display:block; }
+.anno[data-leg="14"],.anno[data-leg="15"]{ display:none; }
+body[data-sub="reward"] #ovReward .anno[data-leg="14"]{ display:block; }
+body[data-sub="ruleChest"] #ovRule .anno[data-leg="15"],
+body[data-sub="ruleRanking"] #ovRule .anno[data-leg="15"]{ display:block; }
 
 /* ============================================================================
    占位元件库
@@ -308,14 +307,6 @@ body[data-sub="ruleRanking"] #ovRule .anno[data-leg="16"]{ display:block; }
 /* ============================================================================
    正文
    ============================================================================ */
-.mini{
-  height:46px; display:flex; align-items:center; gap:8px;
-  padding:0 14px; background:var(--box2); border-bottom:1px solid var(--line2);
-}
-.mini .mt1{ flex:1; min-width:0; }
-.mini .mt1 .a{ font-size:11px; font-weight:700; color:var(--ink); }
-.mini .mt1 .b{ font-size:9px; color:var(--ink3); letter-spacing:1px; }
-.mini .mart{ width:46px; height:30px; flex:0 0 auto; border-radius:4px; }
 .tabs{
   position:sticky; top:0; z-index:25;
   display:flex; gap:7px; padding:10px 14px;
@@ -330,7 +321,7 @@ body[data-sub="ruleRanking"] #ovRule .anno[data-leg="16"]{ display:block; }
 .tabBtn.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
 .scroll{ padding:0 14px; }
 
-/* ⑦ 进度卡 */
+/* ⑥ 进度卡 */
 .prog{ padding:11px; margin-bottom:10px; }
 .prog .prow{ display:flex; align-items:baseline; gap:8px; margin-bottom:8px; }
 .prog .pt{ font-size:11px; font-weight:700; color:var(--ink); }
@@ -354,7 +345,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 .prog .need b{ color:var(--ink); }
 .prog .need.done{ color:var(--ink); font-weight:700; }
 
-/* ⑧ 宝箱轮播（真实横滑 + snap） */
+/* ⑦ 宝箱轮播（真实横滑 + snap） */
 .sectHead{ display:flex; align-items:center; gap:8px; margin-bottom:2px; }
 .sectHead .st{ font-size:11px; font-weight:700; color:var(--ink); }
 .sectHead .sn{ margin-left:auto; font-size:9px; color:var(--ink3); }
@@ -405,7 +396,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 .dots i{ width:5px; height:5px; border-radius:50%; background:var(--line2); cursor:pointer; }
 .dots i.on{ background:var(--ink); }
 
-/* ⑨ 奖励面板 */
+/* ⑧ 奖励面板 */
 .rw{ position:relative; padding:11px; margin-bottom:10px; }
 .rwTop{
   display:flex; align-items:center; gap:8px; padding-bottom:8px; margin-bottom:8px;
@@ -444,7 +435,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 .lockPill .lt{ font-size:11px; color:var(--ink); font-weight:700; }
 .lockPill .lg{ font-size:11px; font-weight:700; color:var(--ink); }
 
-/* ⑩ 吸底 CTA */
+/* ⑨ 吸底 CTA */
 .ctaLayer .ctaInner{ padding:22px 14px 14px; background:linear-gradient(180deg,rgba(251,251,251,0),var(--paper) 42%); }
 .ctaBtn{
   width:100%; height:44px; background:var(--ink); color:#fff;
@@ -456,7 +447,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 .ctaBtn .l1{ font-size:12px; font-weight:700; }
 .ctaBtn .l2{ font-size:9px; opacity:.82; }
 
-/* ⑪ 榜单头 */
+/* ⑩ 榜单头 */
 .board{ display:flex; align-items:center; gap:10px; padding:11px; margin-bottom:10px; }
 .board .bt{ font-size:11px; font-weight:700; color:var(--ink); }
 .board .bs{ font-size:9px; color:var(--ink3); margin-top:2px; line-height:1.35; }
@@ -470,7 +461,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 }
 .boardBtn:hover{ background:var(--box); }
 
-/* ⑫ 领奖台 */
+/* ⑪ 领奖台 */
 .podium{ margin-bottom:10px; }
 .podiumIn{ display:flex; align-items:flex-end; justify-content:center; gap:7px; }
 .pod{ flex:1 1 0; max-width:104px; display:flex; flex-direction:column; align-items:center; gap:3px; }
@@ -487,7 +478,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 }
 .pod.p1 .pbase{ height:30px; background:var(--line2); }
 
-/* ⑬ 榜单列表 */
+/* ⑫ 榜单列表 */
 .rankList{ display:block; }
 .rankRow{
   display:flex; align-items:center; gap:8px; padding:7px 11px; margin-bottom:7px;
@@ -503,7 +494,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 .emptyBox .et{ font-size:12px; font-weight:700; color:var(--ink); }
 .emptyBox .es{ font-size:10px; color:var(--ink3); margin-top:4px; }
 
-/* ⑭ 吸底我的排名条 */
+/* ⑬ 吸底我的排名条 */
 .myIn{
   display:flex; align-items:center; gap:8px; padding:11px; margin:0 14px 12px;
   background:var(--ink); border-radius:var(--r);
@@ -617,7 +608,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
 <body data-state="s1" data-sub="" data-tab="chest" class="">
 
 <header id="topbar">
-  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v2.0</span></div>
+  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v2.2</span></div>
   <div class="tb-state" id="tbState">S1 首屏 Hero</div>
   <div class="spacer"></div>
   <label>缩放 <input type="range" id="zoom" min="50" max="160" step="5" value="100"><span id="zoomVal" style="width:38px;display:inline-block">100%</span></label>
@@ -645,7 +636,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
     <h3>场景跳转（S1…S9）</h3>
     <div id="stateList"></div>
 
-    <h3>模块显隐（①…⑯）</h3>
+    <h3>模块显隐（①…⑮）</h3>
     <div id="modList"></div>
 
     <h3>标注层</h3>
@@ -733,15 +724,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                  ============================================================ -->
             <div class="bodyScreen">
 
-              <div class="mini mod" data-mod="5">
-                <div class="mt1">
-                  <div class="a" data-tkey="body.title">万圣寻宝夜</div>
-                  <div class="b" data-tkey="body.sub">RECHARGE EVENT</div>
-                </div>
-                <div class="ph mart"><span class="phLab">46×30</span></div>
-              </div>
-
-              <div class="tabs mod" data-mod="6">
+              <div class="tabs mod" data-mod="5">
                 <button class="tabBtn" id="tabChest" data-tkey="tab.chest">充值宝箱</button>
                 <button class="tabBtn" id="tabRank" data-tkey="tab.ranking">充值榜单</button>
               </div>
@@ -749,7 +732,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
               <!-- ── 宝箱面板 ── -->
               <div class="scroll paneChest">
 
-                <div class="box prog mod" data-mod="7">
+                <div class="box prog mod" data-mod="6">
                   <div class="prow">
                     <span class="pt" data-tkey="prog.title">Witch's Brew</span>
                     <span class="pa"><b id="pgCur">$32</b> / $<span id="pgTgt">50</span></span>
@@ -764,7 +747,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                   <div class="need" id="pgNeed"></div>
                 </div>
 
-                <div class="mod" data-mod="8">
+                <div class="mod" data-mod="7">
                   <div class="sectHead">
                     <span class="st" data-tkey="chest.sect">Pumpkin Chests</span>
                     <span class="sn" data-tkey="chest.hint">点宝箱查看奖励 · 左右滑动切换</span>
@@ -773,7 +756,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                   <div class="dots" id="deckDots"></div>
                 </div>
 
-                <div class="box rw mod" data-mod="9" id="rwPanel">
+                <div class="box rw mod" data-mod="8" id="rwPanel">
                   <div class="rwTop">
                     <span class="ph ri2"></span>
                     <span class="rn" id="rwName">LV3 CHEST REWARDS</span>
@@ -789,15 +772,15 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                   </div>
                 </div>
 
-                <span class="anno" data-leg="7" style="left:-1px;top:2px">7</span>
-                <span class="anno" data-leg="8" style="left:-1px;top:118px">8</span>
-                <span class="anno" data-leg="9" style="left:-1px;top:228px">9</span>
+                <span class="anno" data-leg="6" style="left:-1px;top:2px">6</span>
+                <span class="anno" data-leg="7" style="left:-1px;top:118px">7</span>
+                <span class="anno" data-leg="8" style="left:-1px;top:228px">8</span>
               </div>
 
               <!-- ── 榜单面板 ── -->
               <div class="scroll paneRank">
 
-                <div class="box board mod" data-mod="11">
+                <div class="box board mod" data-mod="10">
                   <div>
                     <div class="bt" data-tkey="rank.title">Party Contribution Board</div>
                     <div class="bs" data-tkey="rank.sub">按充值金额排名 · 月末为前三名加冕</div>
@@ -815,43 +798,41 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                   <div class="es" data-tkey="rank.emptySub">月末结算后自动展示前三名</div>
                 </div>
 
-                <div class="podium mod" data-mod="12" id="podium"></div>
-                <div class="rankList mod" data-mod="13" id="rankList"></div>
+                <div class="podium mod" data-mod="11" id="podium"></div>
+                <div class="rankList mod" data-mod="12" id="rankList"></div>
 
-                <span class="anno" data-leg="11" style="left:-1px;top:2px">11</span>
-                <span class="anno" data-leg="12" style="left:-1px;top:96px">12</span>
-                <span class="anno" data-leg="13" style="left:-1px;top:262px">13</span>
+                <span class="anno" data-leg="10" style="left:-1px;top:2px">10</span>
+                <span class="anno" data-leg="11" style="left:-1px;top:96px">11</span>
+                <span class="anno" data-leg="12" style="left:-1px;top:262px">12</span>
               </div>
-
-              <span class="anno" data-leg="5" style="left:-1px;top:4px">5</span>
-              <span class="anno" data-leg="6" style="left:-1px;top:54px">6</span>
+              <span class="anno" data-leg="5" style="left:-1px;top:54px">5</span>
             </div>
           </div><!-- /.page -->
 
-          <!-- ⑩ 吸底 CTA（仅宝箱 Tab，进正文后出现） -->
+          <!-- ⑨ 吸底 CTA（仅宝箱 Tab，进正文后出现） -->
           <div class="ctaLayer">
             <div class="ctaInner">
-              <button class="ctaBtn mod" data-mod="10" id="btnCta">
+              <button class="ctaBtn mod" data-mod="9" id="btnCta">
                 <span class="l1" data-tkey="cta.main">Go Recharge</span>
                 <span class="l2" id="ctaSub"></span>
               </button>
             </div>
-            <span class="anno" data-leg="10" style="left:-1px;bottom:22px">10</span>
+            <span class="anno" data-leg="9" style="left:-1px;bottom:22px">9</span>
           </div>
 
-          <!-- ⑭ 吸底我的排名条（仅榜单 Tab，唯一吸底） -->
-          <div class="myBarLayer mod" data-mod="14">
+          <!-- ⑬ 吸底我的排名条（仅榜单 Tab，唯一吸底） -->
+          <div class="myBarLayer mod" data-mod="13">
             <div class="myIn">
               <span class="mb1" id="myRankNo">12</span>
               <div class="avatar"></div>
               <span class="mb2" data-tkey="myrank.me">Me (You)</span>
               <span class="mb3" id="myRankAmt">$860</span>
             </div>
-            <span class="anno" data-leg="14" style="left:12px;top:-6px">14</span>
+            <span class="anno" data-leg="13" style="left:12px;top:-6px">13</span>
           </div>
 
-          <!-- ⑮ 排名奖励弹窗 -->
-          <div class="overlay mod" data-mod="15" id="ovReward">
+          <!-- ⑭ 排名奖励弹窗 -->
+          <div class="overlay mod" data-mod="14" id="ovReward">
             <div class="ovCard">
               <div class="ovHd">
                 <span class="ot" data-tkey="modal.title">RANKING REWARDS</span>
@@ -882,11 +863,11 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                 </div>
               </div>
             </div>
-            <span class="anno" data-leg="15" style="right:-1px;top:4px">15</span>
+            <span class="anno" data-leg="14" style="right:-1px;top:4px">14</span>
           </div>
 
-          <!-- ⑯ 规则页 -->
-          <div class="overlay mod" data-mod="16" id="ovRule">
+          <!-- ⑮ 规则页 -->
+          <div class="overlay mod" data-mod="15" id="ovRule">
             <div class="rulePage">
               <div class="ruleHd">
                 <span class="rt3" data-tkey="rule.title">Event Rules</span>
@@ -918,7 +899,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                 </div>
               </div>
             </div>
-            <span class="anno" data-leg="16" style="right:-1px;top:4px">16</span>
+            <span class="anno" data-leg="15" style="right:-1px;top:4px">15</span>
           </div>
 
         </div><!-- /#screen -->
@@ -984,8 +965,6 @@ const I18N = {
     "hero.foot":"RoStar · Halloween Treasure Night",
     "rules.btn":"Rules",
     "unit.d":"d", "unit.h":"h", "unit.m":"m",
-    "body.title":"Halloween",
-    "body.sub":"RECHARGE EVENT",
     "tab.chest":"Chests",
     "tab.ranking":"Ranking",
     "prog.title":"Witch's Brew",
@@ -1066,8 +1045,6 @@ const I18N = {
     "hero.foot":"روستار · ليلة كنز الهالوين",
     "rules.btn":"القواعد",
     "unit.d":"ي", "unit.h":"س", "unit.m":"د",
-    "body.title":"ليلة كنز الهالوين",
-    "body.sub":"فعالية الشحن",
     "tab.chest":"الصناديق",
     "tab.ranking":"الترتيب",
     "prog.title":"جرعة الساحرة",
@@ -1142,41 +1119,39 @@ const I18N = {
 };
 
 const MODULES = [
-  { n:1,  name:"Hero 全屏头图",   size:"375×636" },
-  { n:2,  name:"规则入口按钮",     size:"64×46" },
-  { n:3,  name:"TOP1 展示卡",     size:"78×76" },
-  { n:4,  name:"结算倒计时",       size:"140×46" },
-  { n:5,  name:"顶部活动条",       size:"375×46" },
-  { n:6,  name:"双页签",           size:"347×32" },
-  { n:7,  name:"进度卡",           size:"347×104" },
-  { n:8,  name:"宝箱轮播",         size:"375×96" },
-  { n:9,  name:"奖励面板",         size:"347×190" },
-  { n:10, name:"吸底 CTA",         size:"375×78" },
-  { n:11, name:"榜单头",           size:"347×90" },
-  { n:12, name:"领奖台 TOP3",      size:"302×150" },
-  { n:13, name:"榜单列表",         size:"347×n" },
-  { n:14, name:"吸底我的排名条",   size:"347×50" },
-  { n:15, name:"排名奖励弹窗",     size:"320×n" },
-  { n:16, name:"规则页",           size:"345×n" }
+  { n:1,  name:"Hero 全屏头图", size:"375×636" },
+  { n:2,  name:"规则入口按钮",  size:"64×46" },
+  { n:3,  name:"TOP1 展示卡", size:"78×76" },
+  { n:4,  name:"结算倒计时",    size:"140×46" },
+  { n:5,  name:"双页签",        size:"347×32" },
+  { n:6,  name:"进度卡",        size:"347×104" },
+  { n:7,  name:"宝箱轮播",      size:"375×96" },
+  { n:8,  name:"奖励面板",      size:"347×190" },
+  { n:9,  name:"吸底 CTA",  size:"375×78" },
+  { n:10, name:"榜单头",        size:"347×90" },
+  { n:11, name:"领奖台 TOP3", size:"302×150" },
+  { n:12, name:"榜单列表",      size:"347×n" },
+  { n:13, name:"吸底我的排名条", size:"347×50" },
+  { n:14, name:"排名奖励弹窗",  size:"320×n" },
+  { n:15, name:"规则页",        size:"345×n" }
 ];
 
 const LEGEND = [
   { n:1,  title:"Hero 全屏头图", size:"375×636px ｜ 100vw × 169.6vw", prd:"§5.1", note:"替换现版 banner：设计稿 750×1272（=10rem×16.96rem），@375 视口 = 375×636，cover 铺满整屏（778px）。<b>交互：下滑进正文（真实滚动，非切屏）。</b>" },
-  { n:2,  title:"规则入口按钮",   size:"64×46px ｜ 17.07vw × 12.27vw", prd:"§6.3.3", note:"新增。置于头图左下，与右侧 TOP1 头像左右对称。<b>交互：点击打开规则页。</b>" },
-  { n:3,  title:"TOP1 展示卡",    size:"78×76px ｜ 20.8vw × 20.27vw", prd:"§6.3.1", note:"新增。仅两行：头像在上、ID 在下；纯展示不可点。无数据时保留外框、内容置空为「—」。" },
-  { n:4,  title:"结算倒计时",      size:"140×46px ｜ 37.33vw × 12.27vw", prd:"§6.3.2", note:"新增。现版组件里 endTime/countdown/Date 零出现，完全没有倒计时。目标＝月末沙特 19:00 / 埃及 18:00。<b>交互：按目标实时走秒。</b>" },
-  { n:5,  title:"顶部活动条",      size:"375×46px ｜ 100vw × 12.27vw", prd:"§5", note:"新增。左侧活动名，右侧 46×30 图形位。" },
-  { n:6,  title:"双页签",          size:"347×32px ｜ 92.53vw × 8.53vw", prd:"§6", note:"替换现版 704×198 图集页签（=352×99@375）。按已定口径改为 DOM 文本，解决多语言与 a11y。<b>交互：切页签，吸顶停留。</b>" },
-  { n:7,  title:"进度卡",          size:"347×104px ｜ 92.53vw × 27.73vw", prd:"§6.1.2", note:"合并原「当前充值额」卡片（已删除，信息重复）。充值额/门槛/差额三合一。<b>交互：随选中档与充值额实时联动，药水宽度带过渡动画。</b>" },
-  { n:8,  title:"宝箱轮播",        size:"375×96px ｜ 100vw × 25.6vw", prd:"§6.1.3", note:"现版宝箱图 120×120（=60×60@375）；条带 padding 60/330/20（=30/165/10）。<b>交互：真实横滑 + scroll-snap 居中吸附；点选或滑停即选中；默认居中于最接近的未解锁档；达标档双描边点亮并带 ✓。</b>" },
-  { n:9,  title:"奖励面板",        size:"347×190px ｜ 92.53vw × 50.67vw", prd:"§6.1.4", note:"现版面板宽 9.6rem=720（=360@375）。奖励按 type 分流：竖版 236×443 / 横版 619×236 / 其余宫格（设计稿 px，@375 减半）。<b>交互：随选中档重建；未达门槛时半透明 + 锁定胶囊。</b>" },
-  { n:10, title:"吸底 CTA",        size:"375×78px ｜ 100vw × 20.8vw", prd:"§6.4", note:"宝箱 Tab 保持现有设计；榜单 Tab 不放（见 ⑭）。<b>交互：点它＝模拟充值一笔（差额恰好解锁当前档）→ 进度增长、宝箱点亮、toast 提示；全解锁后文案改为「去冲榜」并切到榜单。</b>" },
-  { n:11, title:"榜单头",          size:"347×90px ｜ 92.53vw × 24vw", prd:"§6.2.1", note:"标题 + 口径说明 + 右侧距结算倒计时 + 内嵌 Ranking Rewards 入口。<b>交互：点按钮开奖励弹窗（画布内元素唤起，铁律 3）。</b>" },
-  { n:12, title:"领奖台 TOP3",     size:"302×150px ｜ 80.53vw × 40vw", prd:"§6.2.2", note:"现版 rank-1 底纹 604×505（=302×252.5@375）、rank-2/3 336×347（=168×173.5）。帽徽层级 1 王冠 / 2 尖帽 / 3 恶魔角。" },
-  { n:13, title:"榜单列表",        size:"347×56px/行 ｜ 92.53vw × 14.93vw/行", prd:"§6.2.3", note:"现版行板 661×159（=330.5×79.5@375）；无数据时补 ??? 占位行，榜单永不空白。" },
-  { n:14, title:"吸底我的排名条",  size:"347×50px ｜ 92.53vw × 13.33vw", prd:"§6.2.4", note:"榜单 Tab 唯一吸底条，只展示 头像/排名/ID/已充值金额；原「我的排名」+吸底 CTA 两条已合并。现版条宽 10rem=750（=375@375）。" },
-  { n:15, title:"排名奖励弹窗",    size:"320×n px ｜ 85.33vw", prd:"§6.2.5", note:"由榜单头内按钮唤起。<b>交互：✕ 或点遮罩关闭。</b>接口返空时需空态（现版会弹空白弹窗）。" },
-  { n:16, title:"规则页",          size:"345×n px ｜ 92vw", prd:"§6.5", note:"替换现版正文内折叠区。独立页、分「宝箱规则 / 榜单规则」两个页签、正文直接展开不折叠。文案原文照搬。<b>交互：页签切换、✕ 或遮罩关闭。</b>" }
+  { n:2,  title:"规则入口按钮", size:"64×46px ｜ 17.07vw × 12.27vw", prd:"§6.3.3", note:"新增。置于头图左下，与右侧 TOP1 头像左右对称。<b>交互：点击打开规则页。</b>" },
+  { n:3,  title:"TOP1 展示卡", size:"78×76px ｜ 20.8vw × 20.27vw", prd:"§6.3.1", note:"新增。仅两行：头像在上、ID 在下；纯展示不可点。无数据时保留外框、内容置空为「—」。" },
+  { n:4,  title:"结算倒计时",  size:"140×46px ｜ 37.33vw × 12.27vw", prd:"§6.3.2", note:"新增。现版组件里 endTime/countdown/Date 零出现，完全没有倒计时。目标＝月末沙特 19:00 / 埃及 18:00。<b>交互：按目标实时走秒。</b>" },
+  { n:5,  title:"双页签",      size:"347×32px ｜ 92.53vw × 8.53vw", prd:"§6", note:"替换现版 704×198 图集页签（=352×99@375）。按已定口径改为 DOM 文本，解决多语言与 a11y。<b>交互：切页签，吸顶停留。</b>" },
+  { n:6,  title:"进度卡",      size:"347×104px ｜ 92.53vw × 27.73vw", prd:"§6.1.2", note:"合并原「当前充值额」卡片（已删除，信息重复）。充值额/门槛/差额三合一。<b>交互：随选中档与充值额实时联动，药水宽度带过渡动画。</b>" },
+  { n:7,  title:"宝箱轮播",    size:"375×96px ｜ 100vw × 25.6vw", prd:"§6.1.3", note:"现版宝箱图 120×120（=60×60@375）；条带 padding 60/330/20（=30/165/10）。<b>交互：真实横滑 + scroll-snap 居中吸附；点选或滑停即选中；默认居中于最接近的未解锁档；达标档双描边点亮并带 ✓。</b>" },
+  { n:8,  title:"奖励面板",    size:"347×190px ｜ 92.53vw × 50.67vw", prd:"§6.1.4", note:"现版面板宽 9.6rem=720（=360@375）。奖励按 type 分流：竖版 236×443 / 横版 619×236 / 其余宫格（设计稿 px，@375 减半）。<b>交互：随选中档重建；未达门槛时半透明 + 锁定胶囊。</b>" },
+  { n:9,  title:"吸底 CTA", size:"375×78px ｜ 100vw × 20.8vw", prd:"§6.4", note:"宝箱 Tab 保持现有设计；榜单 Tab 不放（见 ⑬）。<b>交互：点它＝模拟充值一笔（差额恰好解锁当前档）→ 进度增长、宝箱点亮、toast 提示；全解锁后文案改为「去冲榜」并切到榜单。</b>" },
+  { n:10, title:"榜单头",      size:"347×90px ｜ 92.53vw × 24vw", prd:"§6.2.1", note:"标题 + 口径说明 + 右侧距结算倒计时 + 内嵌 Ranking Rewards 入口。<b>交互：点按钮开奖励弹窗（画布内元素唤起，铁律 3）。</b>" },
+  { n:11, title:"领奖台 TOP3", size:"302×150px ｜ 80.53vw × 40vw", prd:"§6.2.2", note:"现版 rank-1 底纹 604×505（=302×252.5@375）、rank-2/3 336×347（=168×173.5）。帽徽层级 1 王冠 / 2 尖帽 / 3 恶魔角。" },
+  { n:12, title:"榜单列表",    size:"347×56px/行 ｜ 92.53vw × 14.93vw/行", prd:"§6.2.3", note:"现版行板 661×159（=330.5×79.5@375）；无数据时补 ??? 占位行，榜单永不空白。" },
+  { n:13, title:"吸底我的排名条", size:"347×50px ｜ 92.53vw × 13.33vw", prd:"§6.2.4", note:"榜单 Tab 唯一吸底条，只展示 头像/排名/ID/已充值金额；原「我的排名」+吸底 CTA 两条已合并。现版条宽 10rem=750（=375@375）。" },
+  { n:14, title:"排名奖励弹窗", size:"320×n px ｜ 85.33vw", prd:"§6.2.5", note:"由榜单头内按钮唤起。<b>交互：✕ 或点遮罩关闭。</b>接口返空时需空态（现版会弹空白弹窗）。" },
+  { n:15, title:"规则页",      size:"345×n px ｜ 92vw", prd:"§6.5", note:"替换现版正文内折叠区。独立页、分「宝箱规则 / 榜单规则」两个页签、正文直接展开不折叠。文案原文照搬。<b>交互：页签切换、✕ 或遮罩关闭。</b>" }
 ];
 
 const CHESTS = [
@@ -1712,7 +1687,7 @@ function boot(){
   /* 文案导出 / 导入 / 还原 */
   $("#btnExport").addEventListener("click", function (){
     $("#cfgBox").value = JSON.stringify({
-      _meta:{ at:new Date().toISOString(), stage:"v2.0 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
+      _meta:{ at:new Date().toISOString(), stage:"v2.2 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
       texts:cfg.texts
     }, null, 2);
     toast("已导出到文本框");
