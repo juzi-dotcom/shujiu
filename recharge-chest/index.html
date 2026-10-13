@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>万圣节充值活动 · 可交互灰盒 v2.0</title>
+<style>
+/* ============================================================================
+   可交互灰盒 v2.0 · 万圣节充值活动
+   遵循《可编辑线框原型 · 输出标准规范 v1.0》
+   —— 阶段：规范 §11 的 v2.x「可交互灰盒（数据写入 + 流程联动）」
+   —— §2 灰盒红线在 v2 沿用：页面本体零彩色、零图片、零渐变装饰
+   ============================================================================ */
+:root{
+  --ink:#3a3a3a;
+  --ink2:#6d6d6d;
+  --ink3:#9a9a9a;
+  --line:#a8a8a8;
+  --line2:#c9c9c9;
+  --box:#ededed;
+  --box2:#f6f6f6;
+  --paper:#fbfbfb;
+  --bezel:#26262b;
+  --anno:#c0392b;
+  --chip:#1a5fb4;
+  --chipbg:#eaf1fb;
+  --r:8px;
+  --f:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ height:100%; }
+body{
+  font-family:var(--f); font-size:13px; color:var(--ink);
+  background:#e8e8e8; display:flex; flex-direction:column; overflow:hidden;
+}
+
+/* ============================================================================
+   顶栏（body 级；铁律 1）
+   ============================================================================ */
+#topbar{
+  flex:0 0 46px; display:flex; align-items:center; gap:10px;
+  padding:0 12px; background:var(--bezel); color:#e9e9e9; font-size:12px;
+}
+#topbar .tb-title{ font-weight:700; white-space:nowrap; }
+#topbar .tb-title .ver{ color:#9a9a9a; font-weight:400; }
+#topbar .tb-state{
+  color:#c9c9c9; border:1px solid #4a4a52; border-radius:99px;
+  padding:1px 9px; white-space:nowrap;
+}
+#topbar .spacer{ flex:1; }
+#topbar label{ display:flex; align-items:center; gap:6px; white-space:nowrap; }
+#topbar input[type=range]{ width:100px; }
+#topbar button{
+  font:inherit; color:#e9e9e9; background:#3a3a44; border:1px solid #4a4a52;
+  border-radius:6px; padding:4px 10px; cursor:pointer; white-space:nowrap;
+}
+#topbar button:hover{ background:#4a4a56; }
+#topbar button.on{ background:var(--chip); border-color:var(--chip); color:#fff; }
+
+/* ============================================================================
+   主区（铁律 1：#wrap 内只有 #panel + #stage）
+   ============================================================================ */
+#wrap{ flex:1; min-height:0; display:flex; }
+
+#panel{
+  flex:0 0 316px; width:316px; background:#fff; border-right:1px solid #ddd;
+  overflow-y:auto; padding:12px;
+}
+#panel h3{
+  font-size:12px; color:var(--ink2); font-weight:700; letter-spacing:.4px;
+  margin:14px 0 6px; padding-bottom:4px; border-bottom:1px solid #eee;
+}
+#panel h3:first-child{ margin-top:0; }
+.stateBtn{
+  display:block; width:100%; text-align:left; font:inherit; font-size:12px;
+  padding:6px 9px; margin-bottom:4px; cursor:pointer;
+  background:var(--box2); border:1px solid var(--line2); border-radius:6px; color:var(--ink);
+}
+.stateBtn:hover{ background:var(--box); }
+.stateBtn.on{ background:var(--chip); border-color:var(--chip); color:#fff; font-weight:700; }
+.modRow{
+  display:flex; align-items:center; gap:7px; font-size:12px;
+  padding:4px 2px; border-bottom:1px dashed #f0f0f0;
+}
+.modRow label{ display:flex; align-items:center; gap:7px; cursor:pointer; flex:1; min-width:0; }
+.modRow .modNum{ flex:0 0 18px; text-align:center; font-weight:700; color:var(--anno); }
+.modRow .modSize{ color:var(--ink3); font-size:11px; white-space:nowrap; }
+#panel .hint{ font-size:11px; color:var(--ink3); line-height:1.7; }
+#panel .hint b{ color:var(--ink2); }
+#panel textarea{
+  width:100%; height:92px; font:11px/1.5 ui-monospace,Consolas,monospace;
+  border:1px solid var(--line2); border-radius:6px; padding:6px; resize:vertical;
+  background:var(--box2); color:var(--ink);
+}
+.btnRow{ display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+.btnRow button{
+  flex:1 1 auto; font:inherit; font-size:11px; padding:5px 8px; cursor:pointer;
+  background:var(--box2); border:1px solid var(--line2); border-radius:6px; color:var(--ink);
+}
+.btnRow button:hover{ background:var(--box); }
+#prdRef{
+  margin-top:12px; padding:9px; border-radius:6px;
+  background:var(--chipbg); border:1px solid #cfe0f5;
+  font-size:11.5px; line-height:1.65; color:#20456f;
+}
+#prdRef tag{
+  display:inline-block; background:var(--chip); color:#fff;
+  border-radius:4px; padding:0 5px; margin-right:4px; font-weight:700;
+}
+/* 数据状态读数 */
+#readout{
+  margin-top:8px; padding:9px; border-radius:6px;
+  background:var(--box2); border:1px solid var(--line2);
+  font-size:11.5px; line-height:1.9; color:var(--ink2);
+  font-variant-numeric:tabular-nums;
+}
+#readout b{ color:var(--ink); }
+
+/* ============================================================================
+   舞台
+   ============================================================================ */
+#stage{
+  flex:1; min-width:0; display:flex; align-items:flex-start; gap:20px;
+  padding:20px; overflow:auto;
+}
+#phoneWrap{ flex:0 0 auto; }
+#phone{
+  width:375px; height:812px; background:var(--bezel);
+  border-radius:34px; position:relative;
+  box-shadow:0 10px 34px rgba(0,0,0,.28);
+}
+#screen{
+  position:absolute; inset:0; background:var(--paper);
+  border-radius:34px; overflow:hidden;
+}
+#notchPad{
+  position:absolute; left:0; right:0; top:0; height:34px; z-index:40;
+  background:var(--paper);
+}
+#notchPad::after{
+  content:""; position:absolute; left:50%; top:8px; transform:translateX(-50%);
+  width:118px; height:20px; border-radius:99px; background:var(--bezel);
+}
+#stateBadge{
+  position:absolute; right:9px; top:38px; z-index:70;
+  font-size:10px; font-weight:700; color:#fff; background:var(--anno);
+  border-radius:4px; padding:1px 6px; letter-spacing:.3px;
+}
+/* 滚动容器：Hero 与正文同处一页，真实下滑 */
+.page{
+  position:absolute; left:0; right:0; top:34px; bottom:0;
+  overflow-y:auto; overflow-x:hidden;
+  scrollbar-width:thin;
+}
+body[dir="rtl"] .page{ direction:rtl; }
+.heroScreen{ position:relative; height:778px; }
+/* 正文兜底最小高度 = 一个视口：否则正文比 Hero 短，scrollTop 会被 maxScroll 截断，
+   「下滑进正文」后 Hero 尾部仍留在视口里（实测踩到）。真实页面正文远长于视口，这里只是补足 */
+.bodyScreen{ position:relative; min-height:778px; }
+
+/* 状态块（陷阱 3：~= 多值；特异性抬到 body .stateBlock 压过组件 display） */
+body .stateBlock{ display:none; }
+body[data-state="s1"] .stateBlock[data-show~="s1"]{ display:block; }
+body[data-state="s2"] .stateBlock[data-show~="s2"]{ display:block; }
+body[data-state="s3"] .stateBlock[data-show~="s3"]{ display:block; }
+body[data-state="s4"] .stateBlock[data-show~="s4"]{ display:block; }
+body[data-state="s5"] .stateBlock[data-show~="s5"]{ display:block; }
+body[data-state="s6"] .stateBlock[data-show~="s6"]{ display:block; }
+
+/* 页签面板（data-tab 驱动） */
+.paneChest,.paneRank{ display:none; position:relative; }
+body[data-tab="chest"] .paneChest{ display:block; }
+body[data-tab="ranking"] .paneRank{ display:block; }
+
+/* 吸底层：进正文后才出现（数据-tab 驱动） */
+.ctaLayer,.myBarLayer{ position:absolute; left:0; right:0; bottom:0; z-index:30; display:none; }
+body.inBody[data-tab="chest"] .ctaLayer{ display:block; }
+body.inBody[data-tab="ranking"] .myBarLayer{ display:block; }
+body.inBody[data-tab="chest"] .scroll.paneChest{ padding-bottom:88px; }
+body.inBody[data-tab="ranking"] .scroll.paneRank{ padding-bottom:78px; }
+
+/* 模块显隐 */
+body.no-m1  .mod[data-mod="1"]{ display:none !important; }
+body.no-m2  .mod[data-mod="2"]{ display:none !important; }
+body.no-m3  .mod[data-mod="3"]{ display:none !important; }
+body.no-m4  .mod[data-mod="4"]{ display:none !important; }
+body.no-m5  .mod[data-mod="5"]{ display:none !important; }
+body.no-m6  .mod[data-mod="6"]{ display:none !important; }
+body.no-m7  .mod[data-mod="7"]{ display:none !important; }
+body.no-m8  .mod[data-mod="8"]{ display:none !important; }
+body.no-m9  .mod[data-mod="9"]{ display:none !important; }
+body.no-m10 .mod[data-mod="10"]{ display:none !important; }
+body.no-m11 .mod[data-mod="11"]{ display:none !important; }
+body.no-m12 .mod[data-mod="12"]{ display:none !important; }
+body.no-m13 .mod[data-mod="13"]{ display:none !important; }
+body.no-m14 .mod[data-mod="14"]{ display:none !important; }
+body.no-m15 .mod[data-mod="15"]{ display:none !important; }
+body.no-m16 .mod[data-mod="16"]{ display:none !important; }
+
+/* 标注层 */
+body.no-anno .anno{ display:none !important; }
+/* 角标随所在容器显隐：Hero 角标只在未进正文时出现，正文角标只在进正文后出现 */
+body.inBody .heroScreen .anno{ display:none !important; }
+body:not(.inBody) .bodyScreen .anno{ display:none !important; }
+.anno[data-leg="15"],.anno[data-leg="16"]{ display:none; }
+body[data-sub="reward"] #ovReward .anno[data-leg="15"]{ display:block; }
+body[data-sub="ruleChest"] #ovRule .anno[data-leg="16"],
+body[data-sub="ruleRanking"] #ovRule .anno[data-leg="16"]{ display:block; }
+
+/* ============================================================================
+   占位元件库
+   ============================================================================ */
+.ph{
+  position:relative; background-color:var(--box);
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--line2) calc(50% - 1px), var(--line2) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(to bottom right, transparent calc(50% - 1px), var(--line2) calc(50% - 1px), var(--line2) calc(50% + 1px), transparent calc(50% + 1px));
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.phLab{
+  font-size:9px; color:var(--ink3); background:rgba(255,255,255,.82);
+  border-radius:3px; padding:0 4px; text-align:center; line-height:1.4;
+}
+.avatar{
+  position:relative; border-radius:50%; background-color:var(--box);
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--line2) calc(50% - 1px), var(--line2) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(to bottom right, transparent calc(50% - 1px), var(--line2) calc(50% - 1px), var(--line2) calc(50% + 1px), transparent calc(50% + 1px));
+  overflow:hidden; flex:0 0 auto;
+}
+.box{ background:var(--box2); border:1px solid var(--line2); border-radius:var(--r); }
+.tex{
+  background-image:repeating-linear-gradient(45deg,transparent 0 5px,rgba(0,0,0,.05) 5px 10px);
+  background-color:var(--box);
+}
+/* 角标：15px 红圆点，只放编号（陷阱 4） */
+.anno{
+  position:absolute; z-index:65;
+  width:15px; height:15px; border-radius:50%;
+  background:var(--anno); color:#fff;
+  font-size:9px; font-weight:700; line-height:15px; text-align:center;
+  cursor:pointer; user-select:none; box-shadow:0 0 0 1px #fff;
+  transition:transform .15s;
+}
+.anno:hover, .anno.hot{ transform:scale(1.35); }
+
+/* ============================================================================
+   ① Hero
+   ============================================================================ */
+.heroArt{ position:absolute; inset:0; }
+.heroCopy{
+  position:absolute; left:0; right:0; top:52px; z-index:2;
+  display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 18px;
+}
+.eyebrow{
+  font-size:10px; color:var(--ink2); background:var(--paper);
+  border:1px solid var(--line2); border-radius:99px; padding:2px 9px; margin-bottom:12px;
+}
+.heroTitle{ font-size:30px; font-weight:800; letter-spacing:.5px; color:var(--ink); line-height:1.1; }
+.heroSub{ font-size:15px; font-weight:700; color:var(--ink); margin-top:3px; }
+.heroSub2{ font-size:10px; color:var(--ink2); letter-spacing:2px; margin-top:4px; }
+.heroTag{ font-size:11px; color:var(--ink2); margin-top:18px; max-width:250px; }
+.heroBar{
+  position:absolute; left:14px; right:0; bottom:92px; z-index:20;
+  display:flex; align-items:flex-start; justify-content:space-between;
+}
+.dockR{ display:flex; flex-direction:column; align-items:flex-end; gap:7px; }
+.rulesBtn{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  background:var(--paper); border:1px solid var(--line2); border-radius:var(--r);
+  padding:6px 9px; width:64px; cursor:pointer;
+}
+.rulesBtn .ri{ width:26px; height:26px; border-radius:4px; }
+.rulesBtn .rt{ font-size:10px; font-weight:700; color:var(--ink); }
+.top1{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  background:var(--paper); border:1px solid var(--line2); border-radius:var(--r);
+  padding:6px 10px; width:78px;
+}
+.top1 .avatar{ width:34px; height:34px; }
+.top1 .t1crown{ font-size:10px; color:var(--ink2); margin-top:-9px; }
+.top1 .t1id{
+  font-size:10px; font-weight:700; color:var(--ink);
+  max-width:62px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.top1.empty{ border-style:dashed; opacity:.72; }
+.count{
+  display:flex; align-items:center; gap:7px;
+  background:var(--paper); border:1px solid var(--line2); border-radius:var(--r);
+  padding:6px 10px;
+}
+.count .cg{ width:15px; height:19px; border-radius:3px; }
+.digits{ display:flex; align-items:center; gap:2px; }
+.dcell{ display:flex; flex-direction:column; align-items:center; }
+.dnum{
+  min-width:21px; height:21px; background:var(--ink); color:#fff; border-radius:3px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; font-variant-numeric:tabular-nums;
+}
+.dcap{ font-size:9px; color:var(--ink3); }
+.dcolon{ font-size:11px; color:var(--ink2); padding-bottom:9px; }
+.heroFoot{
+  position:absolute; left:0; right:0; bottom:0; z-index:20; text-align:center;
+  font-size:9px; color:var(--ink3); padding-bottom:5px;
+}
+/* 真实的“下滑”提示：规范允许的线框转译（一个窄条 + 文本），不是装饰图 */
+.scrollCue{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:62px; z-index:21;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:none; border:0; cursor:pointer; font:inherit;
+}
+.scrollCue .sc1{ font-size:9px; color:var(--ink3); }
+.scrollCue .sc2{
+  width:16px; height:16px; border-right:2px solid var(--ink3); border-bottom:2px solid var(--ink3);
+  transform:rotate(45deg);
+}
+
+/* ============================================================================
+   正文
+   ============================================================================ */
+.mini{
+  height:46px; display:flex; align-items:center; gap:8px;
+  padding:0 14px; background:var(--box2); border-bottom:1px solid var(--line2);
+}
+.mini .mt1{ flex:1; min-width:0; }
+.mini .mt1 .a{ font-size:11px; font-weight:700; color:var(--ink); }
+.mini .mt1 .b{ font-size:9px; color:var(--ink3); letter-spacing:1px; }
+.mini .mart{ width:46px; height:30px; flex:0 0 auto; border-radius:4px; }
+.tabs{
+  position:sticky; top:0; z-index:25;
+  display:flex; gap:7px; padding:10px 14px;
+  background:var(--paper);
+}
+.tabBtn{
+  flex:1; height:32px; border-radius:99px; cursor:pointer;
+  border:1px solid var(--line2); background:var(--box2);
+  font:inherit; font-size:11px; font-weight:700; color:var(--ink2);
+  display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.tabBtn.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+.scroll{ padding:0 14px; }
+
+/* ⑦ 进度卡 */
+.prog{ padding:11px; margin-bottom:10px; }
+.prog .prow{ display:flex; align-items:baseline; gap:8px; margin-bottom:8px; }
+.prog .pt{ font-size:11px; font-weight:700; color:var(--ink); }
+.prog .pa{ margin-left:auto; font-size:11px; color:var(--ink2); font-variant-numeric:tabular-nums; }
+.brew{ display:flex; align-items:flex-end; gap:8px; }
+.brew .ca{ width:30px; height:30px; flex:0 0 auto; border-radius:6px; }
+.trough{
+  position:relative; flex:1; height:15px; background:var(--paper);
+  border:1px solid var(--line2); border-radius:99px; overflow:hidden;
+}
+.potion{
+  position:absolute; left:0; top:0; bottom:0; background:var(--ink3); border-radius:99px;
+  transition:width .45s cubic-bezier(.3,.8,.4,1);
+}
+body[dir="rtl"] .potion{ left:auto; right:0; }
+.trough .cap{
+  position:absolute; right:6px; top:50%; transform:translateY(-50%);
+  font-size:9px; font-weight:700; color:var(--ink);
+}
+.prog .need{ margin-top:8px; font-size:11px; color:var(--ink2); }
+.prog .need b{ color:var(--ink); }
+.prog .need.done{ color:var(--ink); font-weight:700; }
+
+/* ⑧ 宝箱轮播（真实横滑 + snap） */
+.sectHead{ display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+.sectHead .st{ font-size:11px; font-weight:700; color:var(--ink); }
+.sectHead .sn{ margin-left:auto; font-size:9px; color:var(--ink3); }
+.deck{
+  display:flex; gap:4px; margin:0 -14px;
+  padding:8px calc(50% - 38px) 4px;
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+}
+.deck::-webkit-scrollbar{ display:none; }
+.chestCard{
+  flex:0 0 auto; width:76px; display:flex; flex-direction:column;
+  align-items:center; gap:3px; scroll-snap-align:center; cursor:pointer;
+  transform:scale(.84); opacity:.45; transition:transform .2s, opacity .2s;
+}
+.chestCard.isC{ transform:scale(1); opacity:1; }
+.clv{ font-size:9px; font-weight:700; color:var(--ink3); font-variant-numeric:tabular-nums; }
+.chestCard.isC .clv{ font-size:11px; color:var(--ink); }
+.cart{ position:relative; width:64px; height:64px; border-radius:6px; }
+.cweb{
+  position:absolute; inset:0; border-radius:6px; display:none;
+  background-image:repeating-linear-gradient(45deg,transparent 0 5px,rgba(0,0,0,.06) 5px 10px);
+  background-color:var(--box);
+}
+.ctick{
+  position:absolute; left:2px; top:2px; width:13px; height:13px; border-radius:50%;
+  background:var(--ink); color:#fff; font-size:9px; line-height:13px; text-align:center;
+  display:none; font-weight:700;
+}
+.clock{
+  position:absolute; right:2px; top:2px; width:13px; height:13px; border-radius:3px;
+  border:1.5px solid var(--ink2); display:none;
+}
+.cname{ font-size:9px; color:var(--ink3); text-align:center; max-width:74px; line-height:1.25; }
+.chestCard.isC .cname{ color:var(--ink); font-weight:700; }
+.chestCard.isLit{ opacity:1; }
+.chestCard.isLit .cart{ box-shadow:inset 0 0 0 2px #fff, 0 0 0 2px var(--ink2); }
+.chestCard.isLit .ctick{ display:block; }
+.chestCard.isLock .cweb{ display:block; }
+.chestCard.isLock .clock{ display:block; }
+/* 刚解锁的那一档闪一下（纯线框语言：描边加粗） */
+@keyframes popOutline{ 0%{ box-shadow:inset 0 0 0 2px #fff, 0 0 0 2px var(--ink2); }
+  50%{ box-shadow:inset 0 0 0 2px #fff, 0 0 0 5px var(--ink2); }
+  100%{ box-shadow:inset 0 0 0 2px #fff, 0 0 0 2px var(--ink2); } }
+.chestCard.justLit .cart{ animation:popOutline .7s ease 2; }
+.dots{ display:flex; justify-content:center; gap:4px; margin:4px 0 10px; }
+.dots i{ width:5px; height:5px; border-radius:50%; background:var(--line2); cursor:pointer; }
+.dots i.on{ background:var(--ink); }
+
+/* ⑨ 奖励面板 */
+.rw{ position:relative; padding:11px; margin-bottom:10px; }
+.rwTop{
+  display:flex; align-items:center; gap:8px; padding-bottom:8px; margin-bottom:8px;
+  border-bottom:1px solid var(--line2);
+}
+.rwTop .ri2{ width:17px; height:17px; border-radius:4px; flex:0 0 auto; }
+.rwTop .rn{ font-size:11px; font-weight:700; color:var(--ink); }
+.rwTop .rt2{
+  margin-left:auto; font-size:9px; font-weight:700; color:var(--ink2);
+  background:var(--box); border-radius:99px; padding:1px 7px;
+}
+.rwGrid{ display:flex; gap:8px; }
+.rwV{ flex:0 0 118px; }
+.rwV .pic{ width:114px; height:132px; border-radius:6px; }
+.rwCol{ flex:1; display:flex; flex-direction:column; gap:8px; }
+.rwCol .pic{ width:56px; height:56px; border-radius:6px; }
+/* 横版奖励（PRD：619×236 形态）—— 按 type 分流放底部 */
+.rwWide{ display:flex; gap:8px; margin-top:8px; }
+.rwWide .pic{ width:100%; height:52px; border-radius:6px; }
+.rwWide .reward{ flex:1; }
+.rwWide .nm{ font-size:9px; }
+.reward{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+.reward .nm{ font-size:9px; color:var(--ink2); text-align:center; line-height:1.2; }
+.reward .ct2{ font-size:9px; color:var(--ink3); }
+.lockCover{
+  position:absolute; inset:0; z-index:6; border-radius:var(--r);
+  display:none; align-items:center; justify-content:center;
+}
+.rw.isLock .lockCover{ display:flex; }
+.rw.isLock .rwGrid{ opacity:.34; }
+.lockPill{
+  display:flex; align-items:center; gap:7px;
+  background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:5px 12px;
+}
+.lockPill .li{ width:15px; height:15px; border-radius:3px; border:2px solid var(--ink2); }
+.lockPill .lt{ font-size:11px; color:var(--ink); font-weight:700; }
+.lockPill .lg{ font-size:11px; font-weight:700; color:var(--ink); }
+
+/* ⑩ 吸底 CTA */
+.ctaLayer .ctaInner{ padding:22px 14px 14px; background:linear-gradient(180deg,rgba(251,251,251,0),var(--paper) 42%); }
+.ctaBtn{
+  width:100%; height:44px; background:var(--ink); color:#fff;
+  border:none; border-radius:99px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+  font:inherit;
+}
+.ctaBtn:hover{ background:#1f1f1f; }
+.ctaBtn .l1{ font-size:12px; font-weight:700; }
+.ctaBtn .l2{ font-size:9px; opacity:.82; }
+
+/* ⑪ 榜单头 */
+.board{ display:flex; align-items:center; gap:10px; padding:11px; margin-bottom:10px; }
+.board .bt{ font-size:11px; font-weight:700; color:var(--ink); }
+.board .bs{ font-size:9px; color:var(--ink3); margin-top:2px; line-height:1.35; }
+.board .bcd{ margin-left:auto; text-align:end; flex:0 0 auto; }
+.board .bcd .v{ font-size:11px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; }
+.board .bcd .k{ font-size:9px; color:var(--ink3); }
+.boardBtn{
+  display:block; width:100%; margin-top:9px; height:30px; cursor:pointer;
+  font:inherit; font-size:11px; font-weight:700; color:var(--ink);
+  background:var(--paper); border:1px solid var(--line2); border-radius:99px;
+}
+.boardBtn:hover{ background:var(--box); }
+
+/* ⑫ 领奖台 */
+.podium{ margin-bottom:10px; }
+.podiumIn{ display:flex; align-items:flex-end; justify-content:center; gap:7px; }
+.pod{ flex:1 1 0; max-width:104px; display:flex; flex-direction:column; align-items:center; gap:3px; }
+.pod .badge{ width:26px; height:22px; border-radius:4px; }
+.pod .avatar{ width:44px; height:44px; }
+.pod.p1 .avatar{ width:54px; height:54px; box-shadow:inset 0 0 0 2px #fff, 0 0 0 2px var(--ink2); }
+.pod.p1 .badge{ width:32px; height:26px; }
+.pod .pn{ font-size:9px; font-weight:700; color:var(--ink); max-width:96px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pod .pamt{ font-size:9px; color:var(--ink3); font-variant-numeric:tabular-nums; }
+.pod .pbase{
+  width:100%; height:22px; border-radius:6px 6px 0 0; background:var(--box);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; color:var(--ink2);
+}
+.pod.p1 .pbase{ height:30px; background:var(--line2); }
+
+/* ⑬ 榜单列表 */
+.rankList{ display:block; }
+.rankRow{
+  display:flex; align-items:center; gap:8px; padding:7px 11px; margin-bottom:7px;
+  background:var(--box2); border:1px solid var(--line2); border-radius:6px;
+}
+.rankRow .rk{ flex:0 0 26px; text-align:center; font-size:11px; font-weight:800; color:var(--ink2); font-variant-numeric:tabular-nums; }
+.rankRow .avatar{ width:26px; height:26px; }
+.rankRow .rn2{ flex:1; min-width:0; font-size:11px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rankRow .rv{ font-size:11px; color:var(--ink2); font-variant-numeric:tabular-nums; }
+.rankRow.ph{ opacity:.55; }
+.emptyBox{ padding:22px 11px; text-align:center; margin-bottom:10px; }
+.emptyBox .ei{ width:34px; height:34px; border-radius:8px; margin:0 auto 8px; }
+.emptyBox .et{ font-size:12px; font-weight:700; color:var(--ink); }
+.emptyBox .es{ font-size:10px; color:var(--ink3); margin-top:4px; }
+
+/* ⑭ 吸底我的排名条 */
+.myIn{
+  display:flex; align-items:center; gap:8px; padding:11px; margin:0 14px 12px;
+  background:var(--ink); border-radius:var(--r);
+}
+.myIn .mb1{ flex:0 0 28px; text-align:center; font-size:13px; font-weight:800; color:#fff; }
+.myIn .avatar{ width:28px; height:28px; }
+.myIn .mb2{ flex:1; font-size:11px; font-weight:700; color:#fff; }
+.myIn .mb3{ font-size:11px; color:#dcdcdc; font-variant-numeric:tabular-nums; }
+
+/* ============================================================================
+   弹层
+   ============================================================================ */
+.overlay{
+  position:absolute; inset:0; z-index:80; display:none;
+  align-items:center; justify-content:center; padding:18px;
+  background:rgba(38,38,43,.5);
+}
+body[data-sub="reward"] #ovReward{ display:flex; }
+body[data-sub="ruleChest"] #ovRule,
+body[data-sub="ruleRanking"] #ovRule{ display:flex; }
+.ovCard{
+  width:100%; max-width:320px; background:var(--paper); border-radius:var(--r);
+  border:1px solid var(--line); padding:14px; max-height:82%;
+  display:flex; flex-direction:column;
+}
+.ovHd{
+  display:flex; align-items:center; gap:8px; padding-bottom:10px; margin-bottom:10px;
+  border-bottom:1px solid var(--line2);
+}
+.ovHd .ot{ font-size:13px; font-weight:800; color:var(--ink); }
+.ovX{
+  margin-left:auto; width:22px; height:22px; border-radius:50%; cursor:pointer;
+  background:var(--box); border:1px solid var(--line2); color:var(--ink2);
+  font:inherit; font-size:12px; line-height:1;
+}
+.ovBd{ overflow:auto; }
+.mrow{ margin-bottom:14px; }
+.mrowTitle{ height:15px; border-radius:3px; margin-bottom:7px; }
+.mrowRew{ display:flex; gap:8px; }
+.mrowRew .pic{ width:46px; height:46px; border-radius:6px; }
+.rulePage{
+  width:100%; max-width:345px; height:100%; max-height:88%;
+  background:var(--paper); border-radius:var(--r); border:1px solid var(--line);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.ruleHd{ flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:11px 14px; border-bottom:1px solid var(--line2); }
+.ruleHd .rt3{ font-size:13px; font-weight:800; color:var(--ink); }
+.ruleTabs{ flex:0 0 auto; display:flex; gap:7px; padding:10px 14px 0; }
+.ruleBody{ flex:1; min-height:0; overflow:auto; padding:11px 14px; }
+.ruleBody p{ font-size:11px; color:var(--ink2); line-height:1.6; margin-bottom:8px; }
+.ruleBody ol{ padding-inline-start:18px; }
+.ruleBody li{ font-size:11px; color:var(--ink2); line-height:1.55; margin-bottom:7px; }
+body[data-sub="ruleChest"] .rBodyChest{ display:block; }
+body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
+.rBodyChest,.rBodyRank{ display:none; }
+
+/* toast */
+#toast{
+  position:fixed; left:50%; bottom:36px; transform:translateX(-50%) translateY(8px);
+  z-index:999; background:var(--bezel); color:#fff; font-size:12px;
+  border-radius:99px; padding:8px 16px; opacity:0; pointer-events:none;
+  transition:opacity .2s, transform .2s; max-width:70vw; text-align:center;
+}
+#toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* 图例 */
+#legend{
+  flex:0 0 330px; width:330px; background:#fff; border:1px solid #ddd; border-radius:var(--r);
+  padding:12px; max-height:calc(100vh - 100px); overflow-y:auto;
+}
+#legend h3{ font-size:12px; font-weight:700; color:var(--ink2); margin-bottom:8px; }
+.legRow{ display:flex; gap:8px; padding:7px 6px; border-radius:6px; border-bottom:1px dashed #f0f0f0; }
+.legRow:hover{ background:var(--chipbg); }
+.legRow .ln{
+  flex:0 0 15px; height:15px; border-radius:50%; background:var(--anno); color:#fff;
+  font-size:9px; font-weight:700; line-height:15px; text-align:center;
+}
+.legRow .lc{ flex:1; min-width:0; font-size:11px; line-height:1.55; color:var(--ink); }
+.legRow .lc .lt{ font-weight:700; }
+.legRow .lc .ls{
+  display:inline-block; background:var(--box); border-radius:3px;
+  padding:0 4px; margin:2px 3px 0 0; font-size:10px; color:var(--ink2);
+  font-variant-numeric:tabular-nums;
+}
+.legRow .lc .lp{ color:var(--chip); font-weight:700; font-size:10px; }
+.legRow .lc .lnote{ display:block; color:var(--ink2); margin-top:3px; }
+
+/* 移动端 ≤820px */
+#btnDrawer,#btnLegMobile{ display:none; }
+@media (max-width:820px){
+  #topbar .tb-state, #topbar label{ display:none; }
+  #btnDrawer,#btnLegMobile{ display:inline-block; }
+  #panel{
+    position:fixed; left:0; top:46px; bottom:0; z-index:200;
+    transform:translateX(-105%); transition:transform .22s;
+    box-shadow:4px 0 18px rgba(0,0,0,.18);
+  }
+  body.drawerOpen #panel{ transform:translateX(0); }
+  #legend{
+    position:fixed; right:0; top:46px; bottom:0; z-index:200; width:300px;
+    max-height:none; border-radius:0;
+    transform:translateX(105%); transition:transform .22s;
+    box-shadow:-4px 0 18px rgba(0,0,0,.18);
+  }
+  body.legOpen #legend{ transform:translateX(0); }
+  #stage{ padding:12px; }
+}
+</style>
+</head>
+
+<body data-state="s1" data-sub="" data-tab="chest" class="">
+
+<header id="topbar">
+  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v2.0</span></div>
+  <div class="tb-state" id="tbState">S1 首屏 Hero</div>
+  <div class="spacer"></div>
+  <label>缩放 <input type="range" id="zoom" min="50" max="160" step="5" value="100"><span id="zoomVal" style="width:38px;display:inline-block">100%</span></label>
+  <button id="btnFit">适应窗口</button>
+  <button id="btnLang">EN</button>
+  <button id="btnAnno" class="on">标注</button>
+  <button id="btnDrawer">面板</button>
+  <button id="btnLegMobile">图例</button>
+</header>
+
+<div id="wrap">
+
+  <aside id="panel">
+    <h3>怎么玩（本版可交互）</h3>
+    <div class="hint">
+      <b>①下滑</b>：手机内直接滚轮/拖动，Hero 下滑进正文<br>
+      <b>②切页签</b>：Chests ⇄ Ranking<br>
+      <b>③选宝箱</b>：点宝箱或左右滑动，奖励面板/进度/CTA 全联动<br>
+      <b>④模拟充值</b>：点吸底 <b>Go Recharge</b> → 进度增长、宝箱逐档点亮<br>
+      <b>⑤连锁</b>：全部解锁后 CTA 变成「去冲榜」，点了切到榜单<br>
+      <b>⑥弹层</b>：榜单里的 <b>Ranking Rewards</b> 按钮开奖励弹窗；Hero 左下 <b>Rules</b> 进规则页
+    </div>
+    <div id="readout"></div>
+
+    <h3>场景跳转（S1…S9）</h3>
+    <div id="stateList"></div>
+
+    <h3>模块显隐（①…⑯）</h3>
+    <div id="modList"></div>
+
+    <h3>标注层</h3>
+    <div class="modRow">
+      <label><input type="checkbox" id="ckAnno" checked> 显示编号角标与图例</label>
+    </div>
+
+    <h3>语言</h3>
+    <div class="btnRow">
+      <button id="btnEn">English</button>
+      <button id="btnAr">العربية (RTL)</button>
+    </div>
+
+    <h3>文案编辑</h3>
+    <div class="hint">画布内任意文案<strong>双击即可编辑</strong>（失焦保存）。</div>
+    <div class="btnRow">
+      <button id="btnExport">导出</button>
+      <button id="btnImport">导入</button>
+      <button id="btnReset">还原</button>
+    </div>
+    <textarea id="cfgBox" spellcheck="false" placeholder="导出的 JSON 会出现在这里；粘贴 JSON 后点「导入」"></textarea>
+
+    <div id="prdRef"></div>
+  </aside>
+
+  <main id="stage">
+    <div id="phoneWrap">
+      <div id="phone">
+        <div id="screen">
+          <div id="notchPad"></div>
+          <div id="stateBadge">S1</div>
+
+          <div class="page" id="page">
+
+            <!-- ============================================================
+                 Hero（① 全屏头图）
+                 ============================================================ -->
+            <div class="heroScreen">
+              <div class="ph heroArt mod" data-mod="1">
+                <span class="phLab">Hero 头图<br>素材 375×636px<br>cover 满屏 375×778</span>
+              </div>
+
+              <div class="heroCopy">
+                <span class="eyebrow" data-tkey="hero.eyebrow">Oct 31 · Ends 23:59</span>
+                <div class="heroTitle" data-tkey="hero.title">HALLOWEEN</div>
+                <div class="heroSub" data-tkey="hero.sub">万圣寻宝夜</div>
+                <div class="heroSub2" data-tkey="hero.sub2">RECHARGE · TREASURE NIGHT</div>
+                <div class="heroTag" data-tkey="hero.tag">每充一笔，城堡里的南瓜灯就亮一盏</div>
+              </div>
+
+              <button class="scrollCue" id="btnScrollDown" title="下滑进入活动">
+                <span class="sc1" data-tkey="hero.scroll">下滑进入活动</span>
+                <span class="sc2"></span>
+              </button>
+
+              <div class="heroBar">
+                <button class="rulesBtn mod" data-mod="2" id="btnOpenRule">
+                  <span class="ph ri"></span>
+                  <span class="rt" data-tkey="rules.btn">Rules</span>
+                </button>
+                <div class="dockR">
+                  <div class="top1 mod" data-mod="3">
+                    <div class="avatar"></div>
+                    <span class="t1crown">👑</span>
+                    <span class="t1id jsTop1Id">Nocturne_Hex</span>
+                  </div>
+                  <div class="count mod" data-mod="4">
+                    <span class="ph cg"></span>
+                    <div class="digits">
+                      <div class="dcell"><span class="dnum" id="cdD">00</span><span class="dcap" data-tkey="unit.d">d</span></div>
+                      <span class="dcolon">:</span>
+                      <div class="dcell"><span class="dnum" id="cdH">00</span><span class="dcap" data-tkey="unit.h">h</span></div>
+                      <span class="dcolon">:</span>
+                      <div class="dcell"><span class="dnum" id="cdM">00</span><span class="dcap" data-tkey="unit.m">m</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="heroFoot" data-tkey="hero.foot">RoStar · Halloween Treasure Night</div>
+
+              <span class="anno" data-leg="1"  style="left:-1px;top:42px">1</span>
+              <span class="anno" data-leg="2"  style="left:-1px;bottom:188px">2</span>
+              <span class="anno" data-leg="3"  style="right:-1px;bottom:234px">3</span>
+              <span class="anno" data-leg="4"  style="right:-1px;bottom:188px">4</span>
+            </div>
+
+            <!-- ============================================================
+                 正文
+                 ============================================================ -->
+            <div class="bodyScreen">
+
+              <div class="mini mod" data-mod="5">
+                <div class="mt1">
+                  <div class="a" data-tkey="body.title">万圣寻宝夜</div>
+                  <div class="b" data-tkey="body.sub">RECHARGE EVENT</div>
+                </div>
+                <div class="ph mart"><span class="phLab">46×30</span></div>
+              </div>
+
+              <div class="tabs mod" data-mod="6">
+                <button class="tabBtn" id="tabChest" data-tkey="tab.chest">充值宝箱</button>
+                <button class="tabBtn" id="tabRank" data-tkey="tab.ranking">充值榜单</button>
+              </div>
+
+              <!-- ── 宝箱面板 ── -->
+              <div class="scroll paneChest">
+
+                <div class="box prog mod" data-mod="7">
+                  <div class="prow">
+                    <span class="pt" data-tkey="prog.title">Witch's Brew</span>
+                    <span class="pa"><b id="pgCur">$32</b> / $<span id="pgTgt">50</span></span>
+                  </div>
+                  <div class="brew">
+                    <span class="ph ca"></span>
+                    <div class="trough">
+                      <div class="potion" id="pgBar"></div>
+                      <span class="cap" id="pgPct">64%</span>
+                    </div>
+                  </div>
+                  <div class="need" id="pgNeed"></div>
+                </div>
+
+                <div class="mod" data-mod="8">
+                  <div class="sectHead">
+                    <span class="st" data-tkey="chest.sect">Pumpkin Chests</span>
+                    <span class="sn" data-tkey="chest.hint">点宝箱查看奖励 · 左右滑动切换</span>
+                  </div>
+                  <div class="deck" id="deck"></div>
+                  <div class="dots" id="deckDots"></div>
+                </div>
+
+                <div class="box rw mod" data-mod="9" id="rwPanel">
+                  <div class="rwTop">
+                    <span class="ph ri2"></span>
+                    <span class="rn" id="rwName">LV3 CHEST REWARDS</span>
+                    <span class="rt2" id="rwTag">Locked</span>
+                  </div>
+                  <div class="rwGrid"></div>
+                  <div class="lockCover">
+                    <div class="lockPill">
+                      <span class="li"></span>
+                      <span class="lt" data-tkey="rw.locked">Chest locked</span>
+                      <span class="lg" id="rwTogo">$18 to go</span>
+                    </div>
+                  </div>
+                </div>
+
+                <span class="anno" data-leg="7" style="left:-1px;top:2px">7</span>
+                <span class="anno" data-leg="8" style="left:-1px;top:118px">8</span>
+                <span class="anno" data-leg="9" style="left:-1px;top:228px">9</span>
+              </div>
+
+              <!-- ── 榜单面板 ── -->
+              <div class="scroll paneRank">
+
+                <div class="box board mod" data-mod="11">
+                  <div>
+                    <div class="bt" data-tkey="rank.title">Party Contribution Board</div>
+                    <div class="bs" data-tkey="rank.sub">按充值金额排名 · 月末为前三名加冕</div>
+                    <button class="boardBtn" id="btnRewards" data-tkey="rank.rewardsBtn">Ranking Rewards</button>
+                  </div>
+                  <div class="bcd">
+                    <div class="v" id="rankCd">21d 04h</div>
+                    <div class="k" data-tkey="rank.closes">距离截止</div>
+                  </div>
+                </div>
+
+                <div class="box emptyBox stateBlock" data-show="s6" id="rankEmpty">
+                  <div class="ph ei"></div>
+                  <div class="et" data-tkey="rank.empty">暂无榜单数据</div>
+                  <div class="es" data-tkey="rank.emptySub">月末结算后自动展示前三名</div>
+                </div>
+
+                <div class="podium mod" data-mod="12" id="podium"></div>
+                <div class="rankList mod" data-mod="13" id="rankList"></div>
+
+                <span class="anno" data-leg="11" style="left:-1px;top:2px">11</span>
+                <span class="anno" data-leg="12" style="left:-1px;top:96px">12</span>
+                <span class="anno" data-leg="13" style="left:-1px;top:262px">13</span>
+              </div>
+
+              <span class="anno" data-leg="5" style="left:-1px;top:4px">5</span>
+              <span class="anno" data-leg="6" style="left:-1px;top:54px">6</span>
+            </div>
+          </div><!-- /.page -->
+
+          <!-- ⑩ 吸底 CTA（仅宝箱 Tab，进正文后出现） -->
+          <div class="ctaLayer">
+            <div class="ctaInner">
+              <button class="ctaBtn mod" data-mod="10" id="btnCta">
+                <span class="l1" data-tkey="cta.main">Go Recharge</span>
+                <span class="l2" id="ctaSub"></span>
+              </button>
+            </div>
+            <span class="anno" data-leg="10" style="left:-1px;bottom:22px">10</span>
+          </div>
+
+          <!-- ⑭ 吸底我的排名条（仅榜单 Tab，唯一吸底） -->
+          <div class="myBarLayer mod" data-mod="14">
+            <div class="myIn">
+              <span class="mb1" id="myRankNo">12</span>
+              <div class="avatar"></div>
+              <span class="mb2" data-tkey="myrank.me">Me (You)</span>
+              <span class="mb3" id="myRankAmt">$860</span>
+            </div>
+            <span class="anno" data-leg="14" style="left:12px;top:-6px">14</span>
+          </div>
+
+          <!-- ⑮ 排名奖励弹窗 -->
+          <div class="overlay mod" data-mod="15" id="ovReward">
+            <div class="ovCard">
+              <div class="ovHd">
+                <span class="ot" data-tkey="modal.title">RANKING REWARDS</span>
+                <button class="ovX" data-close="reward">✕</button>
+              </div>
+              <div class="ovBd">
+                <div class="mrow">
+                  <div class="ph mrowTitle" style="width:112px"></div>
+                  <div class="mrowRew">
+                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.diamond"></span></div>
+                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.crown"></span></div>
+                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.broadcast"></span></div>
+                  </div>
+                </div>
+                <div class="mrow">
+                  <div class="ph mrowTitle" style="width:94px"></div>
+                  <div class="mrowRew">
+                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.diamond"></span></div>
+                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.frame"></span></div>
+                  </div>
+                </div>
+                <div class="mrow">
+                  <div class="ph mrowTitle" style="width:94px"></div>
+                  <div class="mrowRew">
+                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.diamond"></span></div>
+                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.badge"></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="anno" data-leg="15" style="right:-1px;top:4px">15</span>
+          </div>
+
+          <!-- ⑯ 规则页 -->
+          <div class="overlay mod" data-mod="16" id="ovRule">
+            <div class="rulePage">
+              <div class="ruleHd">
+                <span class="rt3" data-tkey="rule.title">Event Rules</span>
+                <button class="ovX" data-close="rule">✕</button>
+              </div>
+              <div class="ruleTabs">
+                <button class="tabBtn" id="rtChest" data-tkey="rule.tabChest">宝箱规则</button>
+                <button class="tabBtn" id="rtRank" data-tkey="rule.tabRanking">榜单规则</button>
+              </div>
+              <div class="ruleBody">
+                <div class="rBodyChest">
+                  <p data-tkey="rule.settle"></p>
+                  <ol>
+                    <li data-tkey="rule.c1"></li>
+                    <li data-tkey="rule.c2"></li>
+                    <li data-tkey="rule.c3"></li>
+                    <li data-tkey="rule.c4"></li>
+                    <li data-tkey="rule.c5"></li>
+                  </ol>
+                </div>
+                <div class="rBodyRank">
+                  <ol>
+                    <li data-tkey="rule.r1"></li>
+                    <li data-tkey="rule.r2"></li>
+                    <li data-tkey="rule.r3"></li>
+                    <li data-tkey="rule.r4"></li>
+                    <li data-tkey="rule.r5"></li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            <span class="anno" data-leg="16" style="right:-1px;top:4px">16</span>
+          </div>
+
+        </div><!-- /#screen -->
+      </div><!-- /#phone -->
+    </div><!-- /#phoneWrap -->
+
+    <aside id="legend">
+      <h3>标注图例（编号 ↔ 说明 ↔ PRD 条目）</h3>
+      <div id="legList"></div>
+    </aside>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================================
+   1) 常量区（全部先定义；函数只引用已定义的——避免 TDZ，陷阱 2）
+   ============================================================================ */
+
+/* 场景：state + sub + tab + 数据初值（评审用跳转，不是运行时状态的全部） */
+const STATE_LABELS = {
+  s1:"S1 首屏 Hero（全屏头图）",
+  s2:"S2 宝箱 Tab · 进行中（$32）",
+  s3:"S3 宝箱 Tab · 未解锁（$8）",
+  s4:"S4 宝箱 Tab · 全解锁（$620）",
+  s5:"S5 榜单 Tab · 有数据",
+  s6:"S6 榜单 Tab · 空数据",
+  s7:"S7 排名奖励弹窗",
+  s8:"S8 规则页 · 宝箱规则",
+  s9:"S9 规则页 · 榜单规则"
+};
+const SCENARIOS = [
+  { id:"s1", label:STATE_LABELS.s1, inBody:false, tab:"chest", sub:"", recharge:32,  selected:3, empty:false },
+  { id:"s2", label:STATE_LABELS.s2, inBody:true,  tab:"chest", sub:"", recharge:32,  selected:3, empty:false },
+  { id:"s3", label:STATE_LABELS.s3, inBody:true,  tab:"chest", sub:"", recharge:8,   selected:2, empty:false },
+  { id:"s4", label:STATE_LABELS.s4, inBody:true,  tab:"chest", sub:"", recharge:620, selected:5, empty:false },
+  { id:"s5", label:STATE_LABELS.s5, inBody:true,  tab:"ranking", sub:"", recharge:32, selected:3, empty:false },
+  { id:"s6", label:STATE_LABELS.s6, inBody:true,  tab:"ranking", sub:"", recharge:32, selected:3, empty:true },
+  { id:"s7", label:STATE_LABELS.s7, inBody:true,  tab:"ranking", sub:"reward", recharge:32, selected:3, empty:false },
+  { id:"s8", label:STATE_LABELS.s8, inBody:false, tab:"chest", sub:"ruleChest", recharge:32, selected:3, empty:false },
+  { id:"s9", label:STATE_LABELS.s9, inBody:false, tab:"chest", sub:"ruleRanking", recharge:32, selected:3, empty:false }
+];
+const PRD_REFS = {
+  s1:"首屏 Hero：占满整屏、下滑进正文；规则入口按钮置于头图左下，与右侧头像左右对称。",
+  s2:"宝箱 Tab 主态：默认选中「最接近的未解锁档」并居中；点亮＝达到门槛才点亮（选中态≠点亮态）。",
+  s3:"宝箱 Tab 低进度变体：仅 LV1 达门槛，冲刺档 LV2。",
+  s4:"宝箱 Tab 全解锁变体：CTA 改为引导冲榜，不再显示「还差 $X」。",
+  s5:"榜单 Tab：只展示 头像/排名/ID/已充值金额；底部两条吸底合并为一条（无吸底 CTA）。",
+  s6:"榜单空数据：保留结构并补占位行，榜单永不空白；TOP1 卡转空框态。",
+  s7:"排名奖励弹窗：由榜单头内 Ranking Rewards 按钮唤起；遮罩点击或 ✕ 关闭。",
+  s8:"规则页·宝箱规则：规则不再是正文折叠区，改为头图左侧按钮进入的独立页；正文直接展开。",
+  s9:"规则页·榜单规则：同一规则页的第二个页签；文案原文照搬，不得改写。"
+};
+
+const I18N = {
+  en:{
+    "hero.eyebrow":"Oct 31 · Ends 23:59",
+    "hero.title":"HALLOWEEN",
+    "hero.sub":"Treasure Night",
+    "hero.sub2":"RECHARGE · TREASURE NIGHT",
+    "hero.tag":"Every recharge lights one more pumpkin.",
+    "hero.foot":"RoStar · Halloween Treasure Night",
+    "hero.scroll":"Scroll to enter",
+    "rules.btn":"Rules",
+    "unit.d":"d", "unit.h":"h", "unit.m":"m",
+    "body.title":"Halloween",
+    "body.sub":"RECHARGE EVENT",
+    "tab.chest":"Chests",
+    "tab.ranking":"Ranking",
+    "prog.title":"Witch's Brew",
+    "prog.need":"One more pour of {amt} unlocks {lv}",
+    "prog.max":"All chests unlocked · climb the ranking",
+    "prog.done":"Unlocked ✓",
+    "chest.sect":"Pumpkin Chests",
+    "chest.hint":"tap a chest · slide to browse",
+    "chest.lv":"LV{n}",
+    "chest.1.name":"Candy Pumpkin Jar",
+    "chest.2.name":"Bat Barrel",
+    "chest.3.name":"Ghost Chest",
+    "chest.4.name":"Witch's Cauldron",
+    "chest.5.name":"Pumpkin King's Crown",
+    "rw.title":"LV{n} CHEST REWARDS",
+    "rw.tag.lit":"Unlocked",
+    "rw.tag.lock":"Locked",
+    "rw.locked":"Chest locked",
+    "rw.togo":"{amt} to go",
+    "rw.ic.diamond":"Diamonds",
+    "rw.ic.candy":"Candy bundle",
+    "rw.ic.bat":"Bat avatar frame",
+    "rw.ic.ghost":"Ghost entry bubble",
+    "rw.ic.pumpkin":"Pumpkin lamp badge",
+    "rw.ic.cauldron":"Cauldron mount",
+    "rw.ic.star":"Toxic-green name",
+    "rw.ic.crown":"Pumpkin King's Crown",
+    "rw.ic.frame":"Avatar frame",
+    "rw.ic.badge":"Badge",
+    "rw.ic.broadcast":"Server-wide broadcast",
+    "rw.expire.none":"No expiry",
+    "rw.expire.d7":"7 days",
+    "rw.expire.d30":"30 days",
+    "cta.main":"Go Recharge",
+    "cta.sub":"only {amt} to unlock {lv}",
+    "cta.nextTier":"Unlocked · view the next tier",
+    "cta.toRank":"All chests unlocked · Go to Ranking",
+    "rank.title":"Party Contribution Board",
+    "rank.sub":"Ranked by recharge amount · top three crowned at month end",
+    "rank.closes":"Closes in",
+    "rank.empty":"No ranking data yet",
+    "rank.emptySub":"Top three will appear after the month settles",
+    "rank.rewardsBtn":"Ranking Rewards",
+    "myrank.me":"Me (You)",
+    "myrank.none":"-",
+    "rank.placeholder":"???",
+    "modal.title":"RANKING REWARDS",
+    "rule.title":"Event Rules",
+    "rule.tabChest":"Chest Rules",
+    "rule.tabRanking":"Ranking Rules",
+    "rule.settle":"Runs from launch until the last day of every month. Rewards are sent automatically at 7pm Saudi time (6pm Egypt time) on that day.",
+    "rule.c1":"Open to regular users only — resellers are not eligible to participate.",
+    "rule.c2":"Recharges made through Google Pay, Apple In-App Purchase and in-app third-party payment methods are counted directly toward the event total.",
+    "rule.c3":"Diamonds bought by a reseller for himself do not count. Diamonds bought from a reseller are counted at the platform price.",
+    "rule.c4":"Rewards are distributed automatically as soon as the eligibility conditions are met.",
+    "rule.c5":"Any form of cheating, abuse or fraudulent behaviour is strictly prohibited. Detected users are disqualified immediately and all rewards are revoked.",
+    "rule.r1":"The event starts at 6:00 PM (Egypt time) and 7:00 PM (Saudi time) on the last day of the previous month, and ends at the same time on the last day of the current month.",
+    "rule.r2":"All rewards will be automatically distributed when the month ends.",
+    "rule.r3":"TOP 1 user will receive Dias equal to 7% of the total recharge; TOP 2 will receive Dias equal to 3% of the total recharge.",
+    "rule.r4":"Reseller buying diamonds himself is not counted. Buying diamonds from resellers is counted based on the price he got from the platform.",
+    "rule.r5":"Salary recharge is not counted.",
+    "toast.tab":"Switched to {name}",
+    "toast.pick":"Selected {lv} · {name}",
+    "toast.recharge":"Simulated recharge +{amt} → {total}",
+    "toast.unlock":"🎃 Unlocked {lv} · {name}!",
+    "toast.already":"Already unlocked — pick the next tier",
+    "toast.toRank":"All chests unlocked · switched to Ranking",
+    "toast.lang":"Language: {name}",
+    "toast.rewards":"Ranking Rewards",
+    "toast.closed":"Closed"
+  },
+  ar:{
+    "hero.eyebrow":"31 أكتوبر · ينتهي 23:59",
+    "hero.title":"هالوين",
+    "hero.sub":"ليلة الكنز",
+    "hero.sub2":"شحن · ليلة الكنز",
+    "hero.tag":"كل عملية شحن تضيء قرعًا إضافيًا.",
+    "hero.foot":"روستار · ليلة كنز الهالوين",
+    "hero.scroll":"اسحب للدخول",
+    "rules.btn":"القواعد",
+    "unit.d":"ي", "unit.h":"س", "unit.m":"د",
+    "body.title":"ليلة كنز الهالوين",
+    "body.sub":"فعالية الشحن",
+    "tab.chest":"الصناديق",
+    "tab.ranking":"الترتيب",
+    "prog.title":"جرعة الساحرة",
+    "prog.need":"تبقّى {amt} لفتح {lv}",
+    "prog.max":"كل الصناديق مفتوحة · تصدّر الترتيب",
+    "prog.done":"مفتوح ✓",
+    "chest.sect":"صناديق اليقطين",
+    "chest.hint":"اضغط صندوقًا · اسحب للتصفح",
+    "chest.lv":"م{ n }",
+    "chest.1.name":"جرة اليقطين الحلوة",
+    "chest.2.name":"برميل الخفافيش",
+    "chest.3.name":"صندوق الشبح",
+    "chest.4.name":"قدر الساحرة",
+    "chest.5.name":"تاج ملك اليقطين",
+    "rw.title":"مكافآت صندوق م{ n }",
+    "rw.tag.lit":"مفتوح",
+    "rw.tag.lock":"مغلق",
+    "rw.locked":"الصندوق مغلق",
+    "rw.togo":"تبقّى {amt}",
+    "rw.ic.diamond":"ألماس",
+    "rw.ic.candy":"حزمة حلوى",
+    "rw.ic.bat":"إطار الخفافيش",
+    "rw.ic.ghost":"فقاعة دخول الشبح",
+    "rw.ic.pumpkin":"شارة مصباح اليقطين",
+    "rw.ic.cauldron":"مركبة القدر",
+    "rw.ic.star":"اسم بلون أخضر سام",
+    "rw.ic.crown":"تاج ملك اليقطين",
+    "rw.ic.frame":"إطار الصورة",
+    "rw.ic.badge":"شارة",
+    "rw.ic.broadcast":"بث لجميع الخوادم",
+    "rw.expire.none":"بدون انتهاء",
+    "rw.expire.d7":"7 أيام",
+    "rw.expire.d30":"30 يومًا",
+    "cta.main":"اشحن الآن",
+    "cta.sub":"تبقّى {amt} لفتح {lv}",
+    "cta.nextTier":"مفتوح · اعرض المستوى التالي",
+    "cta.toRank":"كل الصناديق مفتوحة · انتقل إلى الترتيب",
+    "rank.title":"لوحة مساهمة الحفل",
+    "rank.sub":"الترتيب حسب مبلغ الشحن · يُتوّج الثلاثة الأوائل نهاية الشهر",
+    "rank.closes":"ينتهي خلال",
+    "rank.empty":"لا توجد بيانات ترتيب بعد",
+    "rank.emptySub":"سيظهر الثلاثة الأوائل بعد تسوية الشهر",
+    "rank.rewardsBtn":"مكافآت الترتيب",
+    "myrank.me":"أنا (أنت)",
+    "myrank.none":"-",
+    "rank.placeholder":"؟؟؟",
+    "modal.title":"مكافآت الترتيب",
+    "rule.title":"قواعد الفعالية",
+    "rule.tabChest":"قواعد الصناديق",
+    "rule.tabRanking":"قواعد الترتيب",
+    "rule.settle":"تبدأ الفعالية من بداية الحدث حتى نهاية كل شهر. سيتم إرسال جميع الجوائز تلقائيًا في آخر يوم من الشهر الساعة 7 مساءً بتوقيت السعودية والساعة 6 مساءً بتوقيت مصر.",
+    "rule.c1":"هذا النشاط مخصص للمستخدمين العاديين فقط، ولا يحق لوكلاء الشحن المشاركة فيه.",
+    "rule.c2":"في حال قام المستخدم بالشحن عبر جوجل باي أو الشراء داخل التطبيق من آبل وكذلك وسائل الدفع التابعة لجهات خارجية داخل التطبيق، يتم احتساب مبلغ الشحن مباشرة ضمن إجمالي شحن النشاط.",
+    "rule.c3":"شراء الوكيل الشحن لنفسه لا يتم احتسابه. شراء الألماس من الوكلاء يتم احتسابه حسب السعر الذي حصل عليه من المنصة.",
+    "rule.c4":"يتم توزيع المكافآت تلقائيًا عند استيفاء شروط الحصول عليها.",
+    "rule.c5":"يُمنع منعًا باتًا أي شكل من أشكال الغش أو إساءة الاستخدام أو الاحتيال. وفي حال اكتشاف ذلك، سيتم استبعاد المستخدم فورًا من النشاط وإلغاء جميع المكافآت.",
+    "rule.r1":"يبدأ الحدث في الساعة 6:00 مساءً بتوقيت مصر و7:00 مساءً بتوقيت السعودية في آخر يوم من الشهر السابق، وينتهي في نفس التوقيت في آخر يوم من الشهر الحالي.",
+    "rule.r2":"يتم توزيع جميع المكافآت تلقائيًا عند انتهاء الشهر.",
+    "rule.r3":"يحصل المركز الأول على ألماس يعادل 7٪ من إجمالي الشحن. يحصل المركز الثاني على ألماس يعادل 3٪ من إجمالي الشحن.",
+    "rule.r4":"شراء الوكيل الشحن لنفسه لا يتم احتسابه. شراء الألماس من الوكلاء يتم احتسابه حسب السعر الذي حصل عليه من المنصة.",
+    "rule.r5":"شحن الراتب غير مُحتسب.",
+    "toast.tab":"تم التبديل إلى {name}",
+    "toast.pick":"تم اختيار {lv} · {name}",
+    "toast.recharge":"شحن تجريبي ‎+{amt} → {total}",
+    "toast.unlock":"🎃 تم فتح {lv} · {name}!",
+    "toast.already":"مفتوح بالفعل — اختر المستوى التالي",
+    "toast.toRank":"كل الصناديق مفتوحة · تم الانتقال إلى الترتيب",
+    "toast.lang":"اللغة: {name}",
+    "toast.rewards":"مكافآت الترتيب",
+    "toast.closed":"تم الإغلاق"
+  }
+};
+
+const MODULES = [
+  { n:1,  name:"Hero 全屏头图",   size:"375×636" },
+  { n:2,  name:"规则入口按钮",     size:"64×46" },
+  { n:3,  name:"TOP1 展示卡",     size:"78×76" },
+  { n:4,  name:"结算倒计时",       size:"140×46" },
+  { n:5,  name:"顶部活动条",       size:"375×46" },
+  { n:6,  name:"双页签",           size:"347×32" },
+  { n:7,  name:"进度卡",           size:"347×104" },
+  { n:8,  name:"宝箱轮播",         size:"375×96" },
+  { n:9,  name:"奖励面板",         size:"347×190" },
+  { n:10, name:"吸底 CTA",         size:"375×78" },
+  { n:11, name:"榜单头",           size:"347×90" },
+  { n:12, name:"领奖台 TOP3",      size:"302×150" },
+  { n:13, name:"榜单列表",         size:"347×n" },
+  { n:14, name:"吸底我的排名条",   size:"347×50" },
+  { n:15, name:"排名奖励弹窗",     size:"320×n" },
+  { n:16, name:"规则页",           size:"345×n" }
+];
+
+const LEGEND = [
+  { n:1,  title:"Hero 全屏头图", size:"375×636px ｜ 100vw × 169.6vw", prd:"§5.1", note:"替换现版 banner：设计稿 750×1272（=10rem×16.96rem），@375 视口 = 375×636，cover 铺满整屏（778px）。<b>交互：下滑进正文（真实滚动，非切屏）。</b>" },
+  { n:2,  title:"规则入口按钮",   size:"64×46px ｜ 17.07vw × 12.27vw", prd:"§6.3.3", note:"新增。置于头图左下，与右侧 TOP1 头像左右对称。<b>交互：点击打开规则页。</b>" },
+  { n:3,  title:"TOP1 展示卡",    size:"78×76px ｜ 20.8vw × 20.27vw", prd:"§6.3.1", note:"新增。仅两行：头像在上、ID 在下；纯展示不可点。无数据时保留外框、内容置空为「—」。" },
+  { n:4,  title:"结算倒计时",      size:"140×46px ｜ 37.33vw × 12.27vw", prd:"§6.3.2", note:"新增。现版组件里 endTime/countdown/Date 零出现，完全没有倒计时。目标＝月末沙特 19:00 / 埃及 18:00。<b>交互：按目标实时走秒。</b>" },
+  { n:5,  title:"顶部活动条",      size:"375×46px ｜ 100vw × 12.27vw", prd:"§5", note:"新增。左侧活动名，右侧 46×30 图形位。" },
+  { n:6,  title:"双页签",          size:"347×32px ｜ 92.53vw × 8.53vw", prd:"§6", note:"替换现版 704×198 图集页签（=352×99@375）。按已定口径改为 DOM 文本，解决多语言与 a11y。<b>交互：切页签，吸顶停留。</b>" },
+  { n:7,  title:"进度卡",          size:"347×104px ｜ 92.53vw × 27.73vw", prd:"§6.1.2", note:"合并原「当前充值额」卡片（已删除，信息重复）。充值额/门槛/差额三合一。<b>交互：随选中档与充值额实时联动，药水宽度带过渡动画。</b>" },
+  { n:8,  title:"宝箱轮播",        size:"375×96px ｜ 100vw × 25.6vw", prd:"§6.1.3", note:"现版宝箱图 120×120（=60×60@375）；条带 padding 60/330/20（=30/165/10）。<b>交互：真实横滑 + scroll-snap 居中吸附；点选或滑停即选中；默认居中于最接近的未解锁档；达标档双描边点亮并带 ✓。</b>" },
+  { n:9,  title:"奖励面板",        size:"347×190px ｜ 92.53vw × 50.67vw", prd:"§6.1.4", note:"现版面板宽 9.6rem=720（=360@375）。奖励按 type 分流：竖版 236×443 / 横版 619×236 / 其余宫格（设计稿 px，@375 减半）。<b>交互：随选中档重建；未达门槛时半透明 + 锁定胶囊。</b>" },
+  { n:10, title:"吸底 CTA",        size:"375×78px ｜ 100vw × 20.8vw", prd:"§6.4", note:"宝箱 Tab 保持现有设计；榜单 Tab 不放（见 ⑭）。<b>交互：点它＝模拟充值一笔（差额恰好解锁当前档）→ 进度增长、宝箱点亮、toast 提示；全解锁后文案改为「去冲榜」并切到榜单。</b>" },
+  { n:11, title:"榜单头",          size:"347×90px ｜ 92.53vw × 24vw", prd:"§6.2.1", note:"标题 + 口径说明 + 右侧距结算倒计时 + 内嵌 Ranking Rewards 入口。<b>交互：点按钮开奖励弹窗（画布内元素唤起，铁律 3）。</b>" },
+  { n:12, title:"领奖台 TOP3",     size:"302×150px ｜ 80.53vw × 40vw", prd:"§6.2.2", note:"现版 rank-1 底纹 604×505（=302×252.5@375）、rank-2/3 336×347（=168×173.5）。帽徽层级 1 王冠 / 2 尖帽 / 3 恶魔角。" },
+  { n:13, title:"榜单列表",        size:"347×56px/行 ｜ 92.53vw × 14.93vw/行", prd:"§6.2.3", note:"现版行板 661×159（=330.5×79.5@375）；无数据时补 ??? 占位行，榜单永不空白。" },
+  { n:14, title:"吸底我的排名条",  size:"347×50px ｜ 92.53vw × 13.33vw", prd:"§6.2.4", note:"榜单 Tab 唯一吸底条，只展示 头像/排名/ID/已充值金额；原「我的排名」+吸底 CTA 两条已合并。现版条宽 10rem=750（=375@375）。" },
+  { n:15, title:"排名奖励弹窗",    size:"320×n px ｜ 85.33vw", prd:"§6.2.5", note:"由榜单头内按钮唤起。<b>交互：✕ 或点遮罩关闭。</b>接口返空时需空态（现版会弹空白弹窗）。" },
+  { n:16, title:"规则页",          size:"345×n px ｜ 92vw", prd:"§6.5", note:"替换现版正文内折叠区。独立页、分「宝箱规则 / 榜单规则」两个页签、正文直接展开不折叠。文案原文照搬。<b>交互：页签切换、✕ 或遮罩关闭。</b>" }
+];
+
+const CHESTS = [
+  { lv:1, need:5,   rewards:[ { ic:"diamond", ct:"5,000", v:1 }, { ic:"candy", ct:"x10" } ] },
+  { lv:2, need:20,  rewards:[ { ic:"diamond", ct:"22,000", v:1 }, { ic:"bat", ct:"d30" }, { ic:"candy", ct:"x40", h:1 } ] },
+  { lv:3, need:50,  rewards:[ { ic:"diamond", ct:"60,000", v:1 }, { ic:"ghost", ct:"d30" }, { ic:"pumpkin", ct:"d30", h:1 } ] },
+  { lv:4, need:150, rewards:[ { ic:"diamond", ct:"200,000", v:1 }, { ic:"cauldron", ct:"d30" }, { ic:"star", ct:"d30", h:1 } ] },
+  { lv:5, need:500, rewards:[ { ic:"diamond", ct:"800,000", v:1 }, { ic:"crown", ct:"d30" } ] }
+];
+const RANK_TOP  = [ { rank:1, name:"Nocturne_Hex", amt:12480 },
+                    { rank:2, name:"PumpkinPie",   amt:9150  },
+                    { rank:3, name:"GrimLily",     amt:7320  } ];
+/* 4~10 名：与现版一致（processedRankingList 会补到 4~10，榜单永不空白） */
+const RANK_REST = [ { rank:4,  name:"Witch_Morgana", amt:2410 },
+                    { rank:5,  name:"Wolf_Cry",      amt:1980 },
+                    { rank:6,  name:"Hex_Brewer",    amt:1520 },
+                    { rank:7,  name:"MoonlitOwl",    amt:1180 },
+                    { rank:8,  name:"CandyRush",     amt:940  },
+                    { rank:9,  name:"SpookySam",     amt:770  },
+                    { rank:10, name:"PumpkinSpice",  amt:610  } ];
+const MY_RANK = { rank:12, amt:860 };
+
+const CARD_W = 76, CARD_PITCH = 80;
+
+/* ============================================================================
+   2) 运行时状态（v2 的关键：数据可变）
+   ============================================================================ */
+const S = {
+  state:"s1", inBody:false, tab:"chest", sub:"",
+  recharge:32, selected:3, empty:false,
+  lang:"en", anno:true, zoom:100
+};
+let cfg = { texts:{} };
+let deckLock = false;
+
+function $(s, r){ return (r || document).querySelector(s); }
+function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+function pad2(n){ return (n < 10 ? "0" : "") + n; }
+function money(n){ return "$" + Number(n).toLocaleString("en-US"); }
+function chestOf(lv){ return CHESTS[lv - 1]; }
+function nextLocked(){ for (let i = 0; i < CHESTS.length; i++) { if (S.recharge < CHESTS[i].need) return CHESTS[i]; } return null; }
+function allUnlocked(){ return nextLocked() === null; }
+
+function t(key, vars){
+  if (cfg.texts[key] != null) return cfg.texts[key];
+  const d = I18N[S.lang] || I18N.en;
+  let s = (d[key] != null) ? d[key] : ((I18N.en[key] != null) ? I18N.en[key] : key);
+  if (vars) {
+    Object.keys(vars).forEach(function (k){
+      s = s.split("{" + k + "}").join(vars[k]);
+      s = s.split("{ " + k + " }").join(vars[k]);
+    });
+  }
+  return s;
+}
+function lvName(lv){ return t("chest." + lv + ".name"); }
+
+/* ============================================================================
+   3) 渲染
+   ============================================================================ */
+function renderTexts(){
+  $$("[data-tkey]").forEach(function (el){ el.textContent = t(el.getAttribute("data-tkey")); });
+}
+
+function renderStates(){
+  const box = $("#stateList");
+  box.innerHTML = "";
+  SCENARIOS.forEach(function (sc){
+    const b = document.createElement("button");
+    b.className = "stateBtn" + (sc.id === S.state ? " on" : "");
+    b.textContent = sc.label;
+    b.setAttribute("data-sid", sc.id);
+    b.addEventListener("click", function (){ applyScenario(sc.id); });
+    box.appendChild(b);
+  });
+}
+
+function renderModules(){
+  const box = $("#modList");
+  box.innerHTML = "";
+  MODULES.forEach(function (m){
+    const row = document.createElement("div");
+    row.className = "modRow";
+    const lab = document.createElement("label");
+    const ck = document.createElement("input");
+    ck.type = "checkbox"; ck.checked = true;
+    ck.addEventListener("change", function (){ document.body.classList.toggle("no-m" + m.n, !ck.checked); });
+    const num = document.createElement("span"); num.className = "modNum"; num.textContent = m.n;
+    const nm = document.createElement("span"); nm.textContent = m.name;
+    const sz = document.createElement("span"); sz.className = "modSize"; sz.textContent = m.size;
+    lab.appendChild(ck); lab.appendChild(num); lab.appendChild(nm);
+    row.appendChild(lab); row.appendChild(sz);
+    box.appendChild(row);
+  });
+}
+
+function renderLegend(){
+  const box = $("#legList");
+  box.innerHTML = "";
+  LEGEND.forEach(function (L){
+    const row = document.createElement("div");
+    row.className = "legRow";
+    row.setAttribute("data-legrow", String(L.n));
+    const num = document.createElement("span"); num.className = "ln"; num.textContent = L.n;
+    const c = document.createElement("div"); c.className = "lc";
+    c.innerHTML = '<span class="lt">' + L.title + '</span>' +
+      '<span class="ls">' + L.size + '</span>' +
+      '<span class="lp">PRD ' + L.prd + '</span>' +
+      '<span class="lnote">' + L.note + '</span>';
+    row.appendChild(num); row.appendChild(c);
+    row.addEventListener("mouseenter", function (){ hotAnno(L.n, true); });
+    row.addEventListener("mouseleave", function (){ hotAnno(L.n, false); });
+    box.appendChild(row);
+  });
+}
+function hotAnno(n, on){
+  $$('.anno[data-leg="' + n + '"]').forEach(function (a){ a.classList.toggle("hot", !!on); });
+}
+
+/* 宝箱轮播 */
+function renderChests(){
+  const wrap = $("#deck");
+  wrap.innerHTML = "";
+  CHESTS.forEach(function (c){
+    const lit = S.recharge >= c.need;
+    const card = document.createElement("div");
+    card.className = "chestCard" + (c.lv === S.selected ? " isC" : "") + (lit ? " isLit" : " isLock");
+    card.setAttribute("data-lv", String(c.lv));
+    card.innerHTML =
+      '<span class="clv">' + t("chest.lv", { n:c.lv }) + " · $" + c.need + '</span>' +
+      '<div class="cart">' +
+        '<div class="ph" style="width:100%;height:100%;border-radius:6px"></div>' +
+        '<span class="cweb"></span><span class="ctick">✓</span><span class="clock"></span>' +
+      '</div>' +
+      '<span class="cname">' + lvName(c.lv) + '</span>';
+    card.addEventListener("click", function (){ selectChest(c.lv, true); });
+    wrap.appendChild(card);
+  });
+  const dots = $("#deckDots");
+  dots.innerHTML = "";
+  CHESTS.forEach(function (c){
+    const d = document.createElement("i");
+    if (c.lv === S.selected) d.className = "on";
+    d.addEventListener("click", function (){ selectChest(c.lv, true); });
+    dots.appendChild(d);
+  });
+}
+
+/* 把选中档滑到正中：scrollLeft = (lv-1) × 步进（padding-inline 已由 CSS 配平） */
+function centerDeck(animate){
+  const deck = $("#deck");
+  deckLock = true;
+  const left = (S.selected - 1) * CARD_PITCH;
+  if (animate && deck.scrollTo) deck.scrollTo({ left: left, behavior:"smooth" });
+  else deck.scrollLeft = left;
+  setTimeout(function (){ deckLock = false; }, 420);
+}
+
+function selectChest(lv, notify){
+  if (lv < 1 || lv > CHESTS.length) return;
+  S.selected = lv;
+  renderChests(); renderProgress(); renderReward(); renderCta(); centerDeck(true); updateReadout();
+  if (notify) toast(t("toast.pick", { lv:t("chest.lv", { n:lv }), name:lvName(lv) }));
+}
+
+/* 进度卡（跟随选中档） */
+function renderProgress(){
+  const c = chestOf(S.selected);
+  const lit = S.recharge >= c.need;
+  const pct = Math.max(0, Math.min(100, Math.round(S.recharge / c.need * 100)));
+  $("#pgCur").textContent = money(S.recharge);
+  $("#pgTgt").textContent = c.need;
+  $("#pgBar").style.width = pct + "%";
+  $("#pgPct").textContent = pct + "%";
+  const need = $("#pgNeed");
+  if (lit) { need.className = "need done"; need.textContent = t("prog.done"); }
+  else {
+    need.className = "need";
+    need.textContent = t("prog.need", { amt:money(c.need - S.recharge), lv:t("chest.lv", { n:c.lv }) });
+  }
+}
+
+/* 奖励面板（跟随选中档） */
+function renderReward(){
+  const c = chestOf(S.selected);
+  const lit = S.recharge >= c.need;
+  const panel = $("#rwPanel");
+  panel.classList.toggle("isLock", !lit);
+  $("#rwName").textContent = t("rw.title", { n:c.lv });
+  $("#rwTag").textContent = lit ? t("rw.tag.lit") : t("rw.tag.lock");
+  $("#rwTogo").textContent = t("rw.togo", { amt:money(Math.max(0, c.need - S.recharge)) });
+  const grid = $(".rwGrid", panel);
+  const wide = c.rewards.filter(function (r){ return r.v; });
+  const strip = c.rewards.filter(function (r){ return r.h; });
+  const rest = c.rewards.filter(function (r){ return !r.v && !r.h; });
+  const expOf = function (r){ return (r.ct === "d7") ? "rw.expire.d7" : ((r.ct === "d30") ? "rw.expire.d30" : "rw.expire.none"); };
+  const cell = function (r, cls){
+    return '<div class="reward ' + (cls || "") + '"><div class="ph pic"></div>' +
+           '<span class="nm" data-tkey="rw.ic.' + r.ic + '"></span>' +
+           '<span class="ct2" data-tkey="' + expOf(r) + '"></span></div>';
+  };
+  grid.innerHTML =
+    '<div class="rwV">' + wide.map(function (r){ return cell(r); }).join("") + '</div>' +
+    '<div class="rwCol">' + rest.map(function (r){ return cell(r); }).join("") + '</div>';
+  let wideBox = $(".rwWide", panel);
+  if (strip.length) {
+    if (!wideBox) { wideBox = document.createElement("div"); wideBox.className = "rwWide"; panel.insertBefore(wideBox, $(".lockCover", panel)); }
+    wideBox.innerHTML = strip.map(function (r){ return cell(r); }).join("");
+  } else if (wideBox) { wideBox.remove(); }
+  renderTexts();   /* 动态 DOM 插入后补调（陷阱 6） */
+}
+
+/* CTA 文案（跟随选中档 + 全局解锁进度） */
+function renderCta(){
+  const sub = $("#ctaSub");
+  if (allUnlocked()) { sub.textContent = t("cta.toRank"); return; }
+  const c = chestOf(S.selected);
+  if (S.recharge >= c.need) { sub.textContent = t("cta.nextTier"); return; }
+  sub.textContent = t("cta.sub", { amt:money(c.need - S.recharge), lv:t("chest.lv", { n:c.lv }) });
+}
+
+/* 榜单（静态数据 + 渲染函数） */
+function renderRanking(){
+  const empty = S.empty;
+  const list = $("#rankList");
+  list.innerHTML = "";
+  const rows = empty ? [] : RANK_REST;
+  rows.forEach(function (r){
+    const el = document.createElement("div");
+    el.className = "rankRow";
+    el.innerHTML = '<span class="rk">' + r.rank + '</span><div class="avatar"></div>' +
+      '<span class="rn2">' + r.name + '</span><span class="rv">' + money(r.amt) + '</span>';
+    list.appendChild(el);
+  });
+  if (empty) {
+    for (let i = 4; i <= 8; i++) {
+      const el = document.createElement("div");
+      el.className = "rankRow ph";
+      el.innerHTML = '<span class="rk">' + i + '</span><div class="avatar"></div>' +
+        '<span class="rn2" data-tkey="rank.placeholder"></span><span class="rv">$0</span>';
+      list.appendChild(el);
+    }
+  }
+  const pod = $("#podium");
+  pod.innerHTML = "";
+  if (!empty) {
+    const pin = document.createElement("div");
+    pin.className = "podiumIn";
+    [RANK_TOP[1], RANK_TOP[0], RANK_TOP[2]].forEach(function (r){
+      const el = document.createElement("div");
+      el.className = "pod" + (r.rank === 1 ? " p1" : "");
+      el.innerHTML = '<div class="ph badge"></div><div class="avatar"></div>' +
+        '<span class="pn">' + r.name + '</span><span class="pamt">' + money(r.amt) + '</span>' +
+        '<div class="pbase">' + r.rank + '</div>';
+      pin.appendChild(el);
+    });
+    pod.appendChild(pin);
+  }
+  $("#myRankNo").textContent = empty ? t("myrank.none") : MY_RANK.rank;
+  $("#myRankAmt").textContent = empty ? "$0" : money(MY_RANK.amt);
+  const top1id = $(".jsTop1Id");
+  if (top1id) top1id.textContent = empty ? "—" : RANK_TOP[0].name;
+  const card = $(".top1");
+  if (card) card.classList.toggle("empty", empty);
+  renderTexts();
+}
+
+/* 派生当前状态标签（交互后徽标跟着变） */
+function deriveState(){
+  if (S.sub === "reward") return "s7";
+  if (S.sub === "ruleChest") return "s8";
+  if (S.sub === "ruleRanking") return "s9";
+  if (!S.inBody) return "s1";
+  if (S.tab === "ranking") return S.empty ? "s6" : "s5";
+  /* 宝箱 Tab 按「已点亮到第几档」判定，而不是按充值额硬分段：
+     全解锁 = s4；第二档都还没亮 = s3（起始态）；其余 = s2（进行中） */
+  if (allUnlocked()) return "s4";
+  if (S.recharge < CHESTS[1].need) return "s3";
+  return "s2";
+}
+
+function renderVisibility(){
+  document.body.setAttribute("data-sub", S.sub);
+  document.body.setAttribute("data-tab", S.tab);
+  /* s6 空数据态由 stateBlock 驱动，需要 data-state 落到 s6 才显示空态块 */
+  document.body.setAttribute("data-state", S.empty ? "s6" : "s5");
+  document.body.classList.toggle("inBody", S.inBody);
+  const tc = $("#tabChest"), tr = $("#tabRank");
+  tc.classList.toggle("on", S.tab === "chest");
+  tr.classList.toggle("on", S.tab === "ranking");
+  const rc = $("#rtChest"), rr = $("#rtRank");
+  rc.classList.toggle("on", S.sub === "ruleChest");
+  rr.classList.toggle("on", S.sub === "ruleRanking");
+}
+
+function updateReadout(){
+  const nl = nextLocked();
+  $("#readout").innerHTML =
+    "当前充值：<b>" + money(S.recharge) + "</b><br>" +
+    "选中档：<b>" + t("chest.lv", { n:S.selected }) + " · " + lvName(S.selected) + "</b>（门槛 $" + chestOf(S.selected).need + "）<br>" +
+    "下一未解锁：<b>" + (nl ? (t("chest.lv", { n:nl.lv }) + " · $" + nl.need) : "无（已全解锁）") + "</b><br>" +
+    "已点亮：<b>" + CHESTS.filter(function (c){ return S.recharge >= c.need; }).length + " / 5</b> 档";
+}
+
+function renderAll(){
+  renderTexts(); renderChests(); renderProgress(); renderReward(); renderCta(); renderRanking();
+  renderVisibility(); updateReadout();
+  updateBadge();
+}
+function updateBadge(){
+  const id = deriveState();
+  $("#stateBadge").textContent = id.toUpperCase();
+  $("#tbState").textContent = STATE_LABELS[id] || id;
+  $("#prdRef").innerHTML = "<tag>" + id.toUpperCase() + "</tag>" + (PRD_REFS[id] || "");
+}
+
+/* ============================================================================
+   4) 交互动作
+   ============================================================================ */
+/* scrollIt：是否同步滚动；smooth：平滑 or 瞬时。
+   场景跳转用瞬时——平滑滚动在无头/降级环境下不保证落位，会变成不确定行为 */
+function setInBody(v, scrollIt, smooth){
+  S.inBody = !!v;
+  renderVisibility();
+  if (scrollIt) {
+    const page = $("#page");
+    const top = S.inBody ? 778 : 0;
+    if (smooth) page.scrollTo({ top: top, behavior:"smooth" });
+    else page.scrollTop = top;
+  }
+  updateBadge();
+}
+
+function setTab(tab, notify){
+  S.tab = tab;
+  renderVisibility();
+  updateBadge();
+  if (notify) toast(t("toast.tab", { name:t(tab === "chest" ? "tab.chest" : "tab.ranking") }));
+}
+
+function openSub(sub){ S.sub = sub; renderVisibility(); updateBadge(); }
+function closeSub(){ S.sub = ""; renderVisibility(); updateBadge(); }
+
+/* 模拟充值：一笔刚好补齐当前选中档的差额 */
+function doRecharge(){
+  if (allUnlocked()) {
+    setTab("ranking", false);
+    toast(t("toast.toRank"));
+    return;
+  }
+  const c = chestOf(S.selected);
+  /* 选中的档已点亮 → 把选择推进到下一未解锁档，本轮不充值 */
+  if (S.recharge >= c.need) {
+    const nl = nextLocked();
+    if (nl) { selectChest(nl.lv, false); toast(t("toast.already")); }
+    return;
+  }
+  const gap = c.need - S.recharge;
+  if (gap <= 0) return;
+  S.recharge += gap;
+  toast(t("toast.recharge", { amt:money(gap), total:money(S.recharge) }));
+  renderChests(); renderProgress(); renderReward(); renderCta(); updateReadout();
+  const justLit = $('.chestCard[data-lv="' + c.lv + '"]');
+  if (justLit) justLit.classList.add("justLit");
+  const nm = lvName(c.lv), lvtx = t("chest.lv", { n:c.lv });
+  setTimeout(function (){ toast(t("toast.unlock", { lv:lvtx, name:nm })); }, 520);
+  const nl = nextLocked();
+  setTimeout(function (){
+    if (nl) selectChest(nl.lv, false);
+    renderAll();
+  }, 780);
+}
+
+function applyScenario(id){
+  const sc = SCENARIOS.filter(function (x){ return x.id === id; })[0] || SCENARIOS[0];
+  S.state = sc.id; S.tab = sc.tab; S.sub = sc.sub;
+  S.recharge = sc.recharge; S.selected = sc.selected; S.empty = sc.empty;
+  S.inBody = sc.inBody;
+  renderAll();
+  $$("#stateList .stateBtn").forEach(function (b){ b.classList.toggle("on", b.getAttribute("data-sid") === sc.id); });
+  setInBody(sc.inBody, true, false);
+  setTimeout(function (){ centerDeck(false); }, 60);
+}
+
+/* ============================================================================
+   5) 缩放 / 语言 / toast / 文案编辑
+   ============================================================================ */
+function setZoom(pct){
+  pct = Math.max(50, Math.min(160, Math.round(pct)));
+  S.zoom = pct;
+  const k = pct / 100;
+  const phone = $("#phone"), wrapEl = $("#phoneWrap");
+  phone.style.transformOrigin = "top left";
+  phone.style.transform = "scale(" + k + ")";
+  wrapEl.style.width = (375 * k) + "px";
+  wrapEl.style.height = (812 * k) + "px";
+  $("#zoom").value = String(pct);
+  $("#zoomVal").textContent = pct + "%";
+}
+
+let toastTimer = null;
+function toast(msg){
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function (){ el.classList.remove("show"); }, 2200);
+}
+
+function setLang(lang){
+  S.lang = lang;
+  document.body.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+  $("#btnLang").textContent = (lang === "ar" ? "AR" : "EN");
+  renderAll();
+  centerDeck(false);
+  toast(t("toast.lang", { name: lang === "ar" ? "العربية" : "English" }));
+}
+
+function bindEditable(){
+  document.addEventListener("dblclick", function (ev){
+    const el = ev.target.closest("[data-tkey]");
+    if (!el) return;
+    ev.preventDefault();
+    el.setAttribute("contenteditable", "true");
+    el.focus();
+    const done = function (){
+      el.removeAttribute("contenteditable");
+      cfg.texts[el.getAttribute("data-tkey")] = el.textContent;
+      el.removeEventListener("blur", done);
+    };
+    el.addEventListener("blur", done);
+  });
+}
+
+function tick(){
+  const now = new Date();
+  const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const target = new Date(Date.UTC(last.getFullYear(), last.getMonth(), last.getDate(), 16, 0, 0));
+  const s = Math.max(0, Math.floor((target.getTime() - Date.now()) / 1000));
+  const dd = Math.floor(s / 86400), hh = Math.floor((s % 86400) / 3600), mm = Math.floor((s % 3600) / 60);
+  $("#cdD").textContent = pad2(dd);
+  $("#cdH").textContent = pad2(hh);
+  $("#cdM").textContent = pad2(mm);
+  $("#rankCd").textContent = dd + "d " + pad2(hh) + "h";
+}
+
+/* ============================================================================
+   6) 启动
+   ============================================================================ */
+function boot(){
+  renderStates(); renderModules(); renderLegend(); bindEditable();
+
+  /* 真实滚动：滚进正文即算进入 */
+  $("#page").addEventListener("scroll", function (){
+    const inBody = $("#page").scrollTop > 160;
+    if (inBody !== S.inBody) { S.inBody = inBody; renderVisibility(); updateBadge(); }
+  });
+  $("#btnScrollDown").addEventListener("click", function (){ setInBody(true, true, true); });
+
+  /* 轮播：滑停即选中（真实 swipe） */
+  const deck = $("#deck");
+  deck.addEventListener("scroll", function (){
+    if (deckLock) return;
+    clearTimeout(deck._t);
+    deck._t = setTimeout(function (){
+      if (deckLock) return;
+      const lv = Math.max(1, Math.min(CHESTS.length, Math.round(deck.scrollLeft / CARD_PITCH) + 1));
+      if (lv !== S.selected) selectChest(lv, false);
+    }, 140);
+  });
+  deck.addEventListener("wheel", function (ev){
+    if (Math.abs(ev.deltaY) > Math.abs(ev.deltaX)) {
+      deck.scrollLeft += ev.deltaY;
+      ev.preventDefault();
+    }
+  }, { passive:false });
+
+  /* 页签 */
+  $("#tabChest").addEventListener("click", function (){ setTab("chest", true); });
+  $("#tabRank").addEventListener("click", function (){ setTab("ranking", true); });
+
+  /* CTA：模拟充值 → 全解锁后引导冲榜 */
+  $("#btnCta").addEventListener("click", doRecharge);
+
+  /* 弹层 */
+  $("#btnRewards").addEventListener("click", function (){ openSub("reward"); toast(t("toast.rewards")); });
+  $("#btnOpenRule").addEventListener("click", function (){ openSub("ruleChest"); });
+  $("#rtChest").addEventListener("click", function (){ openSub("ruleChest"); });
+  $("#rtRank").addEventListener("click", function (){ openSub("ruleRanking"); });
+  $$("[data-close]").forEach(function (b){
+    b.addEventListener("click", function (){
+      const kind = b.getAttribute("data-close");
+      closeSub();
+      if (kind === "rule" && S.inBody) { /* 规则页从 Hero 进，关掉仍回 Hero */ }
+    });
+  });
+  $$(".overlay").forEach(function (ov){
+    ov.addEventListener("click", function (ev){ if (ev.target === ov) closeSub(); });
+  });
+  document.addEventListener("keydown", function (ev){ if (ev.key === "Escape") closeSub(); });
+
+  /* 缩放 */
+  $("#zoom").addEventListener("input", function (ev){ setZoom(Number(ev.target.value)); });
+  $("#btnFit").addEventListener("click", function (){ setZoom(Math.round((window.innerHeight - 120) / 812 * 100)); });
+
+  /* 语言 */
+  $("#btnLang").addEventListener("click", function (){ setLang(S.lang === "ar" ? "en" : "ar"); });
+  $("#btnEn").addEventListener("click", function (){ setLang("en"); });
+  $("#btnAr").addEventListener("click", function (){ setLang("ar"); });
+
+  /* 标注 */
+  const syncAnno = function (on){
+    S.anno = on;
+    document.body.classList.toggle("no-anno", !on);
+    $("#ckAnno").checked = on;
+    $("#btnAnno").classList.toggle("on", on);
+  };
+  $("#ckAnno").addEventListener("change", function (ev){ syncAnno(ev.target.checked); });
+  $("#btnAnno").addEventListener("click", function (){ syncAnno(!S.anno); });
+
+  /* 移动端抽屉 */
+  $("#btnDrawer").addEventListener("click", function (){ document.body.classList.toggle("drawerOpen"); });
+  $("#btnLegMobile").addEventListener("click", function (){ document.body.classList.toggle("legOpen"); });
+  $$(".anno").forEach(function (a){
+    a.addEventListener("click", function (){
+      const n = a.getAttribute("data-leg");
+      if (window.matchMedia("(max-width:820px)").matches) document.body.classList.add("legOpen");
+      const row = $('[data-legrow="' + n + '"]');
+      if (row) { row.scrollIntoView({ block:"center", behavior:"smooth" }); hotAnno(n, true); setTimeout(function (){ hotAnno(n, false); }, 1200); }
+    });
+  });
+
+  /* 文案导出 / 导入 / 还原 */
+  $("#btnExport").addEventListener("click", function (){
+    $("#cfgBox").value = JSON.stringify({
+      _meta:{ at:new Date().toISOString(), stage:"v2.0 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
+      texts:cfg.texts
+    }, null, 2);
+    toast("已导出到文本框");
+  });
+  $("#btnImport").addEventListener("click", function (){
+    try {
+      const j = JSON.parse($("#cfgBox").value);
+      cfg.texts = j.texts || {};
+      if (j._meta && j._meta.lang) S.lang = j._meta.lang;
+      renderAll(); centerDeck(false);
+      toast("已导入 " + Object.keys(cfg.texts).length + " 条文案");
+    } catch (e) { toast("JSON 解析失败：" + e.message); }
+  });
+  $("#btnReset").addEventListener("click", function (){
+    cfg.texts = {}; $("#cfgBox").value = "";
+    renderAll(); centerDeck(false);
+    toast("已还原为字典原文");
+  });
+
+  if (window.matchMedia("(max-width:820px)").matches) setZoom(Math.min(100, Math.round((window.innerWidth - 24) / 395 * 100)));
+  else setZoom(100);
+
+  applyScenario("s1");
+  tick();
+  setInterval(tick, 1000);
+}
+
+boot();
+</script>
+</body>
+</html>
