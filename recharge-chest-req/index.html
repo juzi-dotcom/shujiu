@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>万圣节充值活动换皮 · 需求速览（内部过稿版）</title>
+<style>
+:root{
+  --deep:#2d1956; --deep2:#4a2f7a; --orange:#f79b39; --orange-bg:#fff4e0;
+  --ink:#2b2b2b; --ink2:#5a5a5a; --ink3:#8a8a8a;
+  --line:#e2e2e8; --box:#f7f6fb; --paper:#ffffff; --bg:#efeff3;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font:15px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",
+       "Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:var(--ink);background:var(--bg);padding:28px 16px 60px;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:860px;margin:0 auto;background:var(--paper);
+  border-radius:12px;box-shadow:0 2px 18px rgba(45,25,86,.08);overflow:hidden;}
+.hd{background:linear-gradient(135deg,var(--deep) 0%,var(--deep2) 100%);
+  color:#fff;padding:26px 30px 22px;}
+.hd .eyebrow{font-size:12px;letter-spacing:.08em;opacity:.8;margin-bottom:6px;}
+.hd h1{font-size:25px;font-weight:800;letter-spacing:.01em;line-height:1.3;}
+.hd .sub{font-size:12.5px;opacity:.85;margin-top:8px;}
+.bd{padding:8px 30px 34px;}
+h2{font-size:19px;font-weight:800;color:var(--deep);margin:30px 0 12px;
+  padding-bottom:7px;border-bottom:2px solid var(--line);}
+h3{font-size:15.5px;font-weight:700;color:var(--deep2);margin:22px 0 9px;}
+h2:first-child,h3:first-child{margin-top:20px;}
+p{margin:9px 0;color:var(--ink);}
+strong{color:var(--deep);font-weight:700;}
+em{font-style:normal;color:var(--ink2);}
+code{font:13px/1.5 ui-monospace,Consolas,"Courier New",monospace;
+  background:var(--box);border:1px solid var(--line);border-radius:4px;
+  padding:1px 5px;color:var(--deep2);word-break:break-all;}
+ul,ol{margin:9px 0 9px 22px;}
+li{margin:4px 0;}
+hr{border:0;border-top:1px dashed var(--line);margin:26px 0;}
+.note{background:var(--orange-bg);border-left:3px solid var(--orange);
+  border-radius:0 6px 6px 0;padding:11px 15px;margin:14px 0;
+  font-size:13.5px;color:#7a4a10;line-height:1.7;}
+.tw{overflow-x:auto;margin:13px 0;-webkit-overflow-scrolling:touch;}
+table{border-collapse:collapse;width:100%;font-size:13.5px;}
+th{background:var(--deep);color:#fff;font-weight:700;text-align:left;
+  padding:9px 12px;font-size:13px;white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid var(--line);
+  vertical-align:top;line-height:1.65;}
+tbody tr:nth-child(even){background:#faf9fd;}
+tbody tr:hover{background:#f3f1fa;}
+td:first-child{white-space:nowrap;}
+.ft{padding:18px 30px 26px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--ink3);background:#fbfbfd;line-height:1.8;}
+.ft a{color:var(--deep2);}
+.ft a.dl{display:inline-block;font-size:13px;font-weight:700;color:#fff;
+  background:var(--deep);text-decoration:none;border-radius:6px;
+  padding:9px 18px;margin-bottom:10px;transition:background .15s;}
+.ft a.dl:hover{background:var(--deep2);}
+@media (max-width:640px){
+  body{padding:0 0 40px;}
+  .wrap{border-radius:0;box-shadow:none;}
+  .hd{padding:20px 18px 18px;}
+  .hd h1{font-size:20px;}
+  .bd{padding:4px 18px 26px;}
+  h2{font-size:17px;}
+  table{font-size:12.5px;}
+  th,td{padding:8px 9px;}
+  td:first-child{white-space:normal;}
+}
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  .wrap{box-shadow:none;max-width:none;}
+  .hd{background:#fff;color:#000;border-bottom:2px solid var(--deep);}
+  .hd .eyebrow,.hd .sub{opacity:1;color:#444;}
+  h2{page-break-after:avoid;}
+  tr{page-break-inside:avoid;}
+  .note{background:#fdf6ea;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <div class="eyebrow">RoStar 充值宝箱活动 · 万圣节换皮</div>
+    <h1>需求速览</h1>
+    <div class="sub">内部过稿版 · 非完整 PRD · 2026-10-13</div>
+  </div>
+  <div class="bd">
+<div class="note"><strong>用途</strong>：内部快速对齐，不是完整 PRD。 <strong>完整版</strong>：<code>02_文档与笔记\万圣节充值活动换皮_PRD_v1.0.md</code>（15 章 / 44 KB） <strong>可编辑线框</strong>：<code>01_网页与原型\万圣节充值活动-线框图-v2.0.html</code>（v2.2） <strong>日期</strong>：2026-10-13</div>
+<hr>
+<h2>1. 一句话</h2>
+<p>把线上现成的「充值宝箱 + 充值月榜」活动页整体换上<strong>万圣节主题</strong>，</p>
+<p><strong>不改核心玩法、奖励规则、接口与发放逻辑</strong>，并顺手修掉几个现版体验问题。</p>
+<hr>
+<h2>2. 现状与目标</h2>
+<div class="tw"><table><thead><tr><th>项</th><th>内容</th></tr></thead><tbody><tr><td><strong>现版</strong></td><td>线上 <code>/recharge-chest-reward</code>，主题「ROSTAR DRAGON CHEST」巨龙金红</td></tr><tr><td><strong>性质</strong></td><td><strong>纯前端展示层</strong>——数据来自 3 个接口，换皮只动 <strong>美术 + 样式 + 文案</strong></td></tr><tr><td><strong>目标</strong></td><td>万圣节期间拉动充值；<strong>零接口 / 零后端改动</strong>；资源可整体替换、可回滚</td></tr><tr><td><strong>非目标</strong></td><td>❌ 不做新玩法 ❌ 不改奖励数值与发奖规则 ❌ 不改接口 ❌ 不做日榜/周榜（现版周榜是死代码）</td></tr></tbody></table></div>
+<hr>
+<h2>3. 不能碰的基线</h2>
+<ol><li><strong>宝箱线</strong>：累计充值达门槛 → 该档 <code>status=1</code> → 奖励<strong>自动发放</strong>（无需手动领）</li><li><strong>榜单线</strong>：按当月累计充值排名；月末结算 <strong>TOP1 = 总充值 7%、TOP2 = 3%</strong></li><li><strong>计入口径</strong>（原文照搬，不得改写）：<ul class="sub"><li>Google Pay / Apple 内购 / 站内三方支付 → <strong>计入</strong></li><li>代理商自购 → <strong>不计入</strong></li><li>从代理商处买钻石 → <strong>按平台价计入</strong></li><li>工资充值 → <strong>不计入</strong></li></ul></li><li><strong>资格</strong>：仅普通用户，Reseller 不可参与</li><li><strong>发奖</strong>：自动发放；作弊立即取消并追回</li></ol>
+<hr>
+<h2>4. 这次要改什么</h2>
+<h3>4.1 四处结构变化</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>变化</th><th>为什么</th></tr></thead><tbody><tr><td>1</td><td>新增<strong>首屏 Hero，占满整屏、下滑进正文</strong>（底部<strong>不放</strong>下滑提示）</td><td>现版 banner 与正文挤在一起，层次弱</td></tr><tr><td>2</td><td>新增 <strong>TOP1 展示卡 + 结算倒计时</strong></td><td>现版<strong>完全没有倒计时</strong>，用户不知道活动何时结算</td></tr><tr><td>3</td><td>规则从「正文内长文本框」→ <strong>首屏左侧按钮进独立规则页</strong>（宝箱/榜单两 Tab，正文不折叠）</td><td>现版 5 条规则把 CTA 顶出首屏</td></tr><tr><td>4</td><td>榜单 Tab 底部<strong>两条吸底合并为一条</strong></td><td>现版「我的排名」+ CTA 叠加，占屏且信息重复</td></tr></tbody></table></div>
+<div class="note">⚠️ <strong>唯一动到布局骨架的地方</strong>：现版 banner 高 <code>16.96rem</code>(1272px)，Hero 建议 <code>17.52rem</code>(1314px)。 两者仅差 42px / 5.6%，<strong>但头部高度必须跟着改</strong>，不是单纯换图。</div>
+<h3>4.2 宝箱 Tab 要点</h3>
+<div class="tw"><table><thead><tr><th>项</th><th>说明</th></tr></thead><tbody><tr><td>进度卡</td><td>女巫坩埚 + 药水槽（按 <code>当前额/门槛</code> 填充）。<strong>充值额 / 门槛 / 差额三合一</strong>（原独立的「当前充值额」卡片已删，信息重复）</td></tr><tr><td>文案</td><td><code>Witch's Brew</code> + <code>$当前 / $门槛</code>（<strong>只显 <code>$</code>，不带 USD</strong>）+ <code>再充 $X 即可解锁 LVn</code></td></tr><tr><td><strong>宝箱轮播</strong></td><td><strong>5 档</strong>。<strong>滑动停在屏幕中央即选中</strong>（<code>scroll-snap</code>），<strong>选中的档必须居中</strong></td></tr><tr><td><strong>点亮逻辑</strong></td><td><strong>达到门槛才点亮</strong>（光晕 + ✓）；未达门槛＝暗态 + 蛛网 + 🔒。<strong>选中 ≠ 点亮</strong>，两者独立</td></tr><tr><td><strong>默认定位</strong></td><td>进页面自动滚到<strong>最接近的未解锁档</strong>并居中，零操作成本</td></tr><tr><td>联动</td><td>切档后<strong>奖励面板 / 进度条 / CTA 文案</strong>全部跟着更新</td></tr><tr><td>吸底 CTA</td><td><strong>保持现版设计不变</strong></td></tr></tbody></table></div>
+<h3>4.3 榜单 Tab 要点</h3>
+<div class="tw"><table><thead><tr><th>项</th><th>说明</th></tr></thead><tbody><tr><td>榜单头</td><td><code>Party Contribution Board</code> + 副标题 + 右侧距结算倒计时</td></tr><tr><td>领奖台</td><td>TOP1 居中最高（王冠）／TOP2、TOP3 两侧（女巫尖帽、恶魔角）；不足 3 人补 <code>???</code> 占位</td></tr><tr><td>列表</td><td>4~10 名；<strong>昵称脱敏保留前 2 位 + <code></strong><strong></code></strong>；无数据渲染占位行保持骨架</td></tr><tr><td><strong>吸底条</strong></td><td><strong>只保留这一条</strong>：头像 / 排名 / ID / 已充值金额。<strong>不再单独放吸底 CTA</strong></td></tr><tr><td>奖励弹窗</td><td>由榜单内 <code>Ranking Rewards</code> 按钮唤起，TOP1/2/3 三行</td></tr></tbody></table></div>
+<h3>4.4 视觉与多语言</h3>
+<ul><li><strong>主题</strong>：暗黑哥特 · 暗紫鎏金（沿用 v7 已确认方向）</li><li><strong>五级宝箱进化</strong>：糖果南瓜罐 → 蝙蝠木桶 → 幽灵宝箱 → 女巫坩埚 → 南瓜王皇冠箱</li><li><strong>动效</strong>：药水倾倒 + 冒泡、开箱反馈、倒计时走秒</li><li><strong>多语言</strong>：EN + AR（RTL）<strong>同步</strong>；Tab 文字改 <strong>DOM 文本</strong>（现版烘焙在 704×198 位图里、按钮无文字）</li></ul>
+<hr>
+<h2>5. 要修的现版问题</h2>
+<div class="tw"><table><thead><tr><th>#</th><th>问题</th><th>证据</th><th>方案</th></tr></thead><tbody><tr><td>1</td><td><strong>没有倒计时</strong></td><td>组件里 <code>endTime</code>/<code>countdown</code>/<code>Date</code> <strong>零出现</strong></td><td>新增倒计时（§4.1-2）</td></tr><tr><td>2</td><td><strong>规则长文案顶掉 CTA</strong></td><td>5 条规则直接铺在奖励下方、无折叠</td><td>移入独立规则页</td></tr><tr><td>3</td><td><strong>宝箱需点击才切换、默认停在最左</strong></td><td>无 snap、无默认定位</td><td>滑动即选中 + 默认定位</td></tr><tr><td>4</td><td><strong>榜单底部两条叠加</strong></td><td>「我的排名」+ CTA 同时占底</td><td>合并为一条</td></tr></tbody></table></div>
+<p><strong>附带改进</strong>：TOP1 展示位（社交证明）；「还差 $X 解锁 LVn」在进度条与 CTA <strong>双处常驻</strong>；未解锁面板显示 <code>$X to go</code>。</p>
+<hr>
+<h2>6. 技术落点</h2>
+<div class="tw"><table><thead><tr><th>层</th><th>改动</th><th>说明</th></tr></thead><tbody><tr><td>接口</td><td>❌ 不动</td><td>仍是 <code>/revenue/recharge-treasure/{index, rank-list, rank-reward-config}</code></td></tr><tr><td>后端</td><td>❌ 不动</td><td>—</td></tr><tr><td>路由/组件</td><td>🟡 微调</td><td>路由 <code>/recharge-chest-reward</code> 不变；组件内新增 Hero / 倒计时 / TOP1 卡</td></tr><tr><td>样式</td><td>✅ 重写</td><td>万圣主题样式</td></tr><tr><td>美术</td><td>✅ 全量替换</td><td>见下</td></tr><tr><td>i18n</td><td>✅ 新增键</td><td>EN + AR 同步</td></tr></tbody></table></div>
+<p><strong>美术替换关键项</strong></p>
+<div class="tw"><table><thead><tr><th>现版</th><th>尺寸</th><th>换成</th></tr></thead><tbody><tr><td><code>banner.aef8ba81.png</code>（EN/AR 同 hash）</td><td>750×1272</td><td>万圣城堡夜景头图（建议 750×1314）</td></tr><tr><td><code>banner.*.mp4</code>（yyeva 动态）</td><td>1500×1272</td><td>古堡雷电，<strong>保留 yyeva 位</strong>；弱网降级静态海报</td></tr><tr><td><code>img_chest_1..5.png</code></td><td>120×120 ×5</td><td>五级南瓜进化，<strong>需全新绘制</strong></td></tr><tr><td><code>text_level_1..5.png</code></td><td>82×31 ×5</td><td>南瓜木牌字（EN + AR 两套）</td></tr><tr><td><code>bg_frame_t/b.*.png</code></td><td>720×127 / 720×123</td><td>蝙蝠翼形上/下盖</td></tr><tr><td>面板中段（内联 base64）</td><td><strong>720×17 可平铺</strong></td><td><strong>必须重出可平铺条</strong>，否则框体断裂</td></tr></tbody></table></div>
+<div class="note">⚠️ <strong>命名坑</strong>：本页头图<strong>不是</strong> <code>banner.073f4cb2.png</code>（750×870）——那张属于<strong>另一个活动页</strong>。 本页是 <code>banner.aef8ba81.png</code>（750×1272，画面写着 "ROSTAR / DRAGON CHEST"）。<strong>按实际文件名核对，别凭"看着像"认领。</strong></div>
+<hr>
+<h2>7. 待拍板（8 项，建议优先 2 项）</h2>
+<div class="tw"><table><thead><tr><th>#</th><th>问题</th><th>建议</th></tr></thead><tbody><tr><td><strong>11.3</strong> ⭐</td><td><strong>TOP3 奖励规则缺失</strong>——规则原文只写 TOP1=7%、TOP2=3%，但接口与组件都渲染第 3 名</td><td><strong>找运营补齐文案</strong>（现在文案与实现不一致）</td></tr><tr><td><strong>11.9</strong> ⭐</td><td><strong>昵称是否脱敏</strong>——过滤器定义了但从未接线，模板渲染原始昵称</td><td><strong>接线脱敏</strong>（中东市场，原昵称外露有合规风险）→ 需法务确认</td></tr><tr><td>11.4</td><td>展示字体落地（现网万圣字样全烘焙在 PNG 里）</td><td>做成图片（与现网一致、零风险）</td></tr><tr><td>11.5</td><td>倒计时以哪个时区为基准</td><td>统一按沙特时间并标注</td></tr><tr><td>11.6</td><td>是否做开屏动画</td><td>做，但<strong>压缩到 ≤1.2s 且可跳过</strong></td></tr><tr><td>11.7</td><td>Tab 命名</td><td><code>Chests</code> / <code>Ranking</code></td></tr><tr><td>11.10</td><td><code>.reward-left</code> 236px 与奖励卡三比例全硬编码</td><td>无需拍板，但<strong>必须转达设计师</strong>：严格按 156×157 / 236×443 / 619×236</td></tr><tr><td>11.11</td><td><code>bg_rank</code> 159px vs <code>bg_rank_fill</code> 156px 差 3px</td><td>统一为 159px（现版遗留瑕疵）</td></tr></tbody></table></div>
+<p><strong>已拍板 3 项</strong>：币种只显 <code>$</code> 不带 USD ｜ 档位数 <strong>5 档</strong> ｜ Tab 用 DOM 文本</p>
+<hr>
+<h2>8. 验收要点</h2>
+<ul><li>✅ 核心玩法、奖励数值、发奖逻辑、接口<strong>零改动</strong></li><li>✅ 5 档宝箱<strong>达到门槛才点亮</strong>；选中档<strong>居中</strong></li><li>✅ 「还差 $X」在<strong>进度条与 CTA 双处</strong>常驻</li><li>✅ 榜单 Tab 底部<strong>只有一条</strong></li><li>✅ EN / AR 双语齐全，AR 为 RTL</li><li>✅ 零接口改动，资源可整体回滚</li></ul>
+  </div>
+  <div class="ft">
+    <a class="dl" href="halloween-recharge-chest-requirements.docx" download>⤓ 下载 Word 版（.docx）</a>
+    <br>
+    本文为内部过稿速览，非开发依据；细节以完整 PRD 为准。<br>
+    配套：完整 PRD（15 章）· 可编辑线框原型 v2.2（可交互）
+  </div>
+</div>
+</body>
+</html>
