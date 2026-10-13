@@ -3,43 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>线框原型 · 索引</title>
+<title>原型与文档 · 索引</title>
 <style>
-:root{--ink:#3a3a3a;--ink2:#6d6d6d;--ink3:#9a9a9a;--line2:#c9c9c9;--box2:#f6f6f6;--paper:#fbfbfb;}
+:root{--ink:#3a3a3a;--ink2:#6d6d6d;--ink3:#9a9a9a;--line2:#c9c9c9;--box2:#f6f6f6;--paper:#fbfbfb;
+  --deep:#2d1956;--orange:#f79b39;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font:14px/1.6 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
   color:var(--ink);background:#e8e8e8;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:48px 20px;}
-.wrap{width:100%;max-width:600px;background:var(--paper);border:1px solid var(--line2);border-radius:10px;padding:26px;}
+.wrap{width:100%;max-width:620px;background:var(--paper);border:1px solid var(--line2);border-radius:10px;padding:26px;}
 h1{font-size:17px;font-weight:800;margin-bottom:4px;}
-.sub{font-size:12px;color:var(--ink3);margin-bottom:20px;}
+.sub{font-size:12px;color:var(--ink3);margin-bottom:22px;}
+.grp{font-size:11.5px;font-weight:700;color:var(--deep);letter-spacing:.03em;
+  margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid #e8e6f0;}
+.grp:first-of-type{margin-top:6px;}
 .item{display:block;text-decoration:none;color:inherit;background:var(--box2);border:1px solid var(--line2);
-  border-radius:8px;padding:14px 16px;margin-bottom:10px;transition:background .15s;}
-.item:hover{background:#ededed;}
-.item .t{font-size:14px;font-weight:700;}
-.item .d{font-size:12px;color:var(--ink2);margin-top:3px;}
+  border-radius:8px;padding:13px 16px;margin-bottom:9px;transition:background .15s,border-color .15s;}
+.item:hover{background:#ededed;border-color:#b9b9b9;}
+.item .t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.tag{font-size:10px;font-weight:700;border-radius:4px;padding:1px 6px;letter-spacing:.02em;}
+.tag.proto{background:#e6e0f5;color:#4a2f7a;}
+.tag.doc{background:#fdeed8;color:#8a5410;}
+.item .d{font-size:12px;color:var(--ink2);margin-top:4px;}
 .item .u{font-size:11px;color:var(--ink3);margin-top:5px;word-break:break-all;}
-.note{font-size:11px;color:var(--ink3);margin-top:18px;padding-top:14px;border-top:1px dashed var(--line2);line-height:1.8;}
+.note{font-size:11px;color:var(--ink3);margin-top:20px;padding-top:14px;border-top:1px dashed var(--line2);line-height:1.85;}
+@media (max-width:420px){
+  body{padding:0;}
+  .wrap{border-radius:0;border-left:0;border-right:0;min-height:100vh;padding:22px 16px;}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>线框原型 · 索引</h1>
-  <div class="sub">RoStar / Litchat H5 活动换皮 · 可编辑线框与可交互灰盒</div>
+  <h1>原型与文档 · 索引</h1>
+  <div class="sub">RoStar / Litchat H5 活动换皮 · 可交互原型与需求文档</div>
+
+  <div class="grp">万圣节充值活动（RoStar）</div>
 
   <a class="item" href="recharge-chest/">
-    <div class="t">万圣节充值活动 · 可交互灰盒 v2.2</div>
+    <div class="t"><span>可交互灰盒 v2.2</span><span class="tag proto">原型</span></div>
     <div class="d">充值宝箱 + 充值榜单。真实滚动、宝箱联动、模拟充值逐档点亮。</div>
     <div class="u">recharge-chest/</div>
   </a>
 
+  <a class="item" href="recharge-chest-req/">
+    <div class="t"><span>需求速览（内部过稿版）v1.0</span><span class="tag doc">文档</span></div>
+    <div class="d">8 章精简版需求；网页可直接阅读，含可下载 Word 版。</div>
+    <div class="u">recharge-chest-req/</div>
+  </a>
+
+  <div class="grp">Litchat CP 排行榜</div>
+
   <a class="item" href="cp-ranking/">
-    <div class="t">Litchat CP 排行榜 · 万圣节换皮 线框图 v2.1</div>
+    <div class="t"><span>万圣节换皮 线框图 v2.2</span><span class="tag proto">原型</span></div>
     <div class="d">CP 亲密排行榜换皮，单文件可编辑线框原型。</div>
     <div class="u">cp-ranking/</div>
   </a>
 
+  <a class="item" href="cp-ranking-req/">
+    <div class="t"><span>需求文档（简版）v1.0</span><span class="tag doc">文档</span></div>
+    <div class="d">9 章简版需求；网页可直接阅读，含可下载 Word 版。</div>
+    <div class="u">cp-ranking-req/</div>
+  </a>
+
   <div class="note">
-    静态站点，托管于 GitHub Pages。各项目为单文件 HTML、零外部依赖。<br>
+    静态站点，托管于 GitHub Pages。各页面均为单文件 HTML、零外部依赖。<br>
     更新方式：改本地源件 → 推送到对应子目录 → 链接不变。
   </div>
 </div>
