@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Litchat CP排行榜 · 万圣节换皮 · 线框图 v2.2（可编辑）</title>
+<title>Litchat CP排行榜 · 万圣节换皮 · 线框图 v2.3（可编辑）</title>
 <!--
   ═══════════════════════════════════════════════════════════════════
   Litchat H5 「CP 亲密排行榜」万圣节换皮 · 纯静态线框原型 v1.0
@@ -365,14 +365,34 @@ body.show-anno .anno{display:flex}
   position:absolute; z-index:50; align-items:center; justify-content:center;
   width:17px; height:17px; border-radius:50%; padding:0;
   background:var(--anno); color:#fff; font-size:9.5px; font-weight:800;
-  box-shadow:0 0 0 2px #fff; pointer-events:auto; cursor:help;
+  box-shadow:0 0 0 2px #fff; pointer-events:auto; cursor:grab; touch-action:none;
 }
 .anno.hot{transform:scale(1.4); background:#e74c3c; z-index:56; box-shadow:0 0 0 3px #fff}
+.anno.dragging{transform:scale(1.3); background:#c0392b; z-index:58; box-shadow:0 0 0 3px #fff; cursor:grabbing}
+/* ── 标注编辑（v2.3）：拖动改位置 / 图例双击改字 / ✕ 删除 / ＋ 新增 ── */
+.legRow .tx{flex:1; min-width:0}
+.legRow .del{
+  flex:0 0 auto; align-self:flex-start; margin-inline-start:auto; padding:0;
+  border:1px solid #dcdce2; background:#fff; color:#8b8b93; border-radius:6px;
+  width:20px; height:20px; font-size:11px; line-height:1; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.legRow .del:hover{background:#fdeeea; color:#c0392b; border-color:#f0c9c2}
+.legRow .tx[contenteditable="true"]{background:#fff8d6; outline:2px solid #e0a53c; border-radius:4px}
+.annoBar{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px}
+.annoBar .lbl{font-size:11px; color:#8b8b93}
+.annoBar select{font-size:11.5px; padding:3px 5px; border:1px solid #cfcfd8; border-radius:6px; background:#fff; max-width:150px}
+.annoBar button{font-size:11.5px; padding:4px 9px; border:1px solid #cfcfd8; background:#fff; border-radius:6px; cursor:pointer; color:#444}
+.annoBar button:hover{background:#f2f2f5}
+.annoTip{font-size:10.5px; color:#8b8b93; margin-top:6px; line-height:1.65}
+.annoTip b{color:#c0392b}
 /* 图例面板：手机右侧，承载全部标注文字 */
 #legendWrap h4{font-size:12px; color:#8b8b93; letter-spacing:1px; text-transform:uppercase;
   margin:2px 0 8px; display:flex; align-items:center; gap:6px}
 #legendWrap h4::after{content:""; flex:1; height:1px; background:#e6e6ec}
 #legendWrap h4 .cnt{background:var(--anno); color:#fff; border-radius:8px; padding:0 7px; font-size:10px}
+.legHint{font-size:10.5px; color:#8b8b93; background:#fafafc; border:1px dashed #dcdce2; border-radius:7px;
+  padding:6px 8px; margin:2px 0 8px; line-height:1.6}
 .legRow{display:flex; gap:8px; padding:6px 6px; border-radius:8px; cursor:default; align-items:flex-start}
 .legRow:hover{background:#fdf1ef}
 .legRow .no{
@@ -455,7 +475,7 @@ body.show-anno .anno{display:flex}
 <div id="topbar">
   <button id="panelToggle">☰ 面板</button>
   <button id="mStateBtn">☰ 状态</button>
-  <b>Ghost CP Ranking · 线框</b><span class="ver" id="verLabel">v2.2</span><span class="sep">|</span>
+  <b>Ghost CP Ranking · 线框</b><span class="ver" id="verLabel">v2.3</span><span class="sep">|</span>
   <span>纯静态线框 · 可编辑</span><span class="sep">|</span>
   <span id="stateLabel">S1 本周榜·有数据</span>
   <div id="zoomRow">
@@ -495,6 +515,13 @@ body.show-anno .anno{display:flex}
   <h3>标注 Annotation</h3>
   <label class="tgl"><input type="checkbox" id="annoChk" checked>尺寸 + 模块标注层<span class="dim">红=实测值</span></label>
   <div class="hint">红色标签 = 从线上 <b>ranking.css / act-halloween.css</b> 实测的尺寸（375 设计稿，vw 与 px 双标）；蓝色胶囊 = 模块编号与 PRD 对应条目。</div>
+  <div class="annoBar">
+    <span class="lbl">新增到：</span>
+    <select id="annoHost"></select>
+    <button id="annoAdd">＋ 新增标注</button>
+    <button id="annoReset">标注复位</button>
+  </div>
+  <div class="annoTip">画布上红圈可<b>直接拖动</b>改位置（跟着缩放走，精度不受影响）；右侧图例文字<b>双击即改</b>；每条右侧 <b>✕</b> 删除。改动随「导出 JSON」一起留档，刷新页面即复位。</div>
 
   <h3>语言 / 方向 Language</h3>
   <div class="seg">
@@ -541,7 +568,7 @@ body.show-anno .anno{display:flex}
         <div class="t2" data-tkey="title.sub">PHANTOM COUPLE LEADERBOARD</div>
       </div>
       <button id="btnRule"><span data-tkey="buttons.rule">Rule</span></button>
-      <div class="anno" data-leg="n1" style="top:6px; left:8px">1</div>
+      <div class="anno" data-leg="n1" style="top:28px; left:8px">1</div>
       <div class="anno" data-leg="n2" style="top:72%; right:6px">2</div>
     </div>
 
@@ -714,6 +741,7 @@ body.show-anno .anno{display:flex}
 <aside id="legendWrap">
   <button class="legClose" id="legClose">×</button>
   <h4>标注图例 Annotations <span class="cnt" id="legCnt">0</span></h4>
+  <div class="legHint">✎ 双击任意文字即可修改 · 画布红圈可拖动改位置 · ✕ 删除 · 改动随「导出 JSON」一起留存</div>
   <div id="legendList"></div>
 </aside>
 </main>
@@ -931,7 +959,7 @@ window.addEventListener("resize", ()=>{
 /* 移动端点角标 = 弹出该编号的图例文字 */
 document.addEventListener("click", e=>{
   const badge = e.target.closest(".anno[data-leg]");
-  if(badge && isMobile()){
+  if(badge && isMobile() && badge.dataset.dragged !== "1"){
     e.stopPropagation();
     const id = badge.dataset.leg;
     const row = document.querySelector(`.legRow[data-leg="${id}"]`);
@@ -947,8 +975,9 @@ document.addEventListener("click", e=>{
 /* ── 导出 / 导入 / 还原 ── */
 function snapshot(){
   return JSON.stringify({
-    _meta:{doc:"Ghost CP Ranking wireframe", v:"2.2", stage:"v2.2", exportedAt:new Date().toISOString()},
-    state:cfg.state, sub:cfg.sub, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts
+    _meta:{doc:"Ghost CP Ranking wireframe", v:"2.3", stage:"v2.3", exportedAt:new Date().toISOString()},
+    state:cfg.state, sub:cfg.sub, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts,
+    annos:ANNOS.map(a=>({id:a.id, host:a.host, style:a.style, html:a.html}))
   }, null, 2);
 }
 $("#btnExport").onclick = ()=>{
@@ -969,8 +998,11 @@ $("#btnImport").onclick = ()=>{
     if(typeof o.anno==="boolean") cfg.anno=o.anno;
     if(o.mods) Object.assign(cfg.mods, o.mods);
     if(o.texts) cfg.texts = o.texts;
-    applyState(); applyMods(); applyLang(); applyAnno(); renderTexts();
-    alert("已导入：状态/模块/语言/文案改写 已应用。");
+    if(Array.isArray(o.annos) && o.annos.length){
+      ANNOS = o.annos.map(a=>({id:a.id, host:a.host, style:a.style, html:a.html}));
+    }
+    applyState(); applyMods(); applyLang(); applyAnno(); renderTexts(); renderAnnos(); renderLegend();
+    alert("已导入：状态 / 模块 / 语言 / 文案改写 / 标注 已应用。");
   }catch(err){ alert("JSON 解析失败："+err.message); }
 };
 $("#fileIn").onchange = e=>{
@@ -981,8 +1013,14 @@ $("#fileIn").onchange = e=>{
 };
 $("#btnReset").onclick = ()=>{ cfg.texts={}; renderTexts(); alert("文案已还原为 i18n 默认值。"); };
 
-/* ═══════════════ 标注图例（编号 ↔ 文字，画布零叠字）═══════════════ */
-const LEGEND = [
+/* ═══════════════ 标注系统（编号角标 ↔ 图例，v2.3 可编辑）═══════════════
+   数据模型：ANNOS = [{id, host(宿主选择器), style(内联样式串), html(图例文字)}]
+   · 角标位置以「内联样式串」原样保存 → 百分比 / margin 居中这类写法不会被破坏
+   · 拖拽时改写成 left/top 像素值，并按当前缩放换算，任意缩放下都跟手
+   · 图例文字双击即改；✕ 删除并重排编号；「＋ 新增标注」挂到所选宿主
+   · 全部随「导出 JSON」留档（annos 字段），导入即还原
+   ───────────────────────────────────────────────────────────────── */
+const LEGEND_DEFAULT = [
   ["n1","① Banner 头图","满屏 = 一个可视页高（≈758px，375 宽等比）· 2026-10-13 改版：原 399px(106.4vw) → 满屏；首屏全部被头图占据，【下滑才进正文】· 原#f7658e粉底 → 暗夜渐变 #1B1B1D→#2D1956；城堡/满月/蝙蝠剪影"],
   ["n2","Rule 按钮","高31px（8.26vw）· 墓碑切角胶囊 · <b>位置：头图下方 1/4（top:75%，2026-10-13 由贴顶下移）</b> · right:0 贴边 · 原版 top 69.33vw"],
   ["n3","③ Tabs","119.5×53.5px（31.87×14.27vw）· 选中=橙渐变+发光描边 · 三态 This week/Award/Last week"],
@@ -991,29 +1029,177 @@ const LEGEND = [
   ["n6","⑥ 榜单列表 4+","行高≈60px · status=0置灰60%+Bond Broken标签（P0-4.2）· 触底加载 limit=30 · 分值 quantile 格式化"],
   ["n7","空态引导","<span class='prd'>P0-4.1</span>本周榜空且无我的排名时展示 · 落单幽灵170×150px + Find Your CP CTA（h44px）· 沿用现有CP引导路由"],
   ["n8","奖励卡","<span class='prd'>P0-4.3</span>固定325px高 → min-height自适应 · <b>卡片宽 371px→100%(max 355px)</b>（原值超出手机壳可视宽 36px，右侧被裁） · 奖品名单行省略+tooltip · TOP1双描边=发光 · 数据源 /shop/productRankReward/getByType?type=2"],
-  ["n9","⑥ 我的排名条","<b>仅本周榜（This week）展示</b> · 固定底部（sticky 吸底）· 原4px奶油色顶边 → 毛玻璃+橙描边 · <b>本版不做点击弹层</b>（弹层改由左侧面板「S6 弹层组」进入）· 展示：My Rank #名次 + 分值 + <b>动态文案</b>（未上榜→距离上榜还差 x；已上榜→距离上一名还差 x；TOP1→无文案）"],
+  ["n9","⑥ 我的排名条","<b>仅本周榜（This week）展示</b> · 固定底部（sticky 吸底）· 原4px奶油色顶边 → 毛玻璃+橙描边 · <b>本版不做点击弹层</b>（弹层改由左侧面板「S6 弹层组」进入）· 展示：My Rank #名次 + 分值 + <b>动态文案</b>（未上榜→距离上榜还差 x；已上榜→距上一名还差 x；TOP1→无文案）"],
   ["n10","我的排名弹层","<span class='prd'>P0-4.4</span>生效中组合置顶高亮 · 摘要行：N段CP+最高名次（P1-4.4）· 解除CP段显示 Bond Broken"],
   ["n11","规则弹窗","6条规则业务含义与原版逐条对应，仅万圣节措辞包装 · 月光/雾气氛围层（P2-4.6，虚线示意）"]
 ];
+
+/* 可挂角标的宿主（须是定位上下文；角标随宿主内容滚动） */
+const ANNO_HOSTS = [
+  ["#mBanner","① Banner 头图"],
+  ["#mTabs","② Tab 切换"],
+  ["#mCount","③ 倒计时"],
+  ["#mPodium","④ Top3 领奖台"],
+  ["#mList","⑤ 榜单列表"],
+  ["#mEmpty","空态引导"],
+  ["#rewardWrap","奖励卡区"],
+  ["#mMyRank","⑥ 我的排名条"],
+  ["#ovSheet .sheet","我的排名弹层"],
+  ["#ovRule .dialog","规则弹窗"]
+];
+
+let ANNOS = [];
+let ANNO_INIT = [];   // 首屏快照：复位时从这里还原（DOM 里的角标会被拖动改写，不能当"原始状态"）
+
+function defaultAnnoHtml(id){
+  const d = LEGEND_DEFAULT.find(x => x[0] === id);
+  return d ? `<b>${d[1]}</b><br>${d[2]}` : "<b>新标注</b><br>双击这里改文字";
+}
+function hostSelectorOf(el){
+  const hit = ANNO_HOSTS.find(([sel]) => el.closest(sel));
+  return hit ? hit[0] : "#mBanner";
+}
+/* 采集画布现有角标为运行时真状态（读内联样式串，不依赖布局可见性） */
+function collectAnnos(){
+  ANNOS = $$(".anno[data-leg]").map(el => ({
+    id: el.dataset.leg,
+    host: hostSelectorOf(el.parentElement),
+    style: el.getAttribute("style") || "",
+    html: defaultAnnoHtml(el.dataset.leg)
+  }));
+  ANNO_INIT = ANNOS.map(a => Object.assign({}, a));
+}
+function placeAnno(el, a){ el.setAttribute("style", a.style); }
+
+/* 画布角标：按 ANNOS 全量重建（编号 = 顺序号） */
+function renderAnnos(){
+  $$(".anno[data-leg]").forEach(el => el.remove());
+  ANNOS.forEach((a, i) => {
+    const host = document.querySelector(a.host);
+    if(!host) return;
+    const el = document.createElement("div");
+    el.className = "anno";
+    el.dataset.leg = a.id;
+    el.textContent = String(i + 1);
+    el.title = "可拖动改位置 · 详见右侧图例";
+    placeAnno(el, a);
+    host.appendChild(el);
+    bindAnno(el, a);
+  });
+}
+
+/* 拖动改位置：按当前缩放换算，缩放≠100% 也跟手 */
+function bindAnno(el, a){
+  el.onmouseenter = () => { const r = document.querySelector(`.legRow[data-leg="${a.id}"]`); if(r){ r.style.background = "#fdf1ef"; r.scrollIntoView({block:"nearest"}); } };
+  el.onmouseleave = () => { const r = document.querySelector(`.legRow[data-leg="${a.id}"]`); if(r) r.style.background = ""; };
+  el.addEventListener("pointerdown", ev => {
+    if(!document.body.classList.contains("show-anno")) return;
+    ev.preventDefault();
+    const host = el.parentElement;
+    const scale = (el.getBoundingClientRect().width / (el.offsetWidth || 17)) || 1;
+    const offX = ev.clientX - el.getBoundingClientRect().left;
+    const offY = ev.clientY - el.getBoundingClientRect().top;
+    let moved = false;
+    el.classList.add("dragging");
+    try { el.setPointerCapture(ev.pointerId); } catch(e){}
+    const move = e2 => {
+      const h2 = host.getBoundingClientRect();
+      const nx = Math.round((e2.clientX - offX - h2.left) / scale);
+      const ny = Math.round((e2.clientY - offY - h2.top) / scale);
+      if(Math.abs(nx - a.left0) > 1 || Math.abs(ny - a.top0) > 1) moved = true;
+      a.style = `left:${nx}px; top:${ny}px`;
+      placeAnno(el, a);
+    };
+    const up = () => {
+      el.classList.remove("dragging");
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", up);
+      el.dataset.dragged = moved ? "1" : "0";
+      if(moved){
+        const h3 = host.getBoundingClientRect(), r3 = el.getBoundingClientRect();
+        a.left0 = Math.round((r3.left - h3.left) / scale);
+        a.top0  = Math.round((r3.top - h3.top) / scale);
+        toast("标注 " + a.id.replace("n", "#") + " 已移动 · 导出 JSON 可留档");
+      }
+      setTimeout(() => { el.dataset.dragged = "0"; }, 80);
+    };
+    const h0 = host.getBoundingClientRect(), r0 = el.getBoundingClientRect();
+    a.left0 = Math.round((r0.left - h0.left) / scale);
+    a.top0  = Math.round((r0.top - h0.top) / scale);
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+  });
+  el.addEventListener("click", ev => {
+    if(el.dataset.dragged === "1"){ ev.stopPropagation(); ev.preventDefault(); }
+  }, true);
+}
+
+/* 图例面板：按 ANNOS 全量重建（文字双击改，✕ 删除） */
 function renderLegend(){
   const list = $("#legendList");
   list.innerHTML = "";
-  LEGEND.forEach(([id,title,tx])=>{
+  ANNOS.forEach((a, i) => {
     const row = document.createElement("div");
-    row.className = "legRow"; row.dataset.leg = id;
-    row.innerHTML = `<div class="no">${id.replace("n","")}</div><div class="tx"><b>${title}</b><br>${tx}</div>`;
-    row.onmouseenter = ()=>{ const a=document.querySelector(`.anno[data-leg="${id}"]`); if(a) a.classList.add("hot"); };
-    row.onmouseleave = ()=>{ const a=document.querySelector(`.anno[data-leg="${id}"]`); if(a) a.classList.remove("hot"); };
+    row.className = "legRow";
+    row.dataset.leg = a.id;
+    row.innerHTML = `<div class="no">${i + 1}</div><div class="tx">${a.html}</div>`;
+    const tx = row.querySelector(".tx");
+    tx.title = "双击可改这条标注的文字";
+    tx.addEventListener("dblclick", () => {
+      tx.contentEditable = "true";
+      tx.focus();
+      document.execCommand("selectAll", false, null);
+    });
+    tx.addEventListener("blur", () => {
+      if(tx.contentEditable !== "true") return;
+      tx.contentEditable = "false";
+      a.html = tx.innerHTML;
+      toast("标注 " + a.id.replace("n", "#") + " 文字已更新");
+    });
+    const del = document.createElement("button");
+    del.className = "del";
+    del.textContent = "✕";
+    del.title = "删除这条标注";
+    del.onclick = ev => { ev.stopPropagation(); removeAnno(a.id); };
+    row.appendChild(del);
+    row.onmouseenter = () => { const b = document.querySelector(`.anno[data-leg="${a.id}"]`); if(b) b.classList.add("hot"); };
+    row.onmouseleave = () => { const b = document.querySelector(`.anno[data-leg="${a.id}"]`); if(b) b.classList.remove("hot"); };
     list.appendChild(row);
   });
-  $("#legCnt").textContent = LEGEND.length;
-  // 角标悬停 → 高亮图例行
-  $$(".anno[data-leg]").forEach(a=>{
-    a.onmouseenter = ()=>{ const r=document.querySelector(`.legRow[data-leg="${a.dataset.leg}"]`); if(r){ r.style.background="#fdf1ef"; r.scrollIntoView({block:"nearest"});} };
-    a.onmouseleave = ()=>{ const r=document.querySelector(`.legRow[data-leg="${a.dataset.leg}"]`); if(r) r.style.background=""; };
-    a.title = "详见右侧图例 " + a.dataset.leg.replace("n","#");
-  });
+  $("#legCnt").textContent = ANNOS.length;
 }
+
+function addAnno(){
+  const sel = $("#annoHost");
+  const a = { id: "n" + (ANNOS.length + 1), host: sel.value, style: "top:8px; left:8px", html: defaultAnnoHtml("__new__") };
+  ANNOS.push(a);
+  renderAnnos(); renderLegend();
+  toast("已新增标注（挂在「" + sel.options[sel.selectedIndex].text + "」左上角）· 拖到目标位置");
+}
+function removeAnno(id){
+  const i = ANNOS.findIndex(a => a.id === id);
+  if(i < 0) return;
+  ANNOS.splice(i, 1);
+  ANNOS.forEach((a, k) => { a.id = "n" + (k + 1); });   // 编号前移，保持与序号一致
+  renderAnnos(); renderLegend();
+  toast("已删除标注 " + (i + 1) + "，其后编号已前移");
+}
+function resetAnnos(){
+  ANNOS = ANNO_INIT.map(a => Object.assign({}, a));   // 从首屏快照还原（不重读 DOM：角标样式已被拖动改写）
+  renderAnnos(); renderLegend();
+  toast("标注已复位（位置与文字回到初始状态）");
+}
+function fillAnnoHosts(){
+  const sel = $("#annoHost");
+  if(!sel) return;
+  sel.innerHTML = ANNO_HOSTS.map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+}
+fillAnnoHosts();
+if($("#annoAdd")) $("#annoAdd").onclick = addAnno;
+if($("#annoReset")) $("#annoReset").onclick = resetAnnos;
+
 const legendWrap = $("#legendWrap");
 function syncLegendVisibility(){
   legendWrap.style.display = document.body.classList.contains("show-anno") ? "" : "none";
@@ -1024,8 +1210,10 @@ $("#annoChk").addEventListener("change", e=>{
 });
 
 /* 首屏 */
-applyState(); applyMods(); applyLang(); applyAnno(); renderTexts(); renderLegend(); syncLegendVisibility();
+collectAnnos();
+applyState(); applyMods(); applyLang(); applyAnno(); renderTexts(); renderAnnos(); renderLegend(); syncLegendVisibility();
 if(!cfg.anno) legendWrap.style.display = "none";
+
 
 /* ═══════════════ 静态交互（Tab 切换 + 弹层唤起 + 倒计时）═══════════════ */
 const $q = s => document.querySelector(s);
