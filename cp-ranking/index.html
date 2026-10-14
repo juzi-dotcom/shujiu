@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Litchat CP排行榜 · 万圣节换皮 · 线框图 v2.3（可编辑）</title>
+<title>Litchat CP排行榜 · CP 主题换皮 · 线框图 v2.4（可编辑）</title>
 <!--
   ═══════════════════════════════════════════════════════════════════
-  Litchat H5 「CP 亲密排行榜」万圣节换皮 · 纯静态线框原型 v1.0
+  Litchat H5 「CP 亲密排行榜」CP 主题换皮 · 纯静态线框原型 v1.0
   ───────────────────────────────────────────────────────────────────
-  依据：《Litchat-CP排行榜-万圣节换皮-PRD.docx》v1.0 第 5 章原型范围
+  依据：《Litchat-CP排行榜-万圣节换皮-PRD.docx》v1.0 第 5 章原型范围（该 PRD 为原万圣节版；2026-10-14 主题改为 CP 主题）
   覆盖 6 状态：S1 本周榜·有数据 / S2 无CP空态 / S3 解除CP / S4 奖励页
               S5 上周榜 / S6 我的排名弹层 + 规则弹窗
-  尺寸来源：线上 ranking.css / act-halloween.css 实测（375 设计稿，1vw=3.75px）
+  尺寸来源：线上 ranking.css 实测（375 设计稿，1vw=3.75px）；主题为 CP 向（爱心 / 粉色基调），色值待设计确认
   可编辑：  双击画布文字直接改 · 右侧栏切状态/开关模块/EN⇄AR(RTL) ·
             标注模式一键唤出尺寸与 PRD 条目 · 配置可导出/导入 JSON
   ═══════════════════════════════════════════════════════════════════
@@ -211,7 +211,6 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
   display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800;
   font-variant-numeric:tabular-nums;
 }
-.cdNum::before{content:"🎃"; font-size:9px; margin-inline-end:3px; filter:grayscale(1); opacity:.55}
 .cdLab{font-size:11px; color:var(--ink2); margin-top:4px}
 /* 榜单区滚动容器 */
 #rankScroll{flex:0 0 auto; overflow:visible; padding:6px 12px 24px}
@@ -229,7 +228,6 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
   display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--ink2);
 }
 .pod.p1 .base{height:64px; border-width:2px; box-shadow:0 0 0 3px #fff, 0 0 0 4.5px var(--ink2)}
-.pod.p1 .base::before{content:"🦇"; filter:grayscale(1); opacity:.5; font-size:12px; margin-inline-end:4px}
 .pod.p1{order:2}
 .pod.p2{order:1}
 .pod.p3{order:3}
@@ -257,7 +255,7 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
 }
 /* 空态（S2） */
 #mEmpty{padding:34px 22px 0; text-align:center; position:relative}
-#emptyGhost{width:170px; height:150px; margin:0 auto; border-radius:14px}
+#emptyArt{width:170px; height:150px; margin:0 auto; border-radius:14px}
 #emptyTitle{font-size:16px; font-weight:800; margin-top:16px}
 #emptyDesc{font-size:12.5px; color:var(--ink2); line-height:1.6; margin-top:8px}
 #btnCta{
@@ -348,7 +346,7 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
 #ovRule h4{font-size:16px; font-weight:800; text-align:center; margin-bottom:10px}
 #ovRule ol{padding-inline-start:18px; display:flex; flex-direction:column; gap:7px}
 #ovRule li{font-size:11.5px; color:var(--ink2); line-height:1.55}
-#ovRule .fog{ /* PRD 4.6：弹窗雾气氛围层（P2，线框以虚线示意） */
+#ovRule .fog{ /* PRD 4.6：弹窗氛围层（P2，线框以虚线示意） */
   border:1px dashed var(--line); border-radius:10px; padding:5px 8px; margin-top:10px;
   font-size:9.5px; color:var(--ink3); text-align:center;
 }
@@ -475,7 +473,7 @@ body.show-anno .anno{display:flex}
 <div id="topbar">
   <button id="panelToggle">☰ 面板</button>
   <button id="mStateBtn">☰ 状态</button>
-  <b>Ghost CP Ranking · 线框</b><span class="ver" id="verLabel">v2.3</span><span class="sep">|</span>
+  <b>CP Ranking · 线框</b><span class="ver" id="verLabel">v2.4</span><span class="sep">|</span>
   <span>纯静态线框 · 可编辑</span><span class="sep">|</span>
   <span id="stateLabel">S1 本周榜·有数据</span>
   <div id="zoomRow">
@@ -507,14 +505,14 @@ body.show-anno .anno{display:flex}
   <h3>模块显隐 Modules</h3>
   <label class="tgl"><input type="checkbox" data-mod="banner" checked>① Banner 头图<span class="dim">满屏(1 页高)</span></label>
   <label class="tgl"><input type="checkbox" data-mod="tabs" checked>② Tab 切换<span class="dim">119.5×53.5</span></label>
-  <label class="tgl"><input type="checkbox" data-mod="count" checked>③ 倒计时<span class="dim">南瓜灯块</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="count" checked>③ 倒计时<span class="dim">数字块</span></label>
   <label class="tgl"><input type="checkbox" data-mod="podium" checked>④ Top3 领奖台<span class="dim">2-1-3</span></label>
   <label class="tgl"><input type="checkbox" data-mod="list" checked>⑤ 榜单列表 4+<span class="dim">触底加载</span></label>
   <label class="tgl"><input type="checkbox" data-mod="myrank" checked>⑥ 我的排名条<span class="dim">固定底部</span></label>
 
   <h3>标注 Annotation</h3>
   <label class="tgl"><input type="checkbox" id="annoChk" checked>尺寸 + 模块标注层<span class="dim">红=实测值</span></label>
-  <div class="hint">红色标签 = 从线上 <b>ranking.css / act-halloween.css</b> 实测的尺寸（375 设计稿，vw 与 px 双标）；蓝色胶囊 = 模块编号与 PRD 对应条目。</div>
+  <div class="hint">红色标签 = 从线上 <b>ranking.css</b> 实测的尺寸（375 设计稿，vw 与 px 双标）；蓝色胶囊 = 模块编号与 PRD 对应条目。</div>
   <div class="annoBar">
     <span class="lbl">新增到：</span>
     <select id="annoHost"></select>
@@ -562,9 +560,9 @@ body.show-anno .anno{display:flex}
 
     <!-- ① Banner -->
     <div id="mBanner">
-      <div id="bannerImg" class="ph">BANNER PLACEHOLDER<br>城堡 / 满月 / 蝙蝠剪影<br>满屏（一个可视页高）· 下滑进正文</div>
+      <div id="bannerImg" class="ph">BANNER PLACEHOLDER<br>CP 主题头图（双人 / 心动意象）<br>满屏（一个可视页高）· 下滑进正文</div>
       <div id="bannerTitle">
-        <div class="t1" data-tkey="title.main">Ghost CP Ranking</div>
+        <div class="t1" data-tkey="title.main">CP Ranking</div>
         <div class="t2" data-tkey="title.sub">PHANTOM COUPLE LEADERBOARD</div>
       </div>
       <button id="btnRule"><span data-tkey="buttons.rule">Rule</span></button>
@@ -624,9 +622,9 @@ body.show-anno .anno{display:flex}
 
       <!-- S2 空态 -->
       <div id="mEmpty" class="stateBlock" data-show="s2">
-        <div id="emptyGhost" class="ph">GHOST ILLUSTRATION<br>落单幽灵插画<br>170×150px</div>
-        <div id="emptyTitle" data-tkey="empty.title">You're a lone ghost…</div>
-        <div id="emptyDesc" data-tkey="empty.desc">Find your CP to light the pumpkin!<br>结成 CP 后即可参与本周魂榜争夺</div>
+        <div id="emptyArt" class="ph">EMPTY-STATE ILLUSTRATION<br>空态插画（无 CP 引导）<br>170×150px</div>
+        <div id="emptyTitle" data-tkey="empty.title">You're not in a CP yet…</div>
+        <div id="emptyDesc" data-tkey="empty.desc">Find your CP and start your journey!<br>结成 CP 后即可参与本周亲密度榜争夺</div>
         <div id="btnCta" data-tkey="empty.cta">Find Your CP</div>
         <div class="anno" data-leg="n7" style="top:96px; right:6px">7</div>
         <div id="sealedNote" data-tkey="empty.hint">Rewards preview is still available below ↓</div>
@@ -638,24 +636,24 @@ body.show-anno .anno{display:flex}
         <div class="rwCard top1">
           <div class="rwTitle" data-tkey="rw.top1">TOP 1</div>
           <div class="rwGrid">
-            <div class="rwItem"><div class="ph">ICON<br>Cursed Frame</div><div class="nm">Cursed Frame</div></div>
-            <div class="rwItem"><div class="ph">ICON<br>Pumpkin Balloon</div><div class="nm">Pumpkin Balloon</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Lover Frame</div><div class="nm">Lover Frame</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Heart Balloon</div><div class="nm">Heart Balloon</div></div>
             <div class="rwItem"><div class="ph">ICON<br>80 Diamonds</div><div class="nm">80 Diamonds</div></div>
           </div>
         </div>
         <div class="rwCard">
           <div class="rwTitle" data-tkey="rw.top25">TOP 2 ~ 5</div>
           <div class="rwGrid">
-            <div class="rwItem"><div class="ph">ICON<br>Bat Wings</div><div class="nm">Bat Wings Avatar</div></div>
-            <div class="rwItem"><div class="ph">ICON<br>Ghost Bubble</div><div class="nm">Ghost Bubble</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Heart Frame</div><div class="nm">Heart Frame Avatar</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Love Bubble</div><div class="nm">Love Bubble</div></div>
             <div class="rwItem"><div class="ph">ICON<br>30 Diamonds</div><div class="nm">30 Diamonds</div></div>
           </div>
         </div>
         <div class="rwCard">
           <div class="rwTitle" data-tkey="rw.top610">TOP 6 ~ 10</div>
           <div class="rwGrid">
-            <div class="rwItem"><div class="ph">ICON<br>Witch Hat</div><div class="nm">Witch Hat</div></div>
-            <div class="rwItem"><div class="ph">ICON<br>Candy ×5</div><div class="nm">Candy ×5</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Rose Crown</div><div class="nm">Rose Crown</div></div>
+            <div class="rwItem"><div class="ph">ICON<br>Roses ×5</div><div class="nm">Roses ×5</div></div>
             <div class="rwItem"><div class="ph">ICON<br>10 Diamonds</div><div class="nm">10 Diamonds</div></div>
           </div>
         </div>
@@ -717,16 +715,16 @@ body.show-anno .anno{display:flex}
       <div class="dialog">
         <button class="xBtn">×</button>
         <div class="anno" data-leg="n11" style="top:-8px; left:50%; margin-left:-8px">11</div>
-        <h4 data-tkey="rule.title">Ritual Rules · 玩法规则</h4>
+        <h4 data-tkey="rule.title">Activity Rules · 玩法规则</h4>
         <ol>
-          <li data-tkey="rule.r1">Send special CP gifts and invite users to become your CP. Once bonded, your souls enter the ranking.</li>
-          <li data-tkey="rule.r2">The top 10 bonds each week will claim rewards from the pumpkin altar.</li>
-          <li data-tkey="rule.r3">Bonds are ranked by the value of CP gifts given weekly between CPs.</li>
-          <li data-tkey="rule.r4">The leaderboard is refreshed every week.</li>
-          <li data-tkey="rule.r5">Ritual hours: every Monday 00:00 – Sunday 23:59.</li>
-          <li data-tkey="rule.r6">Rewards are delivered every Monday.</li>
+          <li data-tkey="rule.r1">Give specific gifts to users and invite users to become CPs. After becoming CPs, you can participate in the rankings.</li>
+          <li data-tkey="rule.r2">The top 10 users each week will receive corresponding rewards.</li>
+          <li data-tkey="rule.r3">The ranking is based on the price of CP gifts given weekly between CPs.</li>
+          <li data-tkey="rule.r4">Rankings are updated every week.</li>
+          <li data-tkey="rule.r5">Activity time: Every Monday 00:00 - Sunday 23:59.</li>
+          <li data-tkey="rule.r6">Send rewards every Monday.</li>
         </ol>
-        <div class="fog" data-tkey="rule.fog">— 月光 / 雾气氛围层（P2-4.6，此处以虚线示意） —</div>
+        <div class="fog" data-tkey="rule.fog">— 氛围层（爱心 / 星光，P2-4.6，此处以虚线示意） —</div>
       </div>
     </div>
 
@@ -734,7 +732,7 @@ body.show-anno .anno{display:flex}
 
   <div id="toast"></div>
 
-  <div id="footnote">GHOST CP RANKING · WIREFRAME v1.0 · 375×812 · CORE GAMEPLAY UNCHANGED</div>
+  <div id="footnote">CP RANKING · WIREFRAME v1.0 · 375×812 · CORE GAMEPLAY UNCHANGED</div>
 </div></div></div>
 
 <!-- ═══════════ 标注图例（手机右侧，全部文字在这里，画布内只留编号）═══════════ -->
@@ -752,63 +750,63 @@ body.show-anno .anno{display:flex}
 /* ═══════════════ i18n 字典（沿用原版 localePrefix=ranking.couple 的键结构）═══════════════ */
 const I18N = {
   en: {
-    "title.main":"Ghost CP Ranking","title.sub":"PHANTOM COUPLE LEADERBOARD",
+    "title.main":"CP Ranking","title.sub":"COUPLE INTIMACY LEADERBOARD",
     "buttons.rule":"Rule",
     "tabs.thisWeek":"This week","tabs.award":"Award","tabs.lastWeek":"Last week",
     "labels.day":"Day","labels.hour":"Hour","labels.minute":"Min","labels.second":"Sec",
     "list.cpBond":"CP Bond","list.loadMore":"— scroll for more · 触底加载 limit=30 —",
     "bond.broken":"Bond Broken · 羁绊已断",
-    "empty.title":"You're a lone ghost…",
-    "empty.desc":"Find your CP to light the pumpkin!<br>结成 CP 后即可参与本周魂榜争夺",
+    "empty.title":"You're not in a CP yet…",
+    "empty.desc":"Find your CP and start your journey!<br>结成 CP 后即可参与本周亲密度榜争夺",
     "empty.cta":"Find Your CP","empty.hint":"Rewards preview is still available below ↓",
     "rw.top1":"TOP 1","rw.top25":"TOP 2 ~ 5","rw.top610":"TOP 6 ~ 10",
     "lw.title":"Last Week's Sealed Ranking","lw.sub":"Winners were announced & rewarded on Monday","lw.sealed":"Ranking sealed · 榜单已封印",
     "myrank.label":"My Rank","myrank.gapAbove":"{n} to pass the rank above","myrank.gapEnter":"{n} to enter the ranking",
     "sheet.title":"My CP Bonds","sheet.sum":"You have 3 CP bonds · Best #4 this week · 9,100 🔥",
     "sheet.active":"ACTIVE · 当前生效组合","sheet.broken":"Bond Broken · 已解除",
-    "rule.title":"Ritual Rules · 玩法规则",
-    "rule.r1":"Send special CP gifts and invite users to become your CP. Once bonded, your souls enter the ranking.",
-    "rule.r2":"The top 10 bonds each week will claim rewards from the pumpkin altar.",
-    "rule.r3":"Bonds are ranked by the value of CP gifts given weekly between CPs.",
-    "rule.r4":"The leaderboard is refreshed every week.",
-    "rule.r5":"Ritual hours: every Monday 00:00 – Sunday 23:59.",
-    "rule.r6":"Rewards are delivered every Monday.",
-    "rule.fog":"— 月光 / 雾气氛围层（P2-4.6，此处以虚线示意） —",
+    "rule.title":"Activity Rules · 玩法规则",
+    "rule.r1":"Give specific gifts to users and invite users to become CPs. After becoming CPs, you can participate in the rankings.",
+    "rule.r2":"The top 10 users each week will receive corresponding rewards.",
+    "rule.r3":"The ranking is based on the price of CP gifts given weekly between CPs.",
+    "rule.r4":"Rankings are updated every week.",
+    "rule.r5":"Activity time: Every Monday 00:00 - Sunday 23:59.",
+    "rule.r6":"Send rewards every Monday.",
+    "rule.fog":"— 氛围层（爱心 / 星光，P2-4.6，此处以虚线示意） —",
     "pick.title":"Choose a CP Partner","pick.sub":"Pick a user to bond with — you'll enter this week's ranking together",
     "pick.online":"Online now · nearby","pick.last":"Last online 2h ago",
-    "gift.title":"Send a CP Gift","gift.sub":"Gift value converts to soul power (loveValue) for your bond",
-    "gift.candy":"Candy","gift.candle":"Candle","gift.pumpkin":"Pumpkin","gift.send":"Send Gift",
+    "gift.title":"Send a CP Gift","gift.sub":"Gift value converts to intimacy points (loveValue) for your bond",
+    "gift.rose":"Rose","gift.ring":"Ring","gift.firework":"Fireworks","gift.send":"Send Gift",
     "break.title":"Break this bond?","break.sub":"Once broken, this CP no longer counts toward this week's ranking. This cannot be undone.",
     "break.cancel":"Cancel","break.confirm":"Break Bond",
     "sheet.breakBtn":"Break this bond"
   },
   ar: {
-    "title.main":"قائمة الشركاء المسكونة","title.sub":"لوحة ترتيب الشركاء · الهالوين",
+    "title.main":"قائمة الشركاء","title.sub":"لوحة ترتيب الشركاء · الألفة",
     "buttons.rule":"القواعد",
     "tabs.thisWeek":"هذا الأسبوع","tabs.award":"الجوائز","tabs.lastWeek":"الأسبوع الماضي",
     "labels.day":"يوم","labels.hour":"ساعة","labels.minute":"دقيقة","labels.second":"ثانية",
     "list.cpBond":"رابطة الشريك","list.loadMore":"— مرّر للمزيد —",
     "bond.broken":"انقطعت الرابطة",
-    "empty.title":"أنت شبح وحيد…",
-    "empty.desc":"ابحث عن شريكك لإضاءة القرع!<br>بعد الترابط يمكنك دخول قائمة هذا الأسبوع",
+    "empty.title":"لا يوجد لديك شريك بعد…",
+    "empty.desc":"ابحث عن شريكك وابدأ رحلتكما!<br>بعد الترابط يمكنك دخول قائمة هذا الأسبوع",
     "empty.cta":"ابحث عن شريكك","empty.hint":"معاينة الجوائز لا تزال متاحة بالأسفل ↓",
     "rw.top1":"الأول","rw.top25":"الثاني ~ الخامس","rw.top610":"السادس ~ العاشر",
     "lw.title":"قائمة الأسبوع الماضي","lw.sub":"أُعلن الفائزون وجوب مكافآتهم يوم الاثنين","lw.sealed":"القائمة مختومة",
     "myrank.label":"ترتيبي","myrank.gapAbove":"{n} للتفوق على الترتيب الأعلى","myrank.gapEnter":"{n} لدخول القائمة",
     "sheet.title":"روابطي","sheet.sum":"لديك 3 روابط · الأفضل #4 هذا الأسبوع",
     "sheet.active":"نشطة · التوليفة الحالية","sheet.broken":"انقطعت الرابطة",
-    "rule.title":"قواعد الطقس",
-    "rule.r1":"أرسل هدايا الشركاء وادعُ المستخدمين ليصبحوا شريكك؛ بعد الترابط تدخل أرواحكم القائمة.",
-    "rule.r2":"أفضل 10 روابط أسبوعياً تحصد المكافآت من مذبح القرع.",
+    "rule.title":"قواعد النشاط",
+    "rule.r1":"أرسل هدايا محددة وادعُ المستخدمين ليصبحوا شركاءك؛ بعد أن تصبحوا شركاء يمكنكم المشاركة في القائمة.",
+    "rule.r2":"أفضل 10 روابط أسبوعياً تحصل على المكافآت المخصصة.",
     "rule.r3":"يُرتَّب الترتيب حسب قيمة هدايا الشركاء المتبادلة أسبوعياً.",
     "rule.r4":"تُحدَّث القائمة كل أسبوع.",
-    "rule.r5":"وقت الطقس: الاثنين 00:00 – الأحد 23:59.",
+    "rule.r5":"وقت النشاط: الاثنين 00:00 – الأحد 23:59.",
     "rule.r6":"تُسلَّم المكافآت كل يوم اثنين.",
-    "rule.fog":"— طبقة ضباب وقمر (زخرفة) —",
+    "rule.fog":"— طبقة زخرفية (قلوب / نجوم) —",
     "pick.title":"اختر شريكك","pick.sub":"اختر مستخدماً للترابط معه — ستدخلان قائمة هذا الأسبوع معاً",
     "pick.online":"متصل الآن · قريب","pick.last":"آخر ظهور قبل ساعتين",
-    "gift.title":"أرسل هدية شريك","gift.sub":"تتحول قيمة الهدية إلى قوة روح لرباطكما",
-    "gift.candy":"حلوى","gift.candle":"شمعة","gift.pumpkin":"قرعة","gift.send":"أرسل",
+    "gift.title":"أرسل هدية شريك","gift.sub":"تتحول قيمة الهدية إلى نقاط ألفة لرباطكما",
+    "gift.rose":"وردة","gift.ring":"خاتم","gift.firework":"ألعاب نارية","gift.send":"أرسل",
     "break.title":"فك الرباط؟","break.sub":"بعد الفك لن يُحتسب هذا الرباط في قائمة هذا الأسبوع. لا يمكن التراجع.",
     "break.cancel":"إلغاء","break.confirm":"فك الرباط",
     "sheet.breakBtn":"فك هذا الرباط"
@@ -822,12 +820,12 @@ const cfg = {
 };
 const STATE_LABELS = {s1:"S1 本周榜·有数据", s2:"S2 空态·无CP引导", s3:"S3 解除CP·Bond Broken", s4:"S4 奖励页·Award", s5:"S5 上周榜·Last week", s6:"S6 弹层组"};
 const PRD_REFS = {
-  s1:`<span class="tag">S1</span>主参照态：Banner + Tabs + 倒计时 + 领奖台(2-1-3) + 列表4+ + 我的排名条。<br><span class="tag">P1</span>4.5 倒计时最后24h变暗红闪烁（本态为常规态）。`,
-  s2:`<span class="tag">P0-4.1</span>空态引导：本周榜 rows 为空且无 currentMyRank → 落单幽灵插画 + Find Your CTA（沿用现有CP引导路由，不新增页面）；倒计时与奖励预览保留，避免页面显得"坏了"。`,
+  s1:`<span class="tag">S1</span>主参照态：Banner + Tabs + 倒计时 + 领奖台(2-1-3) + 列表4+ + 我的排名条。<br><span class="tag">P1</span>4.5 倒计时最后24h转强调色闪烁（本态为常规态）。`,
+  s2:`<span class="tag">P0-4.1</span>空态引导：本周榜 rows 为空且无 currentMyRank → 空态插画 + Find Your CP CTA（沿用现有CP引导路由，不新增页面）；倒计时与奖励预览保留，避免页面显得"坏了"。`,
   s3:`<span class="tag">P0-4.2</span>解除CP解释：status=0 → 头像置灰38% + 分值不透明度降至60% + 「Bond Broken · 羁绊已断」标签；点击弹轻提示"Bond no longer counts toward this week's ranking."（本线框以标签示意）。`,
   s4:`<span class="tag">P0-4.3</span>奖励页：卡片固定325px高 → min-height 自适应；奖品名长按/hover tooltip；TOP1 档位发光+缓浮（线框以双描边示意）；数据源 type=2。`,
-  s5:`<span class="tag">S5</span>上周榜：与本周同构，无倒计时；列表副色转幽蓝；"Ranking sealed"封印文案（P1-4.5 的 duration=0 分支在此态展示）。`,
-  s6:`<span class="tag">P0-4.4</span>我的排名弹层：生效中组合置顶高亮 + 摘要行（N段CP/最高名次）。<span class="tag">P2-4.6</span>规则弹窗雾气氛围层；规则6条业务含义与原版逐条对应。`
+  s5:`<span class="tag">S5</span>上周榜：与本周同构，无倒计时；列表副色转冷调；"Ranking sealed"封印文案（P1-4.5 的 duration=0 分支在此态展示）。`,
+  s6:`<span class="tag">P0-4.4</span>我的排名弹层：生效中组合置顶高亮 + 摘要行（N段CP/最高名次）。<span class="tag">P2-4.6</span>规则弹窗氛围层；规则6条业务含义与原版逐条对应。`
 };
 
 const $  = s => document.querySelector(s);
@@ -975,7 +973,7 @@ document.addEventListener("click", e=>{
 /* ── 导出 / 导入 / 还原 ── */
 function snapshot(){
   return JSON.stringify({
-    _meta:{doc:"Ghost CP Ranking wireframe", v:"2.3", stage:"v2.3", exportedAt:new Date().toISOString()},
+    _meta:{doc:"CP Ranking wireframe", v:"2.4", stage:"v2.4", exportedAt:new Date().toISOString()},
     state:cfg.state, sub:cfg.sub, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts,
     annos:ANNOS.map(a=>({id:a.id, host:a.host, style:a.style, html:a.html}))
   }, null, 2);
@@ -986,7 +984,7 @@ $("#btnExport").onclick = ()=>{
   const blob = new Blob([json], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "ghost-cp-ranking-wireframe-config.json";
+  a.download = "cp-ranking-wireframe-config.json";
   a.click(); URL.revokeObjectURL(a.href);
 };
 $("#btnImport").onclick = ()=>{
@@ -1021,17 +1019,17 @@ $("#btnReset").onclick = ()=>{ cfg.texts={}; renderTexts(); alert("文案已还�
    · 全部随「导出 JSON」留档（annos 字段），导入即还原
    ───────────────────────────────────────────────────────────────── */
 const LEGEND_DEFAULT = [
-  ["n1","① Banner 头图","满屏 = 一个可视页高（≈758px，375 宽等比）· 2026-10-13 改版：原 399px(106.4vw) → 满屏；首屏全部被头图占据，【下滑才进正文】· 原#f7658e粉底 → 暗夜渐变 #1B1B1D→#2D1956；城堡/满月/蝙蝠剪影"],
-  ["n2","Rule 按钮","高31px（8.26vw）· 墓碑切角胶囊 · <b>位置：头图下方 1/4（top:75%，2026-10-13 由贴顶下移）</b> · right:0 贴边 · 原版 top 69.33vw"],
-  ["n3","③ Tabs","119.5×53.5px（31.87×14.27vw）· 选中=橙渐变+发光描边 · 三态 This week/Award/Last week"],
-  ["n4","④ 倒计时","南瓜灯数字块 · 服务器 sysTime 校准 · 最后24h变暗红闪烁（P1-4.5）"],
-  ["n5","⑤ Top3 领奖台","头像52.5px（14vw）+2px描边 · 双头像=CP · 底座2-1-3排布+蜘蛛网纹理 · TOP1蝙蝠环绕（P2）"],
+  ["n1","① Banner 头图","满屏 = 一个可视页高（≈758px，375 宽等比）· 2026-10-13 改版：原 399px(106.4vw) → 满屏；首屏全部被头图占据，【下滑才进正文】· 原#f7658e粉底 → CP 向主题渐变（爱心 / 粉色为基调；玫瑰金 · 心动粉为方向，色值待设计）；双人 / 心动意象头图"],
+  ["n2","Rule 按钮","高31px（8.26vw）· 圆角胶囊（CP 主题造型待设计） · <b>位置：头图下方 1/4（top:75%，2026-10-13 由贴顶下移）</b> · right:0 贴边 · 原版 top 69.33vw"],
+  ["n3","③ Tabs","119.5×53.5px（31.87×14.27vw）· 选中=心动粉渐变+描边强调 · 三态 This week/Award/Last week"],
+  ["n4","④ 倒计时","数字块（CP 主题造型待设计） · 服务器 sysTime 校准 · 最后24h转强调色闪烁（P1-4.5）"],
+  ["n5","⑤ Top3 领奖台","头像52.5px（14vw）+2px描边 · 双头像=CP · 底座2-1-3排布+纹理 · TOP1 专属强调（P2）"],
   ["n6","⑥ 榜单列表 4+","行高≈60px · status=0置灰60%+Bond Broken标签（P0-4.2）· 触底加载 limit=30 · 分值 quantile 格式化"],
-  ["n7","空态引导","<span class='prd'>P0-4.1</span>本周榜空且无我的排名时展示 · 落单幽灵170×150px + Find Your CP CTA（h44px）· 沿用现有CP引导路由"],
+  ["n7","空态引导","<span class='prd'>P0-4.1</span>本周榜空且无我的排名时展示 · 空态插画170×150px + Find Your CP CTA（h44px）· 沿用现有CP引导路由"],
   ["n8","奖励卡","<span class='prd'>P0-4.3</span>固定325px高 → min-height自适应 · <b>卡片宽 371px→100%(max 355px)</b>（原值超出手机壳可视宽 36px，右侧被裁） · 奖品名单行省略+tooltip · TOP1双描边=发光 · 数据源 /shop/productRankReward/getByType?type=2"],
-  ["n9","⑥ 我的排名条","<b>仅本周榜（This week）展示</b> · 固定底部（sticky 吸底）· 原4px奶油色顶边 → 毛玻璃+橙描边 · <b>本版不做点击弹层</b>（弹层改由左侧面板「S6 弹层组」进入）· 展示：My Rank #名次 + 分值 + <b>动态文案</b>（未上榜→距离上榜还差 x；已上榜→距上一名还差 x；TOP1→无文案）"],
+  ["n9","⑥ 我的排名条","<b>仅本周榜（This week）展示</b> · 固定底部（sticky 吸底）· 原4px奶油色顶边 → 毛玻璃+描边强调 · <b>本版不做点击弹层</b>（弹层改由左侧面板「S6 弹层组」进入）· 展示：My Rank #名次 + 分值 + <b>动态文案</b>（未上榜→距离上榜还差 x；已上榜→距上一名还差 x；TOP1→无文案）"],
   ["n10","我的排名弹层","<span class='prd'>P0-4.4</span>生效中组合置顶高亮 · 摘要行：N段CP+最高名次（P1-4.4）· 解除CP段显示 Bond Broken"],
-  ["n11","规则弹窗","6条规则业务含义与原版逐条对应，仅万圣节措辞包装 · 月光/雾气氛围层（P2-4.6，虚线示意）"]
+  ["n11","规则弹窗","6条规则业务含义与原版逐条对应，措辞按 CP 主题包装 · 氛围层（P2-4.6，虚线示意）"]
 ];
 
 /* 可挂角标的宿主（须是定位上下文；角标随宿主内容滚动） */
