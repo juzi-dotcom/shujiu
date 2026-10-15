@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>万圣节充值活动 · 可交互灰盒 v2.7</title>
+<title>万圣节充值活动 · 可交互灰盒 v3.0</title>
 <style>
 /* ============================================================================
-   可交互灰盒 v2.7 · 万圣节充值活动
+   可交互灰盒 v3.0 · 万圣节充值活动
    遵循《可编辑线框原型 · 输出标准规范 v1.0》
    —— 阶段：规范 §11 的 v2.x「可交互灰盒（数据写入 + 流程联动）」
    —— §2 灰盒红线在 v2 沿用：页面本体零彩色、零图片、零渐变装饰
@@ -195,6 +195,7 @@ body.no-m12 .mod[data-mod="12"]{ display:none !important; }
 body.no-m13 .mod[data-mod="13"]{ display:none !important; }
 body.no-m14 .mod[data-mod="14"]{ display:none !important; }
 body.no-m15 .mod[data-mod="15"]{ display:none !important; }
+body.no-m16 .mod[data-mod="16"]{ display:none !important; }
 
 /* 标注层 */
 body.no-anno .anno{ display:none !important; }
@@ -539,6 +540,41 @@ body[data-sub="ruleChest"] .rBodyChest{ display:block; }
 body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
 .rBodyChest,.rBodyRank{ display:none; }
 
+/* ⑯ 充值页（点宝箱 Tab 吸底 CTA 拉起，2026-10-14 新增；同日按用户要求精简）
+   内容只保留：Diamond 标题 → Banner 占位 → 4 个充值档位行（左数量 / 右价格）
+   头图、Daily/Weekly/Monthly 三页签、页脚 均已去掉
+   ⚠️ 形态＝**从底部拉起的提起式窗口（bottom sheet）**，不是居中弹窗：
+      贴底、通栏、上圆角、从底部滑入（2026-10-14 用户明确要求） */
+body[data-sub="recharge"] #ovRecharge{ display:flex; align-items:flex-end; justify-content:center; padding:0; }
+.rcWrap{ position:relative; width:100%; }
+.rcPage{
+  position:relative;
+  width:100%; max-height:82%;
+  background:var(--paper);
+  border:1px solid var(--line); border-bottom:0; border-radius:16px 16px 0 0;
+  display:flex; flex-direction:column; overflow:hidden;
+  animation:sheetUp .26s cubic-bezier(.22,.8,.3,1);
+}
+@keyframes sheetUp{ from{ transform:translateY(100%); } to{ transform:translateY(0); } }
+@media (prefers-reduced-motion: reduce){ .rcPage{ animation:none; } }
+.rcX{ position:absolute; top:9px; right:10px; z-index:2; }
+.rcBody{ flex:1; min-height:0; overflow:auto; padding:26px 14px 18px; }
+.rcSec{ font-size:13px; font-weight:800; color:var(--ink); text-align:center; margin:0 0 11px; }
+.rcBanner{ position:relative; height:62px; border-radius:var(--r); margin-bottom:11px; }
+.rcRow{
+  display:flex; align-items:center; gap:9px; padding:13px; margin-bottom:9px;
+  background:var(--box2); border:1px solid var(--line2); border-radius:9px;
+}
+.rcRow:last-child{ margin-bottom:0; }
+.rcRow .rcIc{ flex:0 0 auto; width:20px; height:20px; border-radius:4px; }
+.rcRow .rcAmt{ flex:1; font-size:15px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; }
+.rcPrice{
+  flex:0 0 auto; min-width:66px; padding:8px 12px; border-radius:99px; cursor:pointer;
+  background:var(--ink); color:#fff; border:1px solid var(--ink);
+  font:inherit; font-size:12px; font-weight:800; font-variant-numeric:tabular-nums;
+}
+.rcPrice:hover{ background:#000; }
+
 /* toast */
 #toast{
   position:fixed; left:50%; bottom:36px; transform:translateX(-50%) translateY(8px);
@@ -607,7 +643,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
 <body data-state="s1" data-sub="" data-tab="chest" class="">
 
 <header id="topbar">
-  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v2.7</span></div>
+  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v3.0</span></div>
   <div class="tb-state" id="tbState">S1 首屏 Hero</div>
   <div class="spacer"></div>
   <label>缩放 <input type="range" id="zoom" min="50" max="160" step="5" value="100"><span id="zoomVal" style="width:38px;display:inline-block">100%</span></label>
@@ -626,16 +662,17 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
       <b>①下滑</b>：手机内直接滚轮/拖动，Hero 下滑进正文<br>
       <b>②切页签</b>：Chests ⇄ Ranking<br>
       <b>③选宝箱</b>：点宝箱或左右滑动，奖励面板/进度/CTA 全联动<br>
-      <b>④模拟充值</b>：点吸底 <b>Go Recharge</b> → 进度增长、宝箱逐档点亮<br>
-      <b>⑤连锁</b>：全部解锁后 CTA 变成「去冲榜」，点了切到榜单<br>
-      <b>⑥弹层</b>：榜单里的 <b>Ranking Rewards</b> 按钮开奖励弹窗；Hero 左下 <b>Rules</b> 进规则页
+      <b>④充值页</b>：点吸底 <b>Go Recharge</b> → 拉起充值页（头图 / 三页签 / Banner 占位 / 档位）<br>
+      <b>⑤充值</b>：点充值页里的价格 → 按该金额充一笔，宝箱逐档点亮<br>
+      <b>⑥连锁</b>：全部解锁后 CTA 变成「去冲榜」，点了切到榜单<br>
+      <b>⑦弹层</b>：榜单里的 <b>Ranking Rewards</b> 按钮开奖励弹窗；Hero 左下 <b>Rules</b> 进规则页
     </div>
     <div id="readout"></div>
 
     <h3>场景跳转（S1…S9）</h3>
     <div id="stateList"></div>
 
-    <h3>模块显隐（①…⑮）</h3>
+    <h3>模块显隐（①…⑯）</h3>
     <div id="modList"></div>
 
     <h3>标注层</h3>
@@ -898,6 +935,46 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
             <span class="anno" data-leg="15" style="right:-1px;top:4px">15</span>
           </div>
 
+          <!-- ⑯ 充值页（点宝箱 Tab 吸底 CTA 拉起）
+               形态＝**从底部拉起的提起式窗口（bottom sheet）**：贴底、通栏、上圆角、从底部滑入
+               内容（2026-10-14 按用户要求精简）：只保留「Diamond 标题 + Banner 占位 + 4 个档位行」 -->
+          <div class="overlay mod" data-mod="16" id="ovRecharge">
+            <div class="rcWrap">
+              <span class="anno" data-leg="16" style="left:-1px;top:-22px">16</span>
+              <div class="rcPage">
+                <button class="ovX rcX" data-close="recharge">✕</button>
+
+                <div class="rcBody">
+                  <div class="rcSec" data-tkey="rc.sec">Diamond</div>
+
+                  <!-- ★ 分区标题下方、第一个充值档位上方的 banner 占位符 -->
+                  <div class="ph rcBanner"><span class="phLab">Banner 占位</span></div>
+
+                  <div class="rcRow">
+                    <span class="ph rcIc"></span>
+                    <span class="rcAmt">3000</span>
+                    <button class="rcPrice" data-amt="0.99">$0.99</button>
+                  </div>
+                  <div class="rcRow">
+                    <span class="ph rcIc"></span>
+                    <span class="rcAmt">15000</span>
+                    <button class="rcPrice" data-amt="4.99">$4.99</button>
+                  </div>
+                  <div class="rcRow">
+                    <span class="ph rcIc"></span>
+                    <span class="rcAmt">45000</span>
+                    <button class="rcPrice" data-amt="14.99">$14.99</button>
+                  </div>
+                  <div class="rcRow">
+                    <span class="ph rcIc"></span>
+                    <span class="rcAmt">152500</span>
+                    <button class="rcPrice" data-amt="49.99">$49.99</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div><!-- /#screen -->
       </div><!-- /#phone -->
     </div><!-- /#phoneWrap -->
@@ -1026,6 +1103,7 @@ const I18N = {
     "toast.unlock":"🎃 Unlocked {lv} · {name}!",
     "toast.already":"Already unlocked — pick the next tier",
     "toast.toRank":"All chests unlocked · switched to Ranking",
+    "rc.sec":"Diamond",
     "toast.lang":"Language: {name}",
     "toast.rewards":"Ranking Rewards",
     "toast.closed":"Closed"
@@ -1103,6 +1181,7 @@ const I18N = {
     "toast.unlock":"🎃 تم فتح {lv} · {name}!",
     "toast.already":"مفتوح بالفعل — اختر المستوى التالي",
     "toast.toRank":"كل الصناديق مفتوحة · تم الانتقال إلى الترتيب",
+    "rc.sec":"ألماس",
     "toast.lang":"اللغة: {name}",
     "toast.rewards":"مكافآت الترتيب",
     "toast.closed":"تم الإغلاق"
@@ -1124,7 +1203,8 @@ const MODULES = [
   { n:12, name:"榜单列表",      size:"347×n" },
   { n:13, name:"吸底我的排名条", size:"347×50" },
   { n:14, name:"排名奖励弹窗",  size:"320×n" },
-  { n:15, name:"规则页",        size:"345×n" }
+  { n:15, name:"规则页",        size:"345×n" },
+  { n:16, name:"充值页",        size:"375×416" }
 ];
 
 const LEGEND = [
@@ -1142,7 +1222,8 @@ const LEGEND = [
   { n:12, title:"榜单列表",    size:"347×56px/行 ｜ 92.53vw × 14.93vw/行", prd:"§6.2.3", note:"现版行板 661×159（=330.5×79.5@375）；无数据时补 ??? 占位行，榜单永不空白。" },
   { n:13, title:"吸底我的排名条", size:"347×50px ｜ 92.53vw × 13.33vw", prd:"§6.2.4", note:"榜单 Tab 唯一吸底条，只展示 头像/排名/ID/已充值金额；原「我的排名」+吸底 CTA 两条已合并。现版条宽 10rem=750（=375@375）。" },
   { n:14, title:"排名奖励弹窗", size:"320×n px ｜ 85.33vw", prd:"§6.2.5", note:"由榜单头内按钮唤起。<b>交互：✕ 或点遮罩关闭。</b>接口返空时需空态（现版会弹空白弹窗）。" },
-  { n:15, title:"规则页",      size:"345×n px ｜ 92vw", prd:"§6.5", note:"替换现版正文内折叠区。独立页、分「宝箱规则 / 榜单规则」两个页签、正文直接展开不折叠。文案原文照搬。<b>交互：页签切换、✕ 或遮罩关闭。</b>" }
+  { n:15, title:"规则页",      size:"345×n px ｜ 92vw", prd:"§6.5", note:"替换现版正文内折叠区。独立页、分「宝箱规则 / 榜单规则」两个页签、正文直接展开不折叠。文案原文照搬。<b>交互：页签切换、✕ 或遮罩关闭。</b>" },
+  { n:16, title:"充值页",      size:"375×416 px ｜ 100vw × 110.9vw", prd:"§6.1.5", note:"**2026-10-14 新增**。宝箱 Tab 吸底 CTA 点击拉起（原先点 CTA ＝ 一键补足差额，现改为先开充值页）。**形态＝从底部拉起的提起式窗口（bottom sheet）**，不是居中弹窗：**贴底、通栏、上圆角 16px、从底部滑入**（用户明确要求）。**内容只保留「分区标题 `Diamond` → Banner 占位 → 4 个充值档位行」**（头图、三页签、页脚、页面标题均已去掉）。★ **banner 占位在分区标题下方、第一个档位上方**。<b>交互：点价格（`$0.99/$4.99/$14.99/$49.99`）即按该金额充一笔并关闭；跨档会同时闪灯；✕ 或点上方遮罩关闭。</b>" }
 ];
 
 const CHESTS = [
@@ -1493,6 +1574,29 @@ function setTab(tab, notify){
 function openSub(sub){ S.sub = sub; renderVisibility(); updateBadge(); }
 function closeSub(){ S.sub = ""; renderVisibility(); updateBadge(); }
 
+/* ═══ ⑯ 充值页（点吸底 CTA 拉起，2026-10-14 新增）═══ */
+/* 点充值页里的价格 → 按该档金额充一笔 */
+function doRechargeAmt(amt){
+  const before = S.recharge;
+  S.recharge = before + amt;
+  closeSub();
+  renderChests(); renderProgress(); renderReward(); renderCta(); updateReadout();
+  toast(t("toast.recharge", { amt:money(amt), total:money(S.recharge) }));
+  /* 本次充值「新跨越」的档位 → 闪一下 + 解锁提示（可一次跨多档）*/
+  const crossed = CHESTS.filter(function (c){ return c.need > before && c.need <= S.recharge; });
+  crossed.forEach(function (c){
+    const el = $('.chestCard[data-lv="' + c.lv + '"]');
+    if (el) el.classList.add("justLit");
+  });
+  if (crossed.length) {
+    const last = crossed[crossed.length - 1];
+    const lvtx = t("chest.lv", { n:last.lv }), nm = lvName(last.lv);
+    setTimeout(function (){ toast(t("toast.unlock", { lv:lvtx, name:nm })); }, 480);
+  }
+  const nl = nextLocked();
+  setTimeout(function (){ if (nl) selectChest(nl.lv, false); renderAll(); }, 900);
+}
+
 /* 模拟充值：一笔刚好补齐当前选中档的差额 */
 function doRecharge(){
   if (allUnlocked()) {
@@ -1639,7 +1743,15 @@ function boot(){
   $("#tabRank").addEventListener("click", function (){ setTab("ranking", true); });
 
   /* CTA：模拟充值 → 全解锁后引导冲榜 */
-  $("#btnCta").addEventListener("click", doRecharge);
+  /* 吸底 CTA：全解锁 → 切榜单；否则拉起充值页（2026-10-14 起不再是「一键补足差额」）*/
+  $("#btnCta").addEventListener("click", function (){
+    if (allUnlocked()) { setTab("ranking", false); toast(t("toast.toRank")); return; }
+    openSub("recharge");
+  });
+  /* 充值页：点价格按金额充值 */
+  $$(".rcPrice").forEach(function (b){
+    b.addEventListener("click", function (){ doRechargeAmt(parseFloat(b.getAttribute("data-amt"))); });
+  });
 
   /* 弹层 */
   $("#btnRewards").addEventListener("click", function (){ openSub("reward"); toast(t("toast.rewards")); });
@@ -1692,7 +1804,7 @@ function boot(){
   /* 文案导出 / 导入 / 还原 */
   $("#btnExport").addEventListener("click", function (){
     $("#cfgBox").value = JSON.stringify({
-      _meta:{ at:new Date().toISOString(), stage:"v2.7 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
+      _meta:{ at:new Date().toISOString(), stage:"v3.0 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
       texts:cfg.texts
     }, null, 2);
     toast("已导出到文本框");
