@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Litchat CP排行榜 · CP 主题换皮 · 线框图 v2.4（可编辑）</title>
+<title>Litchat CP排行榜 · CP 主题换皮 · 线框图 v2.5（可编辑）</title>
 <!--
   ═══════════════════════════════════════════════════════════════════
   Litchat H5 「CP 亲密排行榜」CP 主题换皮 · 纯静态线框原型 v1.0
@@ -473,7 +473,7 @@ body.show-anno .anno{display:flex}
 <div id="topbar">
   <button id="panelToggle">☰ 面板</button>
   <button id="mStateBtn">☰ 状态</button>
-  <b>CP Ranking · 线框</b><span class="ver" id="verLabel">v2.4</span><span class="sep">|</span>
+  <b>CP Ranking · 线框</b><span class="ver" id="verLabel">v2.5</span><span class="sep">|</span>
   <span>纯静态线框 · 可编辑</span><span class="sep">|</span>
   <span id="stateLabel">S1 本周榜·有数据</span>
   <div id="zoomRow">
@@ -504,8 +504,8 @@ body.show-anno .anno{display:flex}
 
   <h3>模块显隐 Modules</h3>
   <label class="tgl"><input type="checkbox" data-mod="banner" checked>① Banner 头图<span class="dim">满屏(1 页高)</span></label>
-  <label class="tgl"><input type="checkbox" data-mod="tabs" checked>② Tab 切换<span class="dim">119.5×53.5</span></label>
-  <label class="tgl"><input type="checkbox" data-mod="count" checked>③ 倒计时<span class="dim">数字块</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="count" checked>② 倒计时<span class="dim">数字块</span></label>
+  <label class="tgl"><input type="checkbox" data-mod="tabs" checked>③ Tab 切换<span class="dim">119.5×53.5</span></label>
   <label class="tgl"><input type="checkbox" data-mod="podium" checked>④ Top3 领奖台<span class="dim">2-1-3</span></label>
   <label class="tgl"><input type="checkbox" data-mod="list" checked>⑤ 榜单列表 4+<span class="dim">触底加载</span></label>
   <label class="tgl"><input type="checkbox" data-mod="myrank" checked>⑥ 我的排名条<span class="dim">固定底部</span></label>
@@ -570,21 +570,21 @@ body.show-anno .anno{display:flex}
       <div class="anno" data-leg="n2" style="top:72%; right:6px">2</div>
     </div>
 
-    <!-- ② Tabs -->
-    <div id="mTabs">
-      <div class="tabBtn on"><span data-tkey="tabs.thisWeek">This week</span><small>tab 0</small></div>
-      <div class="tabBtn"><span data-tkey="tabs.award">Award</span><small>tab 1</small></div>
-      <div class="tabBtn"><span data-tkey="tabs.lastWeek">Last week</span><small>tab 2</small></div>
-      <div class="anno" data-leg="n3" style="top:-24px; left:50%; margin-left:-8px">3</div>
-    </div>
-
-    <!-- ③ 倒计时 -->
+    <!-- ② 倒计时（2026-10-14 由 Tabs 下方平移至上方） -->
     <div id="mCount">
       <div class="cdItem"><div class="cdNum">02</div><div class="cdLab" data-tkey="labels.day">Day</div></div>
       <div class="cdItem"><div class="cdNum">14</div><div class="cdLab" data-tkey="labels.hour">Hour</div></div>
       <div class="cdItem"><div class="cdNum">36</div><div class="cdLab" data-tkey="labels.minute">Min</div></div>
       <div class="cdItem"><div class="cdNum">51</div><div class="cdLab" data-tkey="labels.second">Sec</div></div>
-      <div class="anno" data-leg="n4" style="top:6px; left:50%; margin-left:64px">4</div>
+      <div class="anno" data-leg="n3" style="top:6px; left:50%; margin-left:64px">3</div>
+    </div>
+
+    <!-- ③ Tabs -->
+    <div id="mTabs">
+      <div class="tabBtn on"><span data-tkey="tabs.thisWeek">This week</span><small>tab 0</small></div>
+      <div class="tabBtn"><span data-tkey="tabs.award">Award</span><small>tab 1</small></div>
+      <div class="tabBtn"><span data-tkey="tabs.lastWeek">Last week</span><small>tab 2</small></div>
+      <div class="anno" data-leg="n4" style="top:-9px; right:4px">4</div>
     </div>
 
     <!-- ══ S1/S3/S5 共用榜单区 ══ -->
@@ -973,7 +973,7 @@ document.addEventListener("click", e=>{
 /* ── 导出 / 导入 / 还原 ── */
 function snapshot(){
   return JSON.stringify({
-    _meta:{doc:"CP Ranking wireframe", v:"2.4", stage:"v2.4", exportedAt:new Date().toISOString()},
+    _meta:{doc:"CP Ranking wireframe", v:"2.5", stage:"v2.5", exportedAt:new Date().toISOString()},
     state:cfg.state, sub:cfg.sub, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts,
     annos:ANNOS.map(a=>({id:a.id, host:a.host, style:a.style, html:a.html}))
   }, null, 2);
@@ -1021,8 +1021,8 @@ $("#btnReset").onclick = ()=>{ cfg.texts={}; renderTexts(); alert("文案已还�
 const LEGEND_DEFAULT = [
   ["n1","① Banner 头图","满屏 = 一个可视页高（≈758px，375 宽等比）· 2026-10-13 改版：原 399px(106.4vw) → 满屏；首屏全部被头图占据，【下滑才进正文】· 原#f7658e粉底 → CP 向主题渐变（爱心 / 粉色为基调；玫瑰金 · 心动粉为方向，色值待设计）；双人 / 心动意象头图"],
   ["n2","Rule 按钮","高31px（8.26vw）· 圆角胶囊（CP 主题造型待设计） · <b>位置：头图下方 1/4（top:75%，2026-10-13 由贴顶下移）</b> · right:0 贴边 · 原版 top 69.33vw"],
-  ["n3","③ Tabs","119.5×53.5px（31.87×14.27vw）· 选中=心动粉渐变+描边强调 · 三态 This week/Award/Last week"],
-  ["n4","④ 倒计时","数字块（CP 主题造型待设计） · 服务器 sysTime 校准 · 最后24h转强调色闪烁（P1-4.5）"],
+  ["n3","② 倒计时","数字块（CP 主题造型待设计） · 服务器 sysTime 校准 · 最后24h转强调色闪烁（P1-4.5）"],
+  ["n4","③ Tabs","119.5×53.5px（31.87×14.27vw）· 选中=心动粉渐变+描边强调 · 三态 This week/Award/Last week"],
   ["n5","⑤ Top3 领奖台","头像52.5px（14vw）+2px描边 · 双头像=CP · 底座2-1-3排布+纹理 · TOP1 专属强调（P2）"],
   ["n6","⑥ 榜单列表 4+","行高≈60px · status=0置灰60%+Bond Broken标签（P0-4.2）· 触底加载 limit=30 · 分值 quantile 格式化"],
   ["n7","空态引导","<span class='prd'>P0-4.1</span>本周榜空且无我的排名时展示 · 空态插画170×150px + Find Your CP CTA（h44px）· 沿用现有CP引导路由"],
