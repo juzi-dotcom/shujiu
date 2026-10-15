@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>万圣节充值活动 · 可交互灰盒 v2.6</title>
+<title>万圣节充值活动 · 可交互灰盒 v2.7</title>
 <style>
 /* ============================================================================
-   可交互灰盒 v2.6 · 万圣节充值活动
+   可交互灰盒 v2.7 · 万圣节充值活动
    遵循《可编辑线框原型 · 输出标准规范 v1.0》
    —— 阶段：规范 §11 的 v2.x「可交互灰盒（数据写入 + 流程联动）」
    —— §2 灰盒红线在 v2 沿用：页面本体零彩色、零图片、零渐变装饰
@@ -441,9 +441,7 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 .board{ display:flex; align-items:center; gap:10px; padding:11px; margin-bottom:10px; }
 .board .bt{ font-size:11px; font-weight:700; color:var(--ink); }
 .board .bs{ font-size:9px; color:var(--ink3); margin-top:2px; line-height:1.35; }
-.board .bcd{ margin-left:auto; text-align:end; flex:0 0 auto; }
-.board .bcd .v{ font-size:11px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; }
-.board .bcd .k{ font-size:9px; color:var(--ink3); }
+/* .board .bcd 右侧「距结算倒计时」已移除（2026-10-14 用户要求）：Hero 模块 ④ 已有结算倒计时 */
 .boardBtn{
   display:block; width:100%; margin-top:9px; height:30px; cursor:pointer;
   font:inherit; font-size:11px; font-weight:700; color:var(--ink);
@@ -609,7 +607,7 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
 <body data-state="s1" data-sub="" data-tab="chest" class="">
 
 <header id="topbar">
-  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v2.6</span></div>
+  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v2.7</span></div>
   <div class="tb-state" id="tbState">S1 首屏 Hero</div>
   <div class="spacer"></div>
   <label>缩放 <input type="range" id="zoom" min="50" max="160" step="5" value="100"><span id="zoomVal" style="width:38px;display:inline-block">100%</span></label>
@@ -784,10 +782,8 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                     <div class="bs" data-tkey="rank.sub">按充值金额排名 · 月末为前三名加冕</div>
                     <button class="boardBtn" id="btnRewards" data-tkey="rank.rewardsBtn">Ranking Rewards</button>
                   </div>
-                  <div class="bcd">
-                    <div class="v" id="rankCd">21d 04h</div>
-                    <div class="k" data-tkey="rank.closes">距离截止</div>
-                  </div>
+                  <!-- 右侧「距结算倒计时」已按用户要求移除（2026-10-14）：
+                       Hero 已有模块 ④ 结算倒计时，此处重复；保留反而两处数字不一致时更困惑 -->
                 </div>
 
                 <div class="box emptyBox stateBlock" data-show="s6" id="rankEmpty">
@@ -803,7 +799,9 @@ body[data-sub="ruleRanking"] .rBodyRank{ display:block; }
                 <span class="anno" data-leg="11" style="left:-1px;top:96px">11</span>
                 <span class="anno" data-leg="12" style="left:-1px;top:262px">12</span>
               </div>
-              <span class="anno" data-leg="5" style="left:-1px;top:54px">5</span>
+              <!-- ⑤ 双页签的角标：必须落在页签行内（.tabs 高 52px = 10+32+10）。
+                   原先 top:54px 会掉到「页签下面那个框」的上沿，看着像在标榜单头/进度卡（用户 2026-10-14 因此把榜单头误认成第 5 点） -->
+              <span class="anno" data-leg="5" style="left:-1px;top:18px">5</span>
             </div>
           </div><!-- /.page -->
 
@@ -1001,7 +999,6 @@ const I18N = {
     "cta.toRank":"All chests unlocked · Go to Ranking",
     "rank.title":"Party Contribution Board",
     "rank.sub":"Ranked by recharge amount · top three crowned at month end",
-    "rank.closes":"Closes in",
     "rank.empty":"No ranking data yet",
     "rank.emptySub":"Top three will appear after the month settles",
     "rank.rewardsBtn":"Ranking Rewards",
@@ -1079,7 +1076,6 @@ const I18N = {
     "cta.toRank":"كل الصناديق مفتوحة · انتقل إلى الترتيب",
     "rank.title":"لوحة مساهمة الحفل",
     "rank.sub":"الترتيب حسب مبلغ الشحن · يُتوّج الثلاثة الأوائل نهاية الشهر",
-    "rank.closes":"ينتهي خلال",
     "rank.empty":"لا توجد بيانات ترتيب بعد",
     "rank.emptySub":"سيظهر الثلاثة الأوائل بعد تسوية الشهر",
     "rank.rewardsBtn":"مكافآت الترتيب",
@@ -1141,7 +1137,7 @@ const LEGEND = [
   { n:7,  title:"宝箱轮播",    size:"375×96px ｜ 100vw × 25.6vw", prd:"§6.1.3", note:"现版宝箱图 120×120（=60×60@375）；条带 padding 60/330/20（=30/165/10）。<b>交互：真实横滑 + scroll-snap 居中吸附；点选或滑停即选中；默认居中于最接近的未解锁档；达标档双描边点亮并带 ✓。</b>" },
   { n:8,  title:"奖励面板",    size:"347×190px ｜ 92.53vw × 50.67vw", prd:"§6.1.4", note:"现版面板宽 9.6rem=720（=360@375）。奖励按 type 分流：竖版 236×443 / 横版 619×236 / 其余宫格（设计稿 px，@375 减半）。<b>交互：随选中档重建。锁定与否只由右上角 Locked/Unlocked 徽标表达，奖励一律完整展示（不加蒙版、不降透明度）。</b>" },
   { n:9,  title:"吸底 CTA", size:"375×78px ｜ 100vw × 20.8vw", prd:"§6.4", note:"宝箱 Tab 保持现有设计；榜单 Tab 不放（见 ⑬）。<b>交互：点它＝模拟充值一笔（差额恰好解锁当前档）→ 进度增长、宝箱点亮、toast 提示；全解锁后文案改为「去冲榜」并切到榜单。</b>" },
-  { n:10, title:"榜单头",      size:"347×90px ｜ 92.53vw × 24vw", prd:"§6.2.1", note:"标题 + 口径说明 + 右侧距结算倒计时 + 内嵌 Ranking Rewards 入口。<b>交互：点按钮开奖励弹窗（画布内元素唤起，铁律 3）。</b>" },
+  { n:10, title:"榜单头",      size:"347×90px ｜ 92.53vw × 24vw", prd:"§6.2.1", note:"标题 + 口径说明 + 内嵌 Ranking Rewards 入口。<b>交互：点按钮开奖励弹窗（画布内元素唤起，铁律 3）。2026-10-14 按用户要求移除右侧「距结算倒计时」——Hero 模块 ④ 已有结算倒计时，此处重复。⚠️ 尺寸不变：右侧那列本来就不是高度决定项（左侧三行更高），实测 91px 与改前一致。</b>" },
   { n:11, title:"领奖台 TOP3", size:"302×150px ｜ 80.53vw × 40vw", prd:"§6.2.2", note:"现版 rank-1 底纹 604×505（=302×252.5@375）、rank-2/3 336×347（=168×173.5）。帽徽层级 1 王冠 / 2 尖帽 / 3 恶魔角。" },
   { n:12, title:"榜单列表",    size:"347×56px/行 ｜ 92.53vw × 14.93vw/行", prd:"§6.2.3", note:"现版行板 661×159（=330.5×79.5@375）；无数据时补 ??? 占位行，榜单永不空白。" },
   { n:13, title:"吸底我的排名条", size:"347×50px ｜ 92.53vw × 13.33vw", prd:"§6.2.4", note:"榜单 Tab 唯一吸底条，只展示 头像/排名/ID/已充值金额；原「我的排名」+吸底 CTA 两条已合并。现版条宽 10rem=750（=375@375）。" },
@@ -1604,7 +1600,7 @@ function tick(){
   $("#cdH").textContent = pad2(hh);
   $("#cdM").textContent = pad2(mm);
   $("#cdS").textContent = pad2(ss);   /* 秒（对齐 CP 排行榜的四段式） */
-  $("#rankCd").textContent = dd + "d " + pad2(hh) + "h";
+  /* 榜单头右侧的「距结算倒计时」已移除，不再更新 #rankCd（2026-10-14） */
 }
 
 /* ============================================================================
@@ -1696,7 +1692,7 @@ function boot(){
   /* 文案导出 / 导入 / 还原 */
   $("#btnExport").addEventListener("click", function (){
     $("#cfgBox").value = JSON.stringify({
-      _meta:{ at:new Date().toISOString(), stage:"v2.6 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
+      _meta:{ at:new Date().toISOString(), stage:"v2.7 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
       texts:cfg.texts
     }, null, 2);
     toast("已导出到文本框");
