@@ -54,7 +54,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <body>
 <div class="top"><div class="in">
   <h1><strong>RoStar H5 · 充值宝箱 + 充值月榜（/recharge-chest-reward）</strong></h1>
-  <div class="meta">v1.1 · 2026-10-16 · 依据：线框原型 v3.4</div>
+  <div class="meta">v1.2 · 2026-10-16 · 依据：线框原型 v3.4</div>
 </div></div>
 <div class="wrap"><div class="card">
 <h2>一、文档说明</h2>
@@ -111,7 +111,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
 </tr></thead><tbody>
 <tr><td>活动周期与结算时刻</td><td>沿用现状（见 4.4 倒计时的目标时刻口径）</td></tr>
 <tr><td>发奖与追回逻辑</td><td>沿用现状，本期不新增表现</td></tr>
-<tr><td>参与资格与计入口径</td><td>沿用现状 —— ⚠️ 细则见 4.14（本版新增），界面文案见 7.3</td></tr>
+<tr><td>参与资格与计入口径</td><td>沿用现状 —— ⚠️ 细则见 4.14（本版新增），界面文案见 6.3</td></tr>
 <tr><td>接口与鉴权</td><td>沿用现状，不改任何字段与请求方式</td></tr>
 <tr><td>字体如何落地</td><td>由设计负责，本文档与原型均不规定；开发按设计稿实现</td></tr>
 </tbody></table></div>
@@ -147,7 +147,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
   <li>点首屏的「Rules」按钮 → 打开规则页（覆盖层），默认停在「宝箱规则」页签。</li>
   <li>规则页内两个页签互斥：「宝箱规则」（6 条）/「榜单规则」（5 条），正文直接展开、不折叠。</li>
   <li>页内「×」按钮或点击弹窗外遮罩 → 关闭规则页，<strong>回到打开它时的状态</strong>。</li>
-  <li><strong>规则文案必须与 7.3 逐字一致；</strong>文案来自配置，不由前端硬编码。</li>
+  <li><strong>规则文案必须与 6.3 逐字一致；</strong>文案来自配置，不由前端硬编码。</li>
 </ul>
 <h3>4.3 Tab 切换</h3>
 <ul>
@@ -188,6 +188,8 @@ tbody tr:nth-child(even){background:#fcfcfd}
   <li><strong>未解锁时奖励一律完整展示：</strong>不加蒙版、不降透明度、不显示中央锁标；锁定状态只由面板上的 Locked / Unlocked 徽标表达。</li>
   <li>奖励项的排布方式由设计定；<strong>内容、数量与顺序（按 2.3 表格从左到右、从上到下）不得改动。</strong></li>
   <li>该档奖励列表为空时，隐藏奖励格区域，保留面板与文案。</li>
+  <li><strong>奖励卡形态由接口字段 type 决定：</strong>type = 36 → 竖版大卡；type = 35 → 横版长条；其余 → 宫格。<strong>前端需按 type 正确分流，不得写死某一种形态。</strong></li>
+  <li><strong>⚠️ 本次奖励重置后，各奖励项实际配置的 type 值待后台确认</strong>（见 9.2）。</li>
 </ul>
 <h3>4.8 吸底 CTA 与充值页</h3>
 <ul>
@@ -216,7 +218,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
   <li>不足 3 人时，空位渲染占位（<strong>???</strong> + 默认头像 + 0），不隐藏整块。</li>
   <li>从第 4 名起逐条展示；每行包含名次、头像、昵称、充值额。</li>
   <li>无数据时渲染占位行，<strong>榜单区域不得出现空白塌陷</strong>。</li>
-  <li>昵称脱敏：保留前 2 位 + <strong>****</strong>（现版有该过滤器但从未接线，本期需接线；如未确认则不脱敏 —— 见 10.2）。</li>
+  <li>昵称脱敏：保留前 2 位 + <strong>****</strong>（现版有该过滤器但从未接线，本期需接线；如未确认则不脱敏 —— 见 9.2）。</li>
   <li><strong>吸底条只展示 4 项：</strong>用户头像 / 排名 / ID / 已充值金额；未上榜时名次显示 <strong>-</strong>。</li>
 </ul>
 <h3>4.11 吸底「我的排名」条</h3>
@@ -243,7 +245,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
   <li><strong>用户向代理商购买钻石也计入，</strong>折算口径为「用户从平台拿到同等数量钻石所需要的价格」，即 <strong>用户侧零售价</strong>（以平台自身的钻石价目表为准），<strong>不是代理商的进货价</strong>。</li>
   <li><strong>以下两项不计入：</strong>① 代理商自己给自己充值；② 工资充值（Salary recharge）。</li>
   <li><strong>⚠️ 以上四条口径的判定与折算全部在后端完成。</strong>前端不参与任何折算、判定或过滤，只展示接口返回的充值额；<strong>本期换皮不改变这套口径，开发无需在前端实现判断逻辑。</strong></li>
-  <li>界面规则文案必须与本条口径一致：宝箱规则 rule.c1 / rule.c3 与榜单规则 rule.r4 见 7.3，其中 <strong>rule.c3 与 rule.r4 必须逐字相同</strong>。</li>
+  <li>界面规则文案必须与本条口径一致：宝箱规则 rule.c1 / rule.c3 与榜单规则 rule.r4 见 6.3，其中 <strong>rule.c3 与 rule.r4 必须逐字相同</strong>。</li>
 </ul>
 <p><strong>⚠️ 与线上旧文案的差异：</strong>旧句为「counted based on the price he got from the platform」，其中 <strong>he</strong> 会被读成「代理商拿到的价」，与上面「用户侧零售价」的口径相反；本期已改写为无歧义的「the price a user would pay on the platform for the same quantity of diamonds」。两种读法下折算金额不同（用户侧零售价 &gt; 代理商进货价），<strong>口径与验收均以新版文案为准</strong>。</p>
 <h2>五、状态与跳转一览</h2>
@@ -267,44 +269,14 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <tr><td>充值页</td><td>点「×」或上方遮罩</td><td>回到 S2/S3/S4</td><td>不发起充值</td></tr>
 <tr><td>S2~S4（全解锁）</td><td>点吸底 CTA「去冲榜」</td><td>S5 榜单 Tab</td><td>全部解锁后 CTA 文案变化</td></tr>
 </tbody></table></div>
-<h2>六、数据与接口（全部沿用现状，不变更）</h2>
-<div class="tw"><table>
-<thead><tr>
-<th>接口</th>
-<th>用途</th>
-<th>关键参数</th>
-</tr></thead><tbody>
-<tr><td>/revenue/recharge-treasure/index</td><td>宝箱配置与当前进度</td><td>返回宝箱档位、门槛、当前充值额、状态</td></tr>
-<tr><td>/revenue/recharge-treasure/rank-list</td><td>榜单列表</td><td>返回名次、用户信息、充值额</td></tr>
-<tr><td>/revenue/recharge-treasure/rank-reward-config</td><td>排名奖励配置</td><td>rankPosition 1 / 2 / 3</td></tr>
-</tbody></table></div>
-<p><strong>字段语义（不变）：</strong></p>
-<div class="tw"><table>
-<thead><tr>
-<th>字段</th>
-<th>含义</th>
-<th>前端表现</th>
-</tr></thead><tbody>
-<tr><td>status</td><td>宝箱档位状态；1 = 已达标</td><td>决定该档是否点亮</td></tr>
-<tr><td>rechargeAmount</td><td>用户累计充值额。⚠️ 该字段**应为已按 4.14 计入口径折算后的金额**（含用户向代理商购买钻石的部分）；**是否已含折算需与后端确认（见 10.2 的 11.18）**</td><td>进度卡、差额、CTA 文案；前端只展示，不二次计算</td></tr>
-<tr><td>rewardProductList</td><td>该档奖励项列表</td><td>奖励面板；按 type 决定卡片形态（见下）</td></tr>
-<tr><td>rewardList</td><td>榜单奖励项列表</td><td>排名奖励弹窗</td></tr>
-<tr><td>rankPosition</td><td>名次</td><td>1 / 2 / 3 对应弹窗三行</td></tr>
-<tr><td>rank / basicUserVo</td><td>名次与用户信息（头像 / 昵称 / id）</td><td>领奖台与榜单列表</td></tr>
-</tbody></table></div>
-<ul>
-  <li><strong>奖励卡形态由接口字段 type 决定：</strong>type = 36 → 竖版大卡；type = 35 → 横版长条；其余 → 宫格。</li>
-  <li><strong>⚠️ 本次奖励重置后，各奖励项实际配置的 type 值待后台确认</strong>（见 10.2）。前端需按 type 正确分流，不得写死某一种形态。</li>
-  <li><strong>⚠️ 以上接口均需登录态，</strong>联调时请准备登录账号。</li>
-</ul>
-<h2>七、文案与多语言</h2>
+<h2>六、文案与多语言</h2>
 <ul>
   <li>页面文案以原型为准（原型中双击即可查看 / 编辑全部文案，共 80+ 条）。</li>
   <li>需支持 en / ar 两种语言；ar 为从右到左（RTL）布局，<strong>镜像需覆盖弹窗、规则页、充值页、榜单、倒计时等全部模块</strong>。</li>
   <li>奖励项名称、VIP 等级、时区标注等也要跟随语言切换；VIPn 为专有名词，两种语言下都写作 VIPn。</li>
   <li>切换语言后，动态文案（差额、倒计时标签、toast 等）需立即跟随刷新。</li>
 </ul>
-<h3>7.3 规则文案（必须逐字一致）</h3>
+<h3>6.3 规则文案（必须逐字一致）</h3>
 <p><strong>宝箱规则（6 条）</strong></p>
 <div class="tw"><table>
 <thead><tr>
@@ -330,8 +302,8 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <tr><td>4</td><td>Diamonds a reseller buys for himself do not count. Diamonds bought from a reseller are counted at the price a user would pay on the platform for the same quantity of diamonds.</td></tr>
 <tr><td>5</td><td>Salary recharge is not counted.</td></tr>
 </tbody></table></div>
-<p>⚠️ 榜单规则第 3 条为奖励重置后的新文案，<strong>措辞尚待运营 / 法务确认</strong>（见 10.2）。测试按当前文案核对，若文案更新以更新后为准。</p>
-<h2>八、验收标准（测试逐项核对）</h2>
+<p>⚠️ 榜单规则第 3 条为奖励重置后的新文案，<strong>措辞尚待运营 / 法务确认</strong>（见 9.2）。测试按当前文案核对，若文案更新以更新后为准。</p>
+<h2>七、验收标准（测试逐项核对）</h2>
 <div class="tw"><table>
 <thead><tr>
 <th>#</th>
@@ -343,7 +315,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <tr><td>3</td><td>Tab 切换</td><td>两个 Tab 互斥选中；切换后内容与选中态同步变化；吸底条随之切换</td></tr>
 <tr><td>4</td><td>首屏与正文</td><td>进入时头图为全屏；下滑进入正文；首屏底部无下滑提示</td></tr>
 <tr><td>5</td><td>规则页</td><td>「Rules」可打开；两个页签互斥；正文不折叠；「×」与遮罩均可关闭并回到打开它的状态</td></tr>
-<tr><td>6</td><td>规则文案</td><td>宝箱 6 条、榜单 5 条，文案与 7.3 逐字一致；en / ar 均无缺失</td></tr>
+<tr><td>6</td><td>规则文案</td><td>宝箱 6 条、榜单 5 条，文案与 6.3 逐字一致；en / ar 均无缺失</td></tr>
 <tr><td>7</td><td>倒计时</td><td>天/时/分/秒每秒递减；归零停 0 不出现负数；目标为月末 19:00 沙特时间；下方有沙特时区标注</td></tr>
 <tr><td>8</td><td>进度与差额</td><td>进度卡与吸底 CTA 的「还差 $X」数值一致；达到门槛后显示已完成</td></tr>
 <tr><td>9</td><td>宝箱轮播</td><td>滑动停稳后中央档即选中；默认定位到最接近的未解锁档；点亮与选中互不干扰</td></tr>
@@ -360,7 +332,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <tr><td>20</td><td>移动端适配</td><td>移动端视口下无横向滚动、无文字截断</td></tr>
 <tr><td>21</td><td>视觉还原</td><td>按设计稿核对（本项由设计 / 产品验收，不在开发自测范围）</td></tr>
 </tbody></table></div>
-<h2>九、边界与异常</h2>
+<h2>八、边界与异常</h2>
 <ul>
   <li>榜单无数据：列表区域不出现空白错位；占位行正常渲染。</li>
   <li>宝箱档位仅 1 档 / 达标档为最高档：选中与默认定位不得越界或报错。</li>
@@ -372,8 +344,8 @@ tbody tr:nth-child(even){background:#fcfcfd}
   <li>网络异常：请求失败时保持页面可用（沿用线上现状处理）。</li>
   <li>接口返回未知的奖励 type：按宫格兜底渲染，不得丢失奖励项或报错。</li>
 </ul>
-<h2>十、已确认结论</h2>
-<p><strong>10.1 已确认不做 / 沿用现状</strong></p>
+<h2>九、已确认结论</h2>
+<p><strong>9.1 已确认不做 / 沿用现状</strong></p>
 <div class="tw"><table>
 <thead><tr>
 <th>事项</th>
@@ -381,11 +353,11 @@ tbody tr:nth-child(even){background:#fcfcfd}
 </tr></thead><tbody>
 <tr><td>日榜 / 周榜</td><td>现版是死代码，本期不做，一并清理，开发无需实现</td></tr>
 <tr><td>活动周期与结算时刻</td><td>沿用现状；倒计时按 4.4 的沙特时间口径展示</td></tr>
-<tr><td>参与资格与计入口径</td><td>沿用现状，文案见 7.3</td></tr>
+<tr><td>参与资格与计入口径</td><td>沿用现状，文案见 6.3</td></tr>
 <tr><td>字体落地</td><td>由设计负责，本文档与原型均不规定</td></tr>
 <tr><td>奖励卡排布方式</td><td>由设计定；内容、数量与顺序以 2.3 为准</td></tr>
 </tbody></table></div>
-<p><strong>10.2 待确认（开发前需闭环，否则影响验收）</strong></p>
+<p><strong>9.2 待确认（开发前需闭环，否则影响验收）</strong></p>
 <div class="tw"><table>
 <thead><tr>
 <th>#</th>
@@ -401,11 +373,11 @@ tbody tr:nth-child(even){background:#fcfcfd}
 </tbody></table></div>
 <p><strong>备注：</strong>奖励内容与发奖时间以本文档 2.3 与后端配置为准；如需变更请与后端确认后另行同步。</p>
   <div class="dl">
-    <a href="halloween-recharge-chest-dev-requirements-v1.1.docx">⬇ 下载 Word 版（.docx）</a>
+    <a href="halloween-recharge-chest-dev-requirements-v1.2.docx">⬇ 下载 Word 版（.docx）</a>
     <a class="ghost" href="../">← 返回原型与文档索引</a>
   </div>
   <div class="note">本页由 Word 版开发需求文档自动转换生成，内容与 .docx 一致；两者若有出入，以 Word 版为准。</div>
 </div></div>
-<div class="foot">RoStar H5 · 充值宝箱 + 充值月榜 · 开发需求文档 v1.1 · 依据线框原型 v3.4</div>
+<div class="foot">RoStar H5 · 充值宝箱 + 充值月榜 · 开发需求文档 v1.2 · 依据线框原型 v3.4</div>
 </body>
 </html>
