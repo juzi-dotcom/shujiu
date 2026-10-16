@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Litchat H5 · CP 亲密排行榜（/ranking/cpv2）</title>
+<style>
+:root{--ink:#22222a;--ink2:#5a5a66;--ink3:#8b8b96;--line:#e2e2e8;--box:#f7f7fa;--accent:#c0392b;}
+*{box-sizing:border-box}
+body{margin:0;background:#ececed;color:var(--ink);
+  font:15px/1.75 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
+.top{background:#1f1f26;color:#fff;padding:26px 20px 22px;}
+.top .in{max-width:840px;margin:0 auto}
+.top h1{font-size:21px;margin:0 0 6px;font-weight:800;letter-spacing:.3px}
+.top .meta{font-size:12px;color:#9a9aa6;margin-top:8px}
+.wrap{max-width:840px;margin:0 auto;padding:22px 20px 60px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 26px 26px;
+  box-shadow:0 6px 22px rgba(30,30,40,.07)}
+h2{font-size:16px;margin:26px 0 8px;padding-left:10px;border-left:4px solid var(--accent);font-weight:800;letter-spacing:.2px}
+h3{font-size:14px;margin:18px 0 6px;font-weight:800;color:#1f1f26}
+p{margin:8px 0}
+ul{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+strong{font-weight:800}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--box);font-weight:800;white-space:nowrap}
+tbody tr:nth-child(even){background:#fcfcfd}
+.dl{margin:18px 0 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.dl a{display:inline-block;text-decoration:none;font-size:13.5px;font-weight:700;color:#fff;
+  background:#1f1f26;border-radius:8px;padding:9px 16px}
+.dl a.ghost{background:#fff;color:#1f1f26;border:1.5px solid #cfcfd8}
+.note{font-size:12px;color:var(--ink3);margin-top:14px;line-height:1.7}
+.foot{max-width:840px;margin:0 auto;padding:0 20px 40px;font-size:12px;color:var(--ink3)}
+@media (max-width:560px){
+  .card{padding:6px 16px 20px;border-radius:10px}
+  .wrap{padding:14px 10px 40px}
+  .top{padding:20px 14px}
+  .top h1{font-size:18px}
+  h2{font-size:15px}
+  table{min-width:440px;font-size:12.5px}
+}
+@media print{
+  body{background:#fff}
+  .top{background:#fff;color:#000;border-bottom:2px solid #000}
+  .top .meta{color:#333}
+  .card{box-shadow:none;border:none;padding:0}
+  .dl{display:none}
+  h2,h3{page-break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <h1><strong>Litchat H5 · CP 亲密排行榜（/ranking/cpv2）</strong></h1>
+  <div class="meta">v1.1 · 2026-10-14 ·依据：线框原型 v2.8</div>
+</div></div>
+<div class="wrap"><div class="card">
+<h2>一、文档说明</h2>
+<ul>
+  <li><strong>用途：</strong>开发人员据此实现，测试人员据此编写用例与验收；每条需求均可独立验证。</li>
+  <li><strong>依据：</strong>线框原型 v2.8（Litchat-CP排行榜-线框图-v1.0.html，线上 https://juzi-dotcom.github.io/shujiu/cp-ranking/）。原型中的交互、状态、文案均与本文档一致。</li>
+  <li><strong>本文档不包含：</strong>具体尺寸、间距、色值、字体、圆角、素材、动效与排版细节 —— 这些由设计交付，本文档不做规定。<strong>视觉以设计稿为准，功能行为以本文档为准。</strong></li>
+  <li><strong>原型自带的辅助功能</strong>（双击改文案、标注编辑、导出 JSON、状态切换面板）是线框图工具能力，<strong>不是产品需求</strong>，开发无需实现。</li>
+  <li><strong>与线上的关系：</strong>接口、字段、分页规则、鉴权方式、玩法规则<strong>全部沿用线上现状，本期不做任何改动</strong>。</li>
+</ul>
+<h2>二、范围</h2>
+<ul>
+  <li><strong>本期做：</strong>视觉换皮（CP 主题）；本文档第四节的各项功能行为；en / ar 双语文案。</li>
+  <li><strong>本期不做：</strong>不改任何后端接口 / 字段 / 分页 / 鉴权；不新增玩法；不改 v1 页面 /ranking/cp；不新增语种。</li>
+  <li><strong>以下三项已确认，本期均不做改动</strong>（2026-10-14 产品确认）：</li>
+  <li><strong>我的排名弹层</strong>：线上现况<strong>没有</strong>这个弹层 → 本期不做，原型中亦已移除，<strong>开发无需实现</strong>。</li>
+  <li><strong>解除</strong><strong> </strong><strong>CP（status</strong><strong>=0）</strong>：<strong>沿用线上现况</strong>，本期不做改动。</li>
+  <li><strong>无 CP 空态</strong>：<strong>沿用线上现况</strong>，本期不做改动；无 CP 场景改由底部「我的排名」条展示「Find Your CP」文案（见 4.7），该文案为<strong>纯展示、无跳转无弹层</strong>。</li>
+</ul>
+<h2>三、页面结构与状态清单</h2>
+<p>页面共 <strong>4 个状态</strong>。头图、Tab、倒计时三个模块在 4 个状态下均可见，不随状态隐藏。</p>
+<div class="tw"><table>
+<thead><tr>
+<th>状态</th>
+<th>进入方式</th>
+<th>该状态可见的内容</th>
+</tr></thead><tbody>
+<tr><td>S1 本周榜</td><td>默认状态；或点 Tab「This week」</td><td>领奖台 Top3 + 榜单列表（第 4 名起）+ 底部「我的排名」条</td></tr>
+<tr><td>S4 奖励页</td><td>点 Tab「Award」</td><td>三张奖励档位卡（TOP 1 / TOP 2~5 / TOP 6~10）</td></tr>
+<tr><td>S5 上周榜</td><td>点 Tab「Last week」</td><td>「上周榜」标题行 +「榜单已封印」提示 + 领奖台 Top3 + 榜单列表</td></tr>
+<tr><td>S6 规则弹窗</td><td>点头图上的 Rule 按钮</td><td>规则弹窗（6 条规则）</td></tr>
+</tbody></table></div>
+<h2>四、功能需求</h2>
+<h3>4.1 头图与进入正文</h3>
+<ul>
+  <li>进入页面时，头图占据整个可视区域，正文（倒计时 / Tab / 榜单）需要<strong>向下滑动</strong>才能看到。</li>
+  <li>头图内包含：主题标题（主标题 + 副标题）、<strong>Rule 按钮</strong>。</li>
+</ul>
+<h3>4.2 Rule 按钮与规则弹窗（S6）</h3>
+<ul>
+  <li>点击头图上的 Rule 按钮 → 打开规则弹窗，内含标题与 6 条规则正文。</li>
+  <li>弹窗内的「×」按钮、或点击弹窗外遮罩 → 关闭弹窗并<strong>回到 S1 本周榜</strong>。</li>
+  <li>规则 6 条的文案见原型；业务含义与原版线上规则逐条对应，仅措辞按主题包装。</li>
+</ul>
+<h3>4.3 Tab 切换</h3>
+<ul>
+  <li>三个 Tab 互斥选中：This week → S1；Award → S4；Last week → S5。</li>
+  <li>切换 Tab 后，页面内容切换为对应状态的内容（见第三节），选中态同步变化。</li>
+  <li>从其他 Tab 切回 This week 时，榜单数据需重新渲染。</li>
+</ul>
+<h3>4.4 倒计时</h3>
+<ul>
+  <li>展示「天 / 时 / 分 / 秒」四段，每秒递减，归零后停在 0（不出现负数）。</li>
+  <li>时间基准必须使用接口返回的服务器时间（sysTime）校准，<strong>不得直接使用本机时间</strong>。</li>
+  <li>距离结束不足 24 小时时，倒计时进入强调态（<strong>具体视觉由设计定</strong>），用于制造紧迫感。</li>
+  <li>在 S5 上周榜状态下<strong>不展示倒计时</strong>。</li>
+</ul>
+<h3>4.5 领奖台（Top 3）</h3>
+<ul>
+  <li>展示本周榜第 1~3 名；每个名次展示一对 CP（双头像）+ CP 名 + 分值。</li>
+  <li>排列顺序固定为 <strong>2-1-3（第 1 名在中间）</strong>，不因数据缺失而错位。</li>
+  <li>在 S1 与 S5 两个状态下均展示。</li>
+</ul>
+<h3>4.6 榜单列表（第 4 名起）</h3>
+<ul>
+  <li>从第 4 名开始逐条展示；每行包含：名次、双头像、CP 名、分值。</li>
+  <li>分页沿用现状：每次请求 limit = 30，<strong>触底自动加载下一页</strong>；数据不足一页时判定为到底，停止请求。</li>
+  <li>长昵称需截断省略（不得撑破布局或换行）。</li>
+</ul>
+<h3>4.7 底部「我的排名」条</h3>
+<ul>
+  <li><strong>仅在本周榜（S1）展示</strong>，切到奖励页 / 上周榜时不出现。</li>
+  <li><strong>点击行为：</strong>该条为纯信息展示，<strong>点击不唤起任何弹层</strong>（原版的点击弹层已取消）。</li>
+  <li><strong>无 CP 场景</strong>：该条只展示「Find Your CP」文案，<strong>纯展示 —— 点击无跳转、无弹层、状态不变</strong>（2026-10-14 产品确认）。</li>
+</ul>
+<p>文案随用户与 CP 的关系变化，共 <strong>4 种场景</strong>：</p>
+<div class="tw"><table>
+<thead><tr>
+<th>场景</th>
+<th>展示内容</th>
+</tr></thead><tbody>
+<tr><td>未上榜（名次 &gt; 10）</td><td>「My Rank」+ 我的名次与分值 +「距离上榜还差 x」</td></tr>
+<tr><td>已上榜（名次 2~10）</td><td>「My Rank」+ 我的名次与分值 +「距离上一名还差 x」</td></tr>
+<tr><td>TOP 1（名次 = 1）</td><td>「My Rank」+ 我的名次与分值，不展示任何文案</td></tr>
+<tr><td>无 CP</td><td>只展示「Find Your CP」文案；不展示名次、分值与火候值</td></tr>
+</tbody></table></div>
+<ul>
+  <li><strong>取值口径：</strong>未上榜的「差 x」= 第 10 名分值 − 我的分值；已上榜的「差 x」= 上一名分值 − 我的分值；差值需做格式化（千分位）。</li>
+  <li>切换语言（en ⇄ ar）后，上述文案需立即跟随刷新。</li>
+</ul>
+<h3>4.8 奖励页（S4）</h3>
+<ul>
+  <li>展示三张奖励档位卡：TOP 1 / TOP 2~5 / TOP 6~10，每张卡内展示该档位的奖品（排布方式由设计定）。</li>
+  <li>奖品名称过长时单行省略；奖品较多时卡片高度自适应撑开，<strong>不出现卡片内部滚动条</strong>。</li>
+  <li>奖励数据来源沿用 /shop/productRankReward/getByType（type=2）。</li>
+</ul>
+<h3>4.9 上周榜（S5）</h3>
+<ul>
+  <li>与本周榜同构（领奖台 + 列表），但<strong>不展示倒计时</strong>，且不展示底部「我的排名」条。</li>
+  <li>页面展示「上周榜」标题与「榜单已封印」提示文案。</li>
+  <li>数据来源沿用 rankingListType=2。</li>
+</ul>
+<h2>五、状态与跳转一览</h2>
+<div class="tw"><table>
+<thead><tr>
+<th>当前状态</th>
+<th>操作</th>
+<th>目标状态</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr><td>S1 本周榜</td><td>点 Tab「Award」</td><td>S4 奖励页</td><td>Tab 选中态同步变化</td></tr>
+<tr><td>S1 本周榜</td><td>点 Tab「Last week」</td><td>S5 上周榜</td><td>Tab 选中态同步变化</td></tr>
+<tr><td>S4 / S5</td><td>点 Tab「This week」</td><td>S1 本周榜</td><td>榜单重新渲染</td></tr>
+<tr><td>任意状态</td><td>点头图 Rule 按钮</td><td>S6 规则弹窗</td><td>弹窗覆盖在页面上</td></tr>
+<tr><td>S6 规则弹窗</td><td>点「×」或弹窗外遮罩</td><td>S1 本周榜</td><td>弹窗关闭</td></tr>
+<tr><td>S1 本周榜</td><td>点底部「我的排名」条</td><td>（不变）</td><td>纯展示，无任何跳转或弹层</td></tr>
+</tbody></table></div>
+<h2>六、数据与接口（全部沿用现状，不变更）</h2>
+<div class="tw"><table>
+<thead><tr>
+<th>接口</th>
+<th>用途</th>
+<th>关键参数</th>
+</tr></thead><tbody>
+<tr><td>GET /revenue/couple/v2/getRankConfig</td><td>活动周期 + 服务器时间</td><td>返回 start / end / sysTime（倒计时校准依据）</td></tr>
+<tr><td>GET /revenue/couple/v2/rank</td><td>榜单列表</td><td>index / limit（默认 30）/ rankingListType（0=本周，2=上周）</td></tr>
+<tr><td>GET /shop/productRankReward/getByType</td><td>奖励配置</td><td>type（1=v1，2=v2）</td></tr>
+</tbody></table></div>
+<p><strong>字段语义（不变）：</strong></p>
+<div class="tw"><table>
+<thead><tr>
+<th>字段</th>
+<th>含义</th>
+<th>前端表现</th>
+</tr></thead><tbody>
+<tr><td>loveValue</td><td>CP 之间互赠 CP 礼物的金额（榜单分值）</td><td>榜单分值展示</td></tr>
+<tr><td>user / cpUser</td><td>一对 CP（双方头像 / 昵称 / id）</td><td>双头像并列</td></tr>
+<tr><td>status</td><td>CP 关系状态；0 = 已解除</td><td>沿用线上现状（本期不新增表现）</td></tr>
+<tr><td>rank</td><td>名次</td><td>≤ 3 进领奖台，&gt; 3 进普通列表</td></tr>
+</tbody></table></div>
+<ul>
+  <li>⚠️ 以上接口<strong>均需登录态</strong>（匿名访问返回 status:1010），联调时请准备登录账号。</li>
+</ul>
+<h2>七、文案与多语言</h2>
+<ul>
+  <li>页面文案以原型为准（原型中双击即可查看 / 编辑全部文案，共 30+ 条）。</li>
+  <li>需支持 en / ar 两种语言；ar 为从右到左（RTL）布局，<strong>镜像需覆盖弹窗、列表、倒计时等全部模块</strong>。</li>
+  <li>新增文案需在两种语言下均无缺失；切换语言后动态文案（底部条差值、倒计时标签等）需同步刷新。</li>
+</ul>
+<h2>八、验收标准（测试逐项核对）</h2>
+<div class="tw"><table>
+<thead><tr>
+<th>#</th>
+<th>验收项</th>
+<th>通过判据</th>
+</tr></thead><tbody>
+<tr><td>1</td><td>玩法一致性</td><td>榜单规则、奖励档位、CP 关系逻辑零改动；三个接口的请求参数、返回字段、分页行为与现网一致</td></tr>
+<tr><td>2</td><td>状态覆盖</td><td>4 个状态均可进入，且各状态展示的模块与第三节表格一致</td></tr>
+<tr><td>3</td><td>Tab 切换</td><td>三个 Tab 互斥选中，切换后内容与选中态同步变化</td></tr>
+<tr><td>4</td><td>倒计时校准</td><td>倒计时与服务器时间一致；归零后停在 0；S5 不展示倒计时</td></tr>
+<tr><td>5</td><td>领奖台</td><td>2-1-3 排列（第 1 名居中）；每名展示双头像 + CP 名 + 分值</td></tr>
+<tr><td>6</td><td>列表分页</td><td>第 4 名起展示；触底加载下一页（limit=30）；到底后停止请求</td></tr>
+<tr><td>7</td><td>底部条展示范围</td><td>仅 S1 展示；S4 / S5 不出现</td></tr>
+<tr><td>8</td><td>底部条点击行为</td><td>点击无任何反应（不弹层、不跳转、状态不变）；无 CP 场景同样如此</td></tr>
+<tr><td>9</td><td>底部条四态文案</td><td>未上榜 / 已上榜 / TOP1 / 无 CP 四种场景的文案与取值口径均正确（见 4.7 表）</td></tr>
+<tr><td>10</td><td>规则弹窗</td><td>Rule 按钮可打开；「×」与遮罩均可关闭并回到 S1；6 条规则文案正确</td></tr>
+<tr><td>11</td><td>奖励页</td><td>三张档位卡与奖品内容正确；卡片无内部滚动条；长奖品名单行省略</td></tr>
+<tr><td>12</td><td>多语言</td><td>en / ar 文案无缺失；ar 下 RTL 镜像正确，无错位或截断</td></tr>
+<tr><td>13</td><td>移动端适配</td><td>移动端视口下无横向滚动、无文字截断</td></tr>
+<tr><td>14</td><td>视觉还原</td><td>按设计稿核对（本项由设计 / 产品验收，不在开发自测范围）</td></tr>
+</tbody></table></div>
+<h2>九、边界与异常</h2>
+<ul>
+  <li>榜单无数据：列表区域不出现空白错位（沿用线上现状处理）。</li>
+  <li>分页到底：不再发起请求，不出现重复行。</li>
+  <li>长昵称 / 长奖品名：截断省略，不得撑破布局。</li>
+  <li>倒计时边界：活动未开始 / 已结束（duration = 0）时不得出现负数或 NaN。</li>
+  <li>语言切换：切换瞬间不得出现文案缺失或布局跳动。</li>
+  <li>网络异常：请求失败时保持页面可用（沿用线上现状处理）。</li>
+</ul>
+<h2>十、已确认结论</h2>
+<p>以下三项已于 2026-10-14 由产品确认，<strong>本期均不做改动</strong>：</p>
+<div class="tw"><table>
+<thead><tr>
+<th>事项</th>
+<th>结论</th>
+</tr></thead><tbody>
+<tr><td>我的排名弹层</td><td>线上现况没有这个弹层 → 本期不做，开发无需实现（原型中亦已移除）</td></tr>
+<tr><td>解除 CP（status=0）</td><td>沿用线上现况，本期不做改动</td></tr>
+<tr><td>无 CP 空态</td><td>沿用线上现况，本期不做改动；无 CP 场景由底部「我的排名」条展示「Find Your CP」</td></tr>
+<tr><td>无 CP 场景底部条交互</td><td>纯展示 —— 点击无跳转、无弹层、状态不变（见 4.7 与验收项 8）</td></tr>
+</tbody></table></div>
+<p><strong>备注：</strong>奖励档位与发奖时间<strong>沿用现状</strong>，本文档不做规定；如需变更请与后端确认后另行同步。</p>
+  <div class="dl">
+    <a href="Litchat-CP-ranking-requirements-v1.1.docx">⬇ 下载 Word 版（.docx）</a>
+    <a class="ghost" href="../">← 返回原型索引</a>
+  </div>
+  <div class="note">本页由 Word 版需求文档自动转换生成，内容与 .docx 一致；两者若有出入，以 Word 版为准。</div>
+</div></div>
+<div class="foot">Litchat H5 · CP 亲密排行榜 · 需求文档（开发测试版）· 依据线框原型 v2.8</div>
+</body>
+</html>
