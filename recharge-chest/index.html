@@ -1,12 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>万圣节充值活动 · 可交互灰盒 v3.0</title>
+<title>万圣节充值活动 · 可交互灰盒 v3.4</title>
 <style>
 /* ============================================================================
-   可交互灰盒 v3.0 · 万圣节充值活动
+   可交互灰盒 v3.4 · 万圣节充值活动
    遵循《可编辑线框原型 · 输出标准规范 v1.0》
    —— 阶段：规范 §11 的 v2.x「可交互灰盒（数据写入 + 流程联动）」
    —— §2 灰盒红线在 v2 沿用：页面本体零彩色、零图片、零渐变装饰
@@ -291,7 +291,8 @@ body[data-sub="ruleRanking"] #ovRule .anno[data-leg="15"]{ display:block; }
   position:absolute; left:0; right:0; bottom:26px; z-index:21;
   display:flex; justify-content:center;
 }
-.count{ display:flex; gap:10px; }
+.count{ display:flex; flex-direction:column; align-items:center; gap:5px; }
+.cdItems{ display:flex; gap:10px; }
 .cdItem{ min-width:45px; text-align:center; }
 .cdNum{
   height:30px; border:1.5px solid var(--ink2); border-radius:7px; background:#fff;
@@ -300,6 +301,8 @@ body[data-sub="ruleRanking"] #ovRule .anno[data-leg="15"]{ display:block; }
 }
 .cdNum::before{ content:"🎃"; font-size:9px; margin-inline-end:3px; filter:grayscale(1); opacity:.55; }
 .cdLab{ font-size:11px; color:var(--ink2); margin-top:4px; }
+/* 2026-10-16 §11.5 定案 B：倒计时统一按沙特时间，并在下方**标注**时区 */
+.cdTz{ font-size:9px; color:var(--ink3); letter-spacing:.2px; }
 .heroFoot{
   position:absolute; left:0; right:0; bottom:0; z-index:20; text-align:center;
   font-size:9px; color:var(--ink3); padding-bottom:5px;
@@ -413,7 +416,11 @@ body[dir="rtl"] .potion{ left:auto; right:0; }
 .rwGrid{ display:flex; gap:8px; }
 .rwV{ flex:0 0 118px; }
 .rwV .pic{ width:114px; height:132px; border-radius:6px; }
-.rwCol{ flex:1; display:flex; flex-direction:column; gap:8px; }
+/* 2026-10-16 奖励重置后每档 4 项同权重（头像框/坐骑/勋章/VIP）
+   2026-10-16 二改（用户）：宫格按 **3 列 × 2 行** 排布，**从左到右、从上到下**流水填充
+   —— CSS Grid 默认流向即 row（先行后列、行内从左到右），4 项自然落成「第 1 行 3 个 + 第 2 行 1 个」；
+      因此**不要**加 grid-auto-flow:column（那会变成先列后行）。 */
+.rwCol{ flex:1; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .rwCol .pic{ width:56px; height:56px; border-radius:6px; }
 /* 横版奖励（PRD：619×236 形态）—— 按 type 分流放底部 */
 .rwWide{ display:flex; gap:8px; margin-top:8px; }
@@ -522,8 +529,12 @@ body[data-sub="ruleRanking"] #ovRule{ display:flex; }
 .ovBd{ overflow:auto; }
 .mrow{ margin-bottom:14px; }
 .mrowTitle{ height:15px; border-radius:3px; margin-bottom:7px; }
-.mrowRew{ display:flex; gap:8px; }
-.mrowRew .pic{ width:46px; height:46px; border-radius:6px; }
+/* 2026-10-16 排名奖励重置为道具：标题改为真实名次文字（顶到整行），奖励格数最多 7 个 → 允许换行 */
+.mrowT{ font-size:11px; font-weight:800; color:var(--ink); margin-bottom:7px; }
+.mrowSub{ font-size:9px; color:var(--ink3); font-weight:400; margin-inline-start:5px; }
+.mrowRew{ display:flex; gap:6px; flex-wrap:wrap; }
+.mrowRew .pic{ width:36px; height:36px; border-radius:5px; }
+.mrowRew .nm{ font-size:8.5px; }
 .rulePage{
   width:100%; max-width:345px; height:100%; max-height:88%;
   background:var(--paper); border-radius:var(--r); border:1px solid var(--line);
@@ -643,7 +654,7 @@ body[data-sub="recharge"] #ovRecharge{ display:flex; align-items:flex-end; justi
 <body data-state="s1" data-sub="" data-tab="chest" class="">
 
 <header id="topbar">
-  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v3.0</span></div>
+  <div class="tb-title">万圣节充值活动 · 可交互灰盒 <span class="ver">v3.4</span></div>
   <div class="tb-state" id="tbState">S1 首屏 Hero</div>
   <div class="spacer"></div>
   <label>缩放 <input type="range" id="zoom" min="50" max="160" step="5" value="100"><span id="zoomVal" style="width:38px;display:inline-block">100%</span></label>
@@ -741,13 +752,17 @@ body[data-sub="recharge"] #ovRecharge{ display:flex; align-items:flex-end; justi
                 </div>
               </div>
 
-              <!-- ④ 结算倒计时：独立一行、水平居中，在「头像框 + 规则按钮」那一行的下面 -->
+              <!-- ④ 结算倒计时：独立一行、水平居中，在「头像框 + 规则按钮」那一行的下面
+                   2026-10-16 §11.5 定案 B：目标＝月末 19:00 沙特时间（=16:00 UTC），下方标注时区 -->
               <div class="countRow">
                 <div class="count mod" data-mod="4">
-                  <div class="cdItem"><div class="cdNum" id="cdD">00</div><div class="cdLab" data-tkey="unit.d">Day</div></div>
-                  <div class="cdItem"><div class="cdNum" id="cdH">00</div><div class="cdLab" data-tkey="unit.h">Hour</div></div>
-                  <div class="cdItem"><div class="cdNum" id="cdM">00</div><div class="cdLab" data-tkey="unit.m">Min</div></div>
-                  <div class="cdItem"><div class="cdNum" id="cdS">00</div><div class="cdLab" data-tkey="unit.s">Sec</div></div>
+                  <div class="cdItems">
+                    <div class="cdItem"><div class="cdNum" id="cdD">00</div><div class="cdLab" data-tkey="unit.d">Day</div></div>
+                    <div class="cdItem"><div class="cdNum" id="cdH">00</div><div class="cdLab" data-tkey="unit.h">Hour</div></div>
+                    <div class="cdItem"><div class="cdNum" id="cdM">00</div><div class="cdLab" data-tkey="unit.m">Min</div></div>
+                    <div class="cdItem"><div class="cdNum" id="cdS">00</div><div class="cdLab" data-tkey="unit.s">Sec</div></div>
+                  </div>
+                  <div class="cdTz" data-tkey="unit.tz">Saudi time (GMT+3)</div>
                 </div>
               </div>
 
@@ -871,30 +886,7 @@ body[data-sub="recharge"] #ovRecharge{ display:flex; align-items:flex-end; justi
                 <span class="ot" data-tkey="modal.title">RANKING REWARDS</span>
                 <button class="ovX" data-close="reward">✕</button>
               </div>
-              <div class="ovBd">
-                <div class="mrow">
-                  <div class="ph mrowTitle" style="width:112px"></div>
-                  <div class="mrowRew">
-                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.diamond"></span></div>
-                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.crown"></span></div>
-                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.broadcast"></span></div>
-                  </div>
-                </div>
-                <div class="mrow">
-                  <div class="ph mrowTitle" style="width:94px"></div>
-                  <div class="mrowRew">
-                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.diamond"></span></div>
-                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.frame"></span></div>
-                  </div>
-                </div>
-                <div class="mrow">
-                  <div class="ph mrowTitle" style="width:94px"></div>
-                  <div class="mrowRew">
-                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.diamond"></span></div>
-                    <div class="reward"><div class="ph pic"></div><span class="nm" data-tkey="rw.ic.badge"></span></div>
-                  </div>
-                </div>
-              </div>
+              <div class="ovBd" id="rankRewBody"></div>
             </div>
             <span class="anno" data-leg="14" style="right:-1px;top:4px">14</span>
           </div>
@@ -919,6 +911,7 @@ body[data-sub="recharge"] #ovRecharge{ display:flex; align-items:flex-end; justi
                     <li data-tkey="rule.c3"></li>
                     <li data-tkey="rule.c4"></li>
                     <li data-tkey="rule.c5"></li>
+                    <li data-tkey="rule.c6"></li>
                   </ol>
                 </div>
                 <div class="rBodyRank">
@@ -1038,7 +1031,7 @@ const I18N = {
     "hero.tag":"Every recharge lights one more pumpkin.",
     "hero.foot":"RoStar · Halloween Treasure Night",
     "rules.btn":"Rules",
-    "unit.d":"Day", "unit.h":"Hour", "unit.m":"Min", "unit.s":"Sec",
+    "unit.d":"Day", "unit.h":"Hour", "unit.m":"Min", "unit.s":"Sec", "unit.tz":"Saudi time (GMT+3)",
     "tab.chest":"Chests",
     "tab.ranking":"Ranking",
     "prog.title":"Witch's Brew",
@@ -1056,20 +1049,20 @@ const I18N = {
     "rw.title":"LV{n} CHEST REWARDS",
     "rw.tag.lit":"Unlocked",
     "rw.tag.lock":"Locked",
-    "rw.ic.diamond":"Diamonds",
-    "rw.ic.candy":"Candy bundle",
-    "rw.ic.bat":"Bat avatar frame",
-    "rw.ic.ghost":"Ghost entry bubble",
-    "rw.ic.pumpkin":"Pumpkin lamp badge",
-    "rw.ic.cauldron":"Cauldron mount",
-    "rw.ic.star":"Toxic-green name",
-    "rw.ic.crown":"Pumpkin King's Crown",
     "rw.ic.frame":"Avatar frame",
-    "rw.ic.badge":"Badge",
-    "rw.ic.broadcast":"Server-wide broadcast",
-    "rw.expire.none":"No expiry",
-    "rw.expire.d7":"7 days",
-    "rw.expire.d30":"30 days",
+    "rw.ic.mount":"Mount",
+    "rw.ic.medal":"Medal frame",
+    "rw.ic.medalS":"Medal frame (no animation)",
+    "rw.ic.vip":"VIP level",
+    "rw.rk.splash":"Splash screen",
+    "rw.rk.specialId":"Special ID",
+    "rw.rk.mount":"Mount",
+    "rw.rk.frame":"Avatar frame",
+    "rw.rk.medalFrame":"Medal frame",
+    "rw.rk.glory":"Glory verification",
+    "rw.rk.banner":"Banner",
+    "modal.pos":"TOP {n}",
+    "modal.count":"{n} items",
     "cta.main":"Go Recharge",
     "cta.sub":"only {amt} to unlock {lv}",
     "cta.nextTier":"Unlocked · view the next tier",
@@ -1089,13 +1082,14 @@ const I18N = {
     "rule.settle":"Runs from launch until the last day of every month. Rewards are sent automatically at 7pm Saudi time (6pm Egypt time) on that day.",
     "rule.c1":"Open to regular users only — resellers are not eligible to participate.",
     "rule.c2":"Recharges made through Google Pay, Apple In-App Purchase and in-app third-party payment methods are counted directly toward the event total.",
-    "rule.c3":"Diamonds bought by a reseller for himself do not count. Diamonds bought from a reseller are counted at the platform price.",
-    "rule.c4":"Rewards are distributed automatically as soon as the eligibility conditions are met.",
-    "rule.c5":"Any form of cheating, abuse or fraudulent behaviour is strictly prohibited. Detected users are disqualified immediately and all rewards are revoked.",
+    "rule.c3":"Diamonds a reseller buys for himself do not count. Diamonds bought from a reseller are counted at the price a user would pay on the platform for the same quantity of diamonds.",
+    "rule.c4":"Salary recharge is not counted.",
+    "rule.c5":"Rewards are distributed automatically as soon as the eligibility conditions are met.",
+    "rule.c6":"Any form of cheating, abuse or fraudulent behaviour is strictly prohibited. Detected users are disqualified immediately and all rewards are revoked.",
     "rule.r1":"The event starts at 6:00 PM (Egypt time) and 7:00 PM (Saudi time) on the last day of the previous month, and ends at the same time on the last day of the current month.",
     "rule.r2":"All rewards will be automatically distributed when the month ends.",
-    "rule.r3":"TOP 1 user will receive Dias equal to 7% of the total recharge; TOP 2 will receive Dias equal to 3% of the total recharge.",
-    "rule.r4":"Reseller buying diamonds himself is not counted. Buying diamonds from resellers is counted based on the price he got from the platform.",
+    "rule.r3":"Rank rewards are item rewards, not diamonds: TOP 1, TOP 2 and TOP 3 each receive a special ID, a mount, an avatar frame, a medal frame, a glory verification and a banner; TOP 1 additionally receives a splash screen. See \"Ranking Rewards\" on the ranking tab for the full list.",
+    "rule.r4":"Diamonds a reseller buys for himself do not count. Diamonds bought from a reseller are counted at the price a user would pay on the platform for the same quantity of diamonds.",
     "rule.r5":"Salary recharge is not counted.",
     "toast.tab":"Switched to {name}",
     "toast.pick":"Selected {lv} · {name}",
@@ -1116,7 +1110,7 @@ const I18N = {
     "hero.tag":"كل عملية شحن تضيء قرعًا إضافيًا.",
     "hero.foot":"روستار · ليلة كنز الهالوين",
     "rules.btn":"القواعد",
-    "unit.d":"يوم", "unit.h":"ساعة", "unit.m":"دقيقة", "unit.s":"ثانية",
+    "unit.d":"يوم", "unit.h":"ساعة", "unit.m":"دقيقة", "unit.s":"ثانية", "unit.tz":"بتوقيت السعودية (GMT+3)",
     "tab.chest":"الصناديق",
     "tab.ranking":"الترتيب",
     "prog.title":"جرعة الساحرة",
@@ -1125,29 +1119,29 @@ const I18N = {
     "prog.done":"مفتوح ✓",
     "chest.sect":"صناديق اليقطين",
     "chest.hint":"اضغط صندوقًا · اسحب للتصفح",
-    "chest.lv":"م{ n }",
+    "chest.lv":"م{n}",
     "chest.1.name":"جرة اليقطين الحلوة",
     "chest.2.name":"برميل الخفافيش",
     "chest.3.name":"صندوق الشبح",
     "chest.4.name":"قدر الساحرة",
     "chest.5.name":"تاج ملك اليقطين",
-    "rw.title":"مكافآت صندوق م{ n }",
+    "rw.title":"مكافآت صندوق م{n}",
     "rw.tag.lit":"مفتوح",
     "rw.tag.lock":"مغلق",
-    "rw.ic.diamond":"ألماس",
-    "rw.ic.candy":"حزمة حلوى",
-    "rw.ic.bat":"إطار الخفافيش",
-    "rw.ic.ghost":"فقاعة دخول الشبح",
-    "rw.ic.pumpkin":"شارة مصباح اليقطين",
-    "rw.ic.cauldron":"مركبة القدر",
-    "rw.ic.star":"اسم بلون أخضر سام",
-    "rw.ic.crown":"تاج ملك اليقطين",
     "rw.ic.frame":"إطار الصورة",
-    "rw.ic.badge":"شارة",
-    "rw.ic.broadcast":"بث لجميع الخوادم",
-    "rw.expire.none":"بدون انتهاء",
-    "rw.expire.d7":"7 أيام",
-    "rw.expire.d30":"30 يومًا",
+    "rw.ic.mount":"مركبة",
+    "rw.ic.medal":"إطار الشارة",
+    "rw.ic.medalS":"إطار الشارة (بدون تأثير)",
+    "rw.ic.vip":"مستوى VIP",
+    "rw.rk.splash":"شاشة الافتتاح",
+    "rw.rk.specialId":"معرّف خاص",
+    "rw.rk.mount":"مركبة",
+    "rw.rk.frame":"إطار الصورة",
+    "rw.rk.medalFrame":"إطار الشارة",
+    "rw.rk.glory":"توثيق الشرف",
+    "rw.rk.banner":"بانر",
+    "modal.pos":"المركز {n}",
+    "modal.count":"{n} عناصر",
     "cta.main":"اشحن الآن",
     "cta.sub":"تبقّى {amt} لفتح {lv}",
     "cta.nextTier":"مفتوح · اعرض المستوى التالي",
@@ -1167,13 +1161,14 @@ const I18N = {
     "rule.settle":"تبدأ الفعالية من بداية الحدث حتى نهاية كل شهر. سيتم إرسال جميع الجوائز تلقائيًا في آخر يوم من الشهر الساعة 7 مساءً بتوقيت السعودية والساعة 6 مساءً بتوقيت مصر.",
     "rule.c1":"هذا النشاط مخصص للمستخدمين العاديين فقط، ولا يحق لوكلاء الشحن المشاركة فيه.",
     "rule.c2":"في حال قام المستخدم بالشحن عبر جوجل باي أو الشراء داخل التطبيق من آبل وكذلك وسائل الدفع التابعة لجهات خارجية داخل التطبيق، يتم احتساب مبلغ الشحن مباشرة ضمن إجمالي شحن النشاط.",
-    "rule.c3":"شراء الوكيل الشحن لنفسه لا يتم احتسابه. شراء الألماس من الوكلاء يتم احتسابه حسب السعر الذي حصل عليه من المنصة.",
-    "rule.c4":"يتم توزيع المكافآت تلقائيًا عند استيفاء شروط الحصول عليها.",
-    "rule.c5":"يُمنع منعًا باتًا أي شكل من أشكال الغش أو إساءة الاستخدام أو الاحتيال. وفي حال اكتشاف ذلك، سيتم استبعاد المستخدم فورًا من النشاط وإلغاء جميع المكافآت.",
+    "rule.c3":"شراء الوكيل الألماس لنفسه لا يتم احتسابه. شراء الألماس من الوكيل يتم احتسابه حسب السعر الذي يدفعه المستخدم على المنصة مقابل نفس كمية الألماس.",
+    "rule.c4":"شحن الراتب غير مُحتسب.",
+    "rule.c5":"يتم توزيع المكافآت تلقائيًا عند استيفاء شروط الحصول عليها.",
+    "rule.c6":"يُمنع منعًا باتًا أي شكل من أشكال الغش أو إساءة الاستخدام أو الاحتيال. وفي حال اكتشاف ذلك، سيتم استبعاد المستخدم فورًا من النشاط وإلغاء جميع المكافآت.",
     "rule.r1":"يبدأ الحدث في الساعة 6:00 مساءً بتوقيت مصر و7:00 مساءً بتوقيت السعودية في آخر يوم من الشهر السابق، وينتهي في نفس التوقيت في آخر يوم من الشهر الحالي.",
     "rule.r2":"يتم توزيع جميع المكافآت تلقائيًا عند انتهاء الشهر.",
-    "rule.r3":"يحصل المركز الأول على ألماس يعادل 7٪ من إجمالي الشحن. يحصل المركز الثاني على ألماس يعادل 3٪ من إجمالي الشحن.",
-    "rule.r4":"شراء الوكيل الشحن لنفسه لا يتم احتسابه. شراء الألماس من الوكلاء يتم احتسابه حسب السعر الذي حصل عليه من المنصة.",
+    "rule.r3":"مكافآت الترتيب عناصر وليست ألماسًا: يحصل أصحاب المراكز الأول والثاني والثالث على معرّف خاص ومركبة وإطار صورة وإطار شارة وتوثيق الشرف وبانر، ويحصل صاحب المركز الأول إضافةً إلى ذلك على شاشة الافتتاح. راجع «مكافآت الترتيب» في تبويب الترتيب للاطلاع على القائمة الكاملة.",
+    "rule.r4":"شراء الوكيل الألماس لنفسه لا يتم احتسابه. شراء الألماس من الوكيل يتم احتسابه حسب السعر الذي يدفعه المستخدم على المنصة مقابل نفس كمية الألماس.",
     "rule.r5":"شحن الراتب غير مُحتسب.",
     "toast.tab":"تم التبديل إلى {name}",
     "toast.pick":"تم اختيار {lv} · {name}",
@@ -1192,11 +1187,11 @@ const MODULES = [
   { n:1,  name:"Hero 全屏头图", size:"375×636" },
   { n:2,  name:"规则入口按钮",  size:"64×46" },
   { n:3,  name:"TOP1 展示卡", size:"78×76" },
-  { n:4,  name:"结算倒计时",    size:"210×48" },
+  { n:4,  name:"结算倒计时",    size:"210×64" },
   { n:5,  name:"双页签",        size:"347×32" },
   { n:6,  name:"进度卡",        size:"347×104" },
   { n:7,  name:"宝箱轮播",      size:"375×96" },
-  { n:8,  name:"奖励面板",      size:"347×190" },
+  { n:8,  name:"奖励面板",      size:"347×217" },
   { n:9,  name:"吸底 CTA",  size:"375×78" },
   { n:10, name:"榜单头",        size:"347×90" },
   { n:11, name:"领奖台 TOP3", size:"302×150" },
@@ -1208,30 +1203,44 @@ const MODULES = [
 ];
 
 const LEGEND = [
-  { n:1,  title:"Hero 全屏头图", size:"375×636px ｜ 100vw × 169.6vw", prd:"§5.1", note:"替换现版 banner：设计稿 750×1272（=10rem×16.96rem），@375 视口 = 375×636，cover 铺满整屏（778px）。<b>交互：下滑进正文（真实滚动，非切屏）。</b>" },
+  { n:1,  title:"Hero 全屏头图", size:"375×636px ｜ 100vw × 169.6vw", prd:"§5.1", note:"替换现版 banner：设计稿 750×1272（=10rem×16.96rem），@375 视口 = 375×636，cover 铺满整屏（778px）。<b>⚠️ 2026-10-16 确认：头图资源自带（已做）动画 —— 因此不再另做开屏动画，灰盒按红线不表现动效，只留占位。</b><b>交互：下滑进正文（真实滚动，非切屏）。</b>" },
   { n:2,  title:"规则入口按钮", size:"64×46px ｜ 17.07vw × 12.27vw", prd:"§6.3.3", note:"新增。置于头图左下，与右侧 TOP1 头像左右对称。<b>交互：点击打开规则页。</b>" },
   { n:3,  title:"TOP1 展示卡", size:"78×76px ｜ 20.8vw × 20.27vw", prd:"§6.3.1", note:"新增。仅两行：头像在上、ID 在下；纯展示不可点。无数据时保留外框、内容置空为「—」。" },
-  { n:4,  title:"结算倒计时",  size:"210×48px ｜ 56vw × 12.8vw", prd:"§6.3.2", note:"新增。现版组件里 endTime/countdown/Date 零出现，完全没有倒计时。目标＝月末沙特 19:00 / 埃及 18:00。<b>交互：按目标实时走秒（含秒）。2026-10-14 按用户要求改为「CP 排行榜同款南瓜灯数字块」造型——白底描边方块 + 每格 🎃 + 方块下方单位、**无冒号**、**四段 Day/Hour/Min/Sec**；位置＝独立一行、水平居中，且**位于「头像框 + 规则按钮」那一行的下面**（不与二者同行）。</b>" },
+  { n:4,  title:"结算倒计时",  size:"210×64px ｜ 56vw × 17.07vw", prd:"§6.3.2", note:"新增。现版组件里 endTime/countdown/Date 零出现，完全没有倒计时。<b>2026-10-16 §11.5 定案 B：<u>统一按沙特时间</u>（目标＝月末 19:00 沙特 = 16:00 UTC），并<b>在数字块下方加一行时区标注</b>「Saudi time (GMT+3)」</b>（新增 i18n 键 `unit.tz`）。<b>实测（无头 Edge）：en 210×64 / ar 210×66（阿语字形高 2px），两语均在 .countRow 内水平居中（偏移 ≤1px）且真实可见。</b><b>交互：按目标实时走秒（含秒）。2026-10-14 按用户要求改为「CP 排行榜同款南瓜灯数字块」造型——白底描边方块 + 每格 🎃 + 方块下方单位、**无冒号**、**四段 Day/Hour/Min/Sec**；位置＝独立一行、水平居中，且**位于「头像框 + 规则按钮」那一行的下面**（不与二者同行）。</b>" },
   { n:5,  title:"双页签",      size:"347×32px ｜ 92.53vw × 8.53vw", prd:"§6", note:"替换现版 704×198 图集页签（=352×99@375）。按已定口径改为 DOM 文本，解决多语言与 a11y。<b>交互：切页签，吸顶停留。</b>" },
   { n:6,  title:"进度卡",      size:"347×104px ｜ 92.53vw × 27.73vw", prd:"§6.1.2", note:"合并原「当前充值额」卡片（已删除，信息重复）。充值额/门槛/差额三合一。<b>交互：随选中档与充值额实时联动，药水宽度带过渡动画。</b>" },
   { n:7,  title:"宝箱轮播",    size:"375×96px ｜ 100vw × 25.6vw", prd:"§6.1.3", note:"现版宝箱图 120×120（=60×60@375）；条带 padding 60/330/20（=30/165/10）。<b>交互：真实横滑 + scroll-snap 居中吸附；点选或滑停即选中；默认居中于最接近的未解锁档；达标档双描边点亮并带 ✓。</b>" },
-  { n:8,  title:"奖励面板",    size:"347×190px ｜ 92.53vw × 50.67vw", prd:"§6.1.4", note:"现版面板宽 9.6rem=720（=360@375）。奖励按 type 分流：竖版 236×443 / 横版 619×236 / 其余宫格（设计稿 px，@375 减半）。<b>交互：随选中档重建。锁定与否只由右上角 Locked/Unlocked 徽标表达，奖励一律完整展示（不加蒙版、不降透明度）。</b>" },
+  { n:8,  title:"奖励面板",    size:"347×217px ｜ 92.53vw × 57.87vw", prd:"§6.1.4", note:"现版面板宽 9.6rem=720（=360@375）。<b>⚠️ 2026-10-16 奖励全部重置（来源 `D:\\移植活动奖励.xlsx`「充值宝箱」页）：<u>本活动已无任何钻石/百分比奖励</u>。每档固定 4 项＝头像框 / 坐骑 / 勋章 / VIP 等级；宫格按 <u>3 列 × 2 行、从左到右、从上到下</u> 排布，面板高由 190 → 实测 217px。</b><br><b>逐档明细（画布只显示奖励名，复用／设计／素材编号写在这里供设计对表）：</b><br>• <b>LV1</b>：头像框 <code>uparty:161</code> ／ 坐骑「复用」／ 勋章「设计·无动效」／ <code>VIP4</code><br>• <b>LV2</b>：头像框 <code>uparty:162</code> ／ 坐骑「复用」／ 勋章「设计·无动效」／ <code>VIP5</code><br>• <b>LV3~LV5</b>：头像框「复用」／ 坐骑「复用」／ 勋章「设计」／ <code>VIP7 / VIP8 / VIP9</code><br>⚠️ <b>本批 4 项暂全部走「宫格」形态</b>，<b>排布＝3 列 × 2 行、从左到右、从上到下</b>（4 项落成「第 1 行 3 个 ＋ 第 2 行 1 个」；实测单格 99×99，第 2 行首格 x 与第 1 行首格 x 相同）。现版组件按接口 `type` 分三形态——实测：<code>type=36</code>→竖版大卡 236×443（`.reward-left`）／<code>type=35</code>→横版长条 619×236（`.reward-big`）／其余→宫格 157×157（`.reward-right`）。<b>新奖励各自的 type 值待后台配置确认</b>（见 PRD §11.14）。<br><b>交互：随选中档重建。锁定与否只由右上角 Locked/Unlocked 徽标表达，奖励一律完整展示（不加蒙版、不降透明度）。</b>" },
   { n:9,  title:"吸底 CTA", size:"375×78px ｜ 100vw × 20.8vw", prd:"§6.4", note:"宝箱 Tab 保持现有设计；榜单 Tab 不放（见 ⑬）。<b>交互：点它＝模拟充值一笔（差额恰好解锁当前档）→ 进度增长、宝箱点亮、toast 提示；全解锁后文案改为「去冲榜」并切到榜单。</b>" },
   { n:10, title:"榜单头",      size:"347×90px ｜ 92.53vw × 24vw", prd:"§6.2.1", note:"标题 + 口径说明 + 内嵌 Ranking Rewards 入口。<b>交互：点按钮开奖励弹窗（画布内元素唤起，铁律 3）。2026-10-14 按用户要求移除右侧「距结算倒计时」——Hero 模块 ④ 已有结算倒计时，此处重复。⚠️ 尺寸不变：右侧那列本来就不是高度决定项（左侧三行更高），实测 91px 与改前一致。</b>" },
   { n:11, title:"领奖台 TOP3", size:"302×150px ｜ 80.53vw × 40vw", prd:"§6.2.2", note:"现版 rank-1 底纹 604×505（=302×252.5@375）、rank-2/3 336×347（=168×173.5）。帽徽层级 1 王冠 / 2 尖帽 / 3 恶魔角。" },
   { n:12, title:"榜单列表",    size:"347×56px/行 ｜ 92.53vw × 14.93vw/行", prd:"§6.2.3", note:"现版行板 661×159（=330.5×79.5@375）；无数据时补 ??? 占位行，榜单永不空白。" },
   { n:13, title:"吸底我的排名条", size:"347×50px ｜ 92.53vw × 13.33vw", prd:"§6.2.4", note:"榜单 Tab 唯一吸底条，只展示 头像/排名/ID/已充值金额；原「我的排名」+吸底 CTA 两条已合并。现版条宽 10rem=750（=375@375）。" },
-  { n:14, title:"排名奖励弹窗", size:"320×n px ｜ 85.33vw", prd:"§6.2.5", note:"由榜单头内按钮唤起。<b>交互：✕ 或点遮罩关闭。</b>接口返空时需空态（现版会弹空白弹窗）。" },
+  { n:14, title:"排名奖励弹窗", size:"320×n px ｜ 85.33vw", prd:"§6.2.5", note:"由榜单头内按钮唤起。<b>⚠️ 2026-10-16 奖励重置（来源 `D:\\移植活动奖励.xlsx`「充值宝箱」页）：<u>不再是「总充值额 7% / 3% 钻石」</u>，改为道具奖励。</b><br>• <b>TOP1</b>（7 项）：启屏 ／ 特殊ID ／ 坐骑 ／ 头像框 ／ 勋章框 ／ 荣耀认证 ／ banner<br>• <b>TOP2 / TOP3</b>（各 6 项）：特殊ID ／ 坐骑 ／ 头像框 ／ 勋章框 ／ 荣耀认证 ／ banner<br>★ <b>只有 TOP1 有「启屏」</b>（xlsx 里 TOP2/TOP3 的启屏格是 `/`）。美术来源：坐骑/头像框＝复用，勋章框/荣耀认证/banner/启屏＝设计。<b>交互：✕ 或点遮罩关闭。</b>接口返空时需空态（现版会弹空白弹窗）。" },
   { n:15, title:"规则页",      size:"345×n px ｜ 92vw", prd:"§6.5", note:"替换现版正文内折叠区。独立页、分「宝箱规则 / 榜单规则」两个页签、正文直接展开不折叠。文案原文照搬。<b>交互：页签切换、✕ 或遮罩关闭。</b>" },
   { n:16, title:"充值页",      size:"375×416 px ｜ 100vw × 110.9vw", prd:"§6.1.5", note:"**2026-10-14 新增**。宝箱 Tab 吸底 CTA 点击拉起（原先点 CTA ＝ 一键补足差额，现改为先开充值页）。**形态＝从底部拉起的提起式窗口（bottom sheet）**，不是居中弹窗：**贴底、通栏、上圆角 16px、从底部滑入**（用户明确要求）。**内容只保留「分区标题 `Diamond` → Banner 占位 → 4 个充值档位行」**（头图、三页签、页脚、页面标题均已去掉）。★ **banner 占位在分区标题下方、第一个档位上方**。<b>交互：点价格（`$0.99/$4.99/$14.99/$49.99`）即按该金额充一笔并关闭；跨档会同时闪灯；✕ 或点上方遮罩关闭。</b>" }
 ];
 
+/* ⚠️ 2026-10-16 奖励**全部重置**（用户提供 `D:\移植活动奖励.xlsx`「充值宝箱」页）：
+   榜单不再发「总充值额 7%／3% 钻石」，宝箱也不再发钻石 —— **本活动已无任何百分比奖励**。
+   宝箱每档固定 4 项：头像框 / 坐骑 / 勋章 / VIP 等级；勋章 LV1~LV2 为「无动效」版。
+   ⚠️ 卡片形态由接口 `type` 决定（实测现版组件：36 = 竖版大卡 / 35 = 横版长条 / 其余 = 宫格）。
+      本批 4 项暂全部走宫格；**实际 type 值待后台配置确认**（见 PRD §11.14）。
+   美术来源（复用／设计／素材编号）不进画布，写在图例 ⑧ 的注里，供设计对表。 */
 const CHESTS = [
-  { lv:1, need:5,   rewards:[ { ic:"diamond", ct:"5,000", v:1 }, { ic:"candy", ct:"x10" } ] },
-  { lv:2, need:20,  rewards:[ { ic:"diamond", ct:"22,000", v:1 }, { ic:"bat", ct:"d30" }, { ic:"candy", ct:"x40", h:1 } ] },
-  { lv:3, need:50,  rewards:[ { ic:"diamond", ct:"60,000", v:1 }, { ic:"ghost", ct:"d30" }, { ic:"pumpkin", ct:"d30", h:1 } ] },
-  { lv:4, need:150, rewards:[ { ic:"diamond", ct:"200,000", v:1 }, { ic:"cauldron", ct:"d30" }, { ic:"star", ct:"d30", h:1 } ] },
-  { lv:5, need:500, rewards:[ { ic:"diamond", ct:"800,000", v:1 }, { ic:"crown", ct:"d30" } ] }
+  { lv:1, need:5,   rewards:[ { ic:"frame" }, { ic:"mount" }, { ic:"medalS" }, { ic:"vip", ct:"VIP4" } ] },
+  { lv:2, need:20,  rewards:[ { ic:"frame" }, { ic:"mount" }, { ic:"medalS" }, { ic:"vip", ct:"VIP5" } ] },
+  { lv:3, need:50,  rewards:[ { ic:"frame" }, { ic:"mount" }, { ic:"medal"  }, { ic:"vip", ct:"VIP7" } ] },
+  { lv:4, need:150, rewards:[ { ic:"frame" }, { ic:"mount" }, { ic:"medal"  }, { ic:"vip", ct:"VIP8" } ] },
+  { lv:5, need:500, rewards:[ { ic:"frame" }, { ic:"mount" }, { ic:"medal"  }, { ic:"vip", ct:"VIP9" } ] }
+];
+
+/* ⑭ 排名奖励（2026-10-16 重置：道具奖励，不再是钻石百分比）
+   TOP1 = 7 项（比 TOP2/3 多一项「启屏」）；TOP2 / TOP3 = 6 项。来源同上 xlsx「充值宝箱」页。 */
+const RANK_REWARDS = [
+  { pos:1, items:["splash","specialId","mount","frame","medalFrame","glory","banner"] },
+  { pos:2, items:["specialId","mount","frame","medalFrame","glory","banner"] },
+  { pos:3, items:["specialId","mount","frame","medalFrame","glory","banner"] }
 ];
 const RANK_TOP  = [ { rank:1, name:"Nocturne_Hex", amt:12480 },
                     { rank:2, name:"PumpkinPie",   amt:9150  },
@@ -1426,20 +1435,39 @@ function renderReward(){
   const wide = c.rewards.filter(function (r){ return r.v; });
   const strip = c.rewards.filter(function (r){ return r.h; });
   const rest = c.rewards.filter(function (r){ return !r.v && !r.h; });
-  const expOf = function (r){ return (r.ct === "d7") ? "rw.expire.d7" : ((r.ct === "d30") ? "rw.expire.d30" : "rw.expire.none"); };
-  const cell = function (r, cls){
-    return '<div class="reward ' + (cls || "") + '"><div class="ph pic"></div>' +
+  /* ct 是数据里的字面量（如 VIP4），不做 i18n —— 等级名是专有名词，阿语侧同样写 VIP4 */
+  const cell = function (r){
+    return '<div class="reward"><div class="ph pic"></div>' +
            '<span class="nm" data-tkey="rw.ic.' + r.ic + '"></span>' +
-           '<span class="ct2" data-tkey="' + expOf(r) + '"></span></div>';
+           (r.ct ? '<span class="ct2">' + r.ct + '</span>' : '') + '</div>';
   };
+  /* 空容器不渲染：原先恒输出 .rwV（flex:0 0 118px），奖励里没有竖版卡时会白占 118px */
   grid.innerHTML =
-    '<div class="rwV">' + wide.map(function (r){ return cell(r); }).join("") + '</div>' +
-    '<div class="rwCol">' + rest.map(function (r){ return cell(r); }).join("") + '</div>';
+    (wide.length  ? '<div class="rwV">'   + wide.map(cell).join("")  + '</div>' : '') +
+    (rest.length  ? '<div class="rwCol">' + rest.map(cell).join("")  + '</div>' : '');
   let wideBox = $(".rwWide", panel);
   if (strip.length) {
     if (!wideBox) { wideBox = document.createElement("div"); wideBox.className = "rwWide"; panel.appendChild(wideBox); }
-    wideBox.innerHTML = strip.map(function (r){ return cell(r); }).join("");
+    wideBox.innerHTML = strip.map(cell).join("");
   } else if (wideBox) { wideBox.remove(); }
+  renderTexts();   /* 动态 DOM 插入后补调（陷阱 6） */
+}
+
+/* ⑭ 排名奖励弹窗（2026-10-16 改为数据驱动：TOP1 7 项 / TOP2·TOP3 各 6 项） */
+function renderRankRewards(){
+  const body = $("#rankRewBody");
+  if (!body) return;
+  body.innerHTML = RANK_REWARDS.map(function (g){
+    const cells = g.items.map(function (k){
+      return '<div class="reward"><div class="ph pic"></div>' +
+             '<span class="nm" data-tkey="rw.rk.' + k + '"></span></div>';
+    }).join("");
+    return '<div class="mrow">' +
+             '<div class="mrowT">' + t("modal.pos", { n:g.pos }) +
+               '<span class="mrowSub">' + t("modal.count", { n:g.items.length }) + '</span></div>' +
+             '<div class="mrowRew">' + cells + '</div>' +
+           '</div>';
+  }).join("");
   renderTexts();   /* 动态 DOM 插入后补调（陷阱 6） */
 }
 
@@ -1537,6 +1565,7 @@ function updateReadout(){
 
 function renderAll(){
   renderTexts(); renderChests(); renderProgress(); renderReward(); renderCta(); renderRanking();
+  renderRankRewards();
   renderVisibility(); updateReadout();
   updateBadge();
 }
@@ -1804,7 +1833,7 @@ function boot(){
   /* 文案导出 / 导入 / 还原 */
   $("#btnExport").addEventListener("click", function (){
     $("#cfgBox").value = JSON.stringify({
-      _meta:{ at:new Date().toISOString(), stage:"v3.0 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
+      _meta:{ at:new Date().toISOString(), stage:"v3.4 可交互灰盒", recharge:S.recharge, selected:S.selected, lang:S.lang },
       texts:cfg.texts
     }, null, 2);
     toast("已导出到文本框");
