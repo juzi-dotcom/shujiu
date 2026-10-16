@@ -3,14 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Litchat CP排行榜 · CP 主题换皮 · 线框图 v2.5（可编辑）</title>
+<title>Litchat CP排行榜 · CP 主题换皮 · 线框图 v2.8（可编辑）</title>
 <!--
   ═══════════════════════════════════════════════════════════════════
   Litchat H5 「CP 亲密排行榜」CP 主题换皮 · 纯静态线框原型 v1.0
   ───────────────────────────────────────────────────────────────────
   依据：《Litchat-CP排行榜-万圣节换皮-PRD.docx》v1.0 第 5 章原型范围（该 PRD 为原万圣节版；2026-10-14 主题改为 CP 主题）
-  覆盖 6 状态：S1 本周榜·有数据 / S2 无CP空态 / S3 解除CP / S4 奖励页
-              S5 上周榜 / S6 我的排名弹层 + 规则弹窗
+  覆盖 4 状态：S1 本周榜·有数据 / S4 奖励页 / S5 上周榜 / S6 规则弹窗
+              （原 S3「解除CP」、S2「无CP空态」、以及 S6 内的「我的排名弹层」+ 子态切换器
+                已于 2026-10-14 按用户决定移除；
+                无 CP 情形改由底部排名条展示 Find Your CP 文案 —— 见左侧「底部浮窗演练」）
   尺寸来源：线上 ranking.css 实测（375 设计稿，1vw=3.75px）；主题为 CP 向（爱心 / 粉色基调），色值待设计确认
   可编辑：  双击画布文字直接改 · 右侧栏切状态/开关模块/EN⇄AR(RTL) ·
             标注模式一键唤出尺寸与 PRD 条目 · 配置可导出/导入 JSON
@@ -121,20 +123,14 @@ body{
 /* 状态显隐：!important 压过所有 ID 级 display（#mPodium{display:flex} 等） */
 .stateBlock{display:none!important}
 body[data-state="s1"] .stateBlock[data-show~="s1"],
-body[data-state="s2"] .stateBlock[data-show~="s2"],
-body[data-state="s3"] .stateBlock[data-show~="s3"],
 body[data-state="s4"] .stateBlock[data-show~="s4"],
 body[data-state="s5"] .stateBlock[data-show~="s5"],
 body[data-state="s6"] .stateBlock[data-show~="s6"]{display:block!important}
 /* 布局修正：下列模块需 flex 布局，用 ID 特异性 + !important 覆盖上面的通用 block */
-body[data-state="s1"] #mPodium, body[data-state="s3"] #mPodium, body[data-state="s5"] #mPodium,
-body[data-state="s1"] #mList,   body[data-state="s3"] #mList,   body[data-state="s5"] #mList,
+body[data-state="s1"] #mPodium, body[data-state="s5"] #mPodium,
+body[data-state="s1"] #mList,   body[data-state="s5"] #mList,
 body[data-state="s1"] #mMyRank,
 body[data-state="s4"] #rewardWrap{display:flex!important}
-/* S6 子态 */
-body[data-sub="sheet"] #ovRule{display:none!important}
-body[data-sub="rule"]  #ovSheet{display:none!important}
-body[data-state="s6"] #ovSheet, body[data-state="s6"] #ovRule{display:block}
 /* ───────────── 模块开关 ───────────── */
 body.no-banner  #mBanner{display:none!important}
 body.no-tabs    #mTabs{display:none!important}
@@ -246,26 +242,6 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
 .row .names .n2{font-size:10.5px; color:var(--ink3); margin-top:1px}
 .row .val{font-size:14px; font-weight:800; display:flex; align-items:center; gap:3px}
 .row .val::before{content:"🔥"; font-size:11px; filter:grayscale(1); opacity:.6}
-/* 解除CP（S3） */
-.broken .avatar{opacity:.38; filter:grayscale(1)}
-.broken .val{opacity:.6}
-.bondTag{
-  display:inline-block; font-size:9.5px; font-weight:700; color:#fff; background:#8a8a92;
-  border-radius:4px; padding:1px 6px; margin-top:3px; letter-spacing:.3px;
-}
-/* 空态（S2） */
-#mEmpty{padding:34px 22px 0; text-align:center; position:relative}
-#emptyArt{width:170px; height:150px; margin:0 auto; border-radius:14px}
-#emptyTitle{font-size:16px; font-weight:800; margin-top:16px}
-#emptyDesc{font-size:12.5px; color:var(--ink2); line-height:1.6; margin-top:8px}
-#btnCta{
-  margin:18px auto 0; height:44px; min-width:210px; border-radius:22px;
-  border:2px solid var(--ink); background:#dcdce2; font-size:15px; font-weight:800;
-  display:flex; align-items:center; justify-content:center; color:#1f1f26;
-  cursor:pointer; transition:filter .15s;
-}
-#btnCta:hover{filter:brightness(1.06)}
-#btnCta:active{transform:translateY(1px)}
 #mMyRank{cursor:default}
 .row{cursor:pointer; transition:background .15s}
 .row:hover{background:#f4f4f7}
@@ -279,10 +255,6 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
   text-align:center; line-height:1.5;
 }
 #toast.show{opacity:.95}
-#sealedNote{
-  margin:14px auto 0; font-size:11px; color:var(--ink2); border:1px dashed var(--line);
-  border-radius:8px; padding:6px 10px; display:inline-block; background:#fff;
-}
 /* 奖励页（S4） */
 #rewardWrap{padding:8px 6px 0; display:flex; flex-direction:column; gap:12px; position:relative}
 .rwCard{
@@ -320,25 +292,13 @@ body[data-editmode="1"] [data-tkey]:hover{background:#fff3c2; outline:1px dashed
 #mMyRank .mv{font-size:13px; color:var(--ink2); display:flex; align-items:center; gap:3px; margin-inline-start:auto}
 #mMyRank .mv::before{content:"🔥"; font-size:10px; filter:grayscale(1); opacity:.6}
 #mMyRank .chev{font-size:11px; color:var(--ink2)}
+/* 无 CP 态（2026-10-14）：底部条只展示 Find Your CP —— 隐去 My Rank 标签、分值与火苗，头像降透明 */
+#mMyRank.noCp .mr [data-tkey="myrank.label"]{display:none}
+#mMyRank.noCp .mv{display:none}
+#mMyRank.noCp .pair .avatar{opacity:.35}
 /* ───────────── 覆盖层：S6 ───────────── */
 .overlay{position:absolute; inset:0; z-index:40}
 .overlay .mask{position:absolute; inset:0; background:rgba(40,40,46,.45)}
-#ovSheet .sheet{
-  position:absolute; left:0; right:0; bottom:0; background:#fff; border-radius:18px 18px 0 0;
-  border-top:4px solid var(--ink2); padding:16px 14px 24px; max-height:62%;
-  display:flex; flex-direction:column;
-}
-#ovSheet h4{font-size:15px; font-weight:800}
-#ovSheet .sum{font-size:11.5px; color:var(--ink2); margin:4px 0 12px}
-.bondRow{
-  display:flex; align-items:center; gap:9px; border:1px solid var(--line2); border-radius:10px;
-  padding:9px 10px; margin-bottom:8px; background:#fff;
-}
-.bondRow.active{border:2px solid var(--ink); background:#f2f2f5; order:-1} /* PRD 4.4：生效中置顶高亮 */
-.bondRow .info{flex:1; min-width:0}
-.bondRow .info .n{font-size:13px; font-weight:700}
-.bondRow .info .d{font-size:10.5px; color:var(--ink2); margin-top:1px}
-.bondRow .pos{font-size:14px; font-weight:800}
 #ovRule .dialog{
   position:absolute; left:22px; right:22px; top:120px; background:#fff;
   border:1.5px solid var(--ink); border-radius:14px; padding:16px 16px 14px; max-height:520px; overflow:auto;
@@ -468,12 +428,12 @@ body.show-anno .anno{display:flex}
 ::-webkit-scrollbar-thumb{background:#c9c9d2;border-radius:5px}
 </style>
 </head>
-<body data-state="s1" data-sub="sheet">
+<body data-state="s1">
 
 <div id="topbar">
   <button id="panelToggle">☰ 面板</button>
   <button id="mStateBtn">☰ 状态</button>
-  <b>CP Ranking · 线框</b><span class="ver" id="verLabel">v2.5</span><span class="sep">|</span>
+  <b>CP Ranking · 线框</b><span class="ver" id="verLabel">v2.8</span><span class="sep">|</span>
   <span>纯静态线框 · 可编辑</span><span class="sep">|</span>
   <span id="stateLabel">S1 本周榜·有数据</span>
   <div id="zoomRow">
@@ -489,17 +449,9 @@ body.show-anno .anno{display:flex}
   <h3>状态 State</h3>
   <div class="seg" id="stateSeg">
     <button data-s="s1" class="on">S1 本周榜<small>有数据态</small></button>
-    <button data-s="s2">S2 空态<small>无CP引导 P0</small></button>
-    <button data-s="s3">S3 解除CP<small>Bond Broken P0</small></button>
     <button data-s="s4">S4 奖励页<small>Award 自适应 P0</small></button>
     <button data-s="s5">S5 上周榜<small>Last week</small></button>
-    <button data-s="s6">S6 弹层组<small>我的排名+规则</small></button>
-  </div>
-  <div id="subRow" style="display:none">
-    <div class="subRadio">
-      <button data-sub="sheet" class="on">我的排名弹层</button>
-      <button data-sub="rule">规则弹窗</button>
-    </div>
+    <button data-s="s6">S6 规则弹窗<small>6 条规则</small></button>
   </div>
 
   <h3>模块显隐 Modules</h3>
@@ -542,8 +494,9 @@ body.show-anno .anno{display:flex}
     <button data-my="top1">TOP1<small>只显 My Rank</small></button>
     <button data-my="onList">已上榜<small>距上一名</small></button>
     <button data-my="offList" class="on">未上榜<small>距上榜</small></button>
+    <button data-my="noCp">无 CP<small>Find Your CP</small></button>
   </div>
-  <div class="hint">底部浮窗文案随名次变化：<b>未上榜</b>→「距离上榜还差 x」；<b>已上榜</b>→「距离上一名还差 x」；<b>TOP1</b>→只显 My Rank（无文案）。点上方按钮切换预览。</div>
+  <div class="hint">底部浮窗文案随名次变化：<b>未上榜</b>→「距离上榜还差 x」；<b>已上榜</b>→「距离上一名还差 x」；<b>TOP1</b>→只显 My Rank（无文案）；<b>无 CP</b>→只展示「Find Your CP」（原 S2 空态已并入此处）。点上方按钮切换预览。</div>
 
   <h3>本状态 PRD 对照</h3>
   <div class="prdRef" id="prdRef"></div>
@@ -591,7 +544,7 @@ body.show-anno .anno{display:flex}
     <div id="rankScroll">
 
       <!-- ④ 领奖台（JS 动态渲染） -->
-      <div id="mPodium" class="stateBlock" data-show="s1 s3 s5">
+      <div id="mPodium" class="stateBlock" data-show="s1 s5">
         <div class="pod p2" data-pod="2">
           <div class="pair"><div class="avatar"></div><div class="avatar"></div></div>
           <div class="names">—</div>
@@ -614,20 +567,10 @@ body.show-anno .anno{display:flex}
       </div>
 
       <!-- ⑤ 列表（JS 动态渲染，rank 4+） -->
-      <div id="mList" class="stateBlock" data-show="s1 s3 s5">
+      <div id="mList" class="stateBlock" data-show="s1 s5">
         <div id="listRows"></div>
         <div class="box" style="padding:8px; text-align:center; font-size:10.5px; color:#9a9a9a" data-tkey="list.loadMore">— scroll for more · 触底加载 limit=30 —</div>
         <div class="anno" data-leg="n6" style="top:-2px; left:-6px">6</div>
-      </div>
-
-      <!-- S2 空态 -->
-      <div id="mEmpty" class="stateBlock" data-show="s2">
-        <div id="emptyArt" class="ph">EMPTY-STATE ILLUSTRATION<br>空态插画（无 CP 引导）<br>170×150px</div>
-        <div id="emptyTitle" data-tkey="empty.title">You're not in a CP yet…</div>
-        <div id="emptyDesc" data-tkey="empty.desc">Find your CP and start your journey!<br>结成 CP 后即可参与本周亲密度榜争夺</div>
-        <div id="btnCta" data-tkey="empty.cta">Find Your CP</div>
-        <div class="anno" data-leg="n7" style="top:96px; right:6px">7</div>
-        <div id="sealedNote" data-tkey="empty.hint">Rewards preview is still available below ↓</div>
       </div>
 
       <!-- S4 奖励页（可领取交互） -->
@@ -684,32 +627,6 @@ body.show-anno .anno{display:flex}
     </div>
 
     <!-- ══ S6 覆盖层 ══ -->
-    <div id="ovSheet" class="overlay stateBlock" data-show="s6">
-      <div class="mask"></div>
-      <div class="sheet">
-        <button class="xBtn">×</button>
-        <div class="anno" data-leg="n10" style="top:12px; left:40px">10</div>
-        <h4 data-tkey="sheet.title">My CP Bonds</h4>
-        <div class="sum" data-tkey="sheet.sum">You have 3 CP bonds · Best #4 this week · 9,100 🔥</div>
-        <div class="bondRow active">
-          <div class="pair sm"><div class="avatar"></div><div class="avatar"></div></div>
-          <div class="info"><div class="n">Ro****</div><div class="d" data-tkey="sheet.active">ACTIVE · 当前生效组合</div></div>
-          <div class="pos">#4</div>
-        </div>
-
-        <div class="bondRow">
-          <div class="pair sm"><div class="avatar"></div><div class="avatar"></div></div>
-          <div class="info"><div class="n">Da****</div><div class="d">2,300 🔥</div></div>
-          <div class="pos">#15</div>
-        </div>
-        <div class="bondRow">
-          <div class="pair sm"><div class="avatar"></div><div class="avatar"></div></div>
-          <div class="info"><div class="n">Sa****</div><div class="d" data-tkey="sheet.broken">Bond Broken · 已解除</div></div>
-          <div class="pos">—</div>
-        </div>
-      </div>
-    </div>
-
     <div id="ovRule" class="overlay stateBlock" data-show="s6">
       <div class="mask"></div>
       <div class="dialog">
@@ -755,15 +672,10 @@ const I18N = {
     "tabs.thisWeek":"This week","tabs.award":"Award","tabs.lastWeek":"Last week",
     "labels.day":"Day","labels.hour":"Hour","labels.minute":"Min","labels.second":"Sec",
     "list.cpBond":"CP Bond","list.loadMore":"— scroll for more · 触底加载 limit=30 —",
-    "bond.broken":"Bond Broken · 羁绊已断",
-    "empty.title":"You're not in a CP yet…",
-    "empty.desc":"Find your CP and start your journey!<br>结成 CP 后即可参与本周亲密度榜争夺",
-    "empty.cta":"Find Your CP","empty.hint":"Rewards preview is still available below ↓",
+    "empty.cta":"Find Your CP",
     "rw.top1":"TOP 1","rw.top25":"TOP 2 ~ 5","rw.top610":"TOP 6 ~ 10",
     "lw.title":"Last Week's Sealed Ranking","lw.sub":"Winners were announced & rewarded on Monday","lw.sealed":"Ranking sealed · 榜单已封印",
     "myrank.label":"My Rank","myrank.gapAbove":"{n} to pass the rank above","myrank.gapEnter":"{n} to enter the ranking",
-    "sheet.title":"My CP Bonds","sheet.sum":"You have 3 CP bonds · Best #4 this week · 9,100 🔥",
-    "sheet.active":"ACTIVE · 当前生效组合","sheet.broken":"Bond Broken · 已解除",
     "rule.title":"Activity Rules · 玩法规则",
     "rule.r1":"Give specific gifts to users and invite users to become CPs. After becoming CPs, you can participate in the rankings.",
     "rule.r2":"The top 10 users each week will receive corresponding rewards.",
@@ -775,10 +687,7 @@ const I18N = {
     "pick.title":"Choose a CP Partner","pick.sub":"Pick a user to bond with — you'll enter this week's ranking together",
     "pick.online":"Online now · nearby","pick.last":"Last online 2h ago",
     "gift.title":"Send a CP Gift","gift.sub":"Gift value converts to intimacy points (loveValue) for your bond",
-    "gift.rose":"Rose","gift.ring":"Ring","gift.firework":"Fireworks","gift.send":"Send Gift",
-    "break.title":"Break this bond?","break.sub":"Once broken, this CP no longer counts toward this week's ranking. This cannot be undone.",
-    "break.cancel":"Cancel","break.confirm":"Break Bond",
-    "sheet.breakBtn":"Break this bond"
+    "gift.rose":"Rose","gift.ring":"Ring","gift.firework":"Fireworks","gift.send":"Send Gift"
   },
   ar: {
     "title.main":"قائمة الشركاء","title.sub":"لوحة ترتيب الشركاء · الألفة",
@@ -786,15 +695,10 @@ const I18N = {
     "tabs.thisWeek":"هذا الأسبوع","tabs.award":"الجوائز","tabs.lastWeek":"الأسبوع الماضي",
     "labels.day":"يوم","labels.hour":"ساعة","labels.minute":"دقيقة","labels.second":"ثانية",
     "list.cpBond":"رابطة الشريك","list.loadMore":"— مرّر للمزيد —",
-    "bond.broken":"انقطعت الرابطة",
-    "empty.title":"لا يوجد لديك شريك بعد…",
-    "empty.desc":"ابحث عن شريكك وابدأ رحلتكما!<br>بعد الترابط يمكنك دخول قائمة هذا الأسبوع",
-    "empty.cta":"ابحث عن شريكك","empty.hint":"معاينة الجوائز لا تزال متاحة بالأسفل ↓",
+    "empty.cta":"ابحث عن شريكك",
     "rw.top1":"الأول","rw.top25":"الثاني ~ الخامس","rw.top610":"السادس ~ العاشر",
     "lw.title":"قائمة الأسبوع الماضي","lw.sub":"أُعلن الفائزون وجوب مكافآتهم يوم الاثنين","lw.sealed":"القائمة مختومة",
     "myrank.label":"ترتيبي","myrank.gapAbove":"{n} للتفوق على الترتيب الأعلى","myrank.gapEnter":"{n} لدخول القائمة",
-    "sheet.title":"روابطي","sheet.sum":"لديك 3 روابط · الأفضل #4 هذا الأسبوع",
-    "sheet.active":"نشطة · التوليفة الحالية","sheet.broken":"انقطعت الرابطة",
     "rule.title":"قواعد النشاط",
     "rule.r1":"أرسل هدايا محددة وادعُ المستخدمين ليصبحوا شركاءك؛ بعد أن تصبحوا شركاء يمكنكم المشاركة في القائمة.",
     "rule.r2":"أفضل 10 روابط أسبوعياً تحصل على المكافآت المخصصة.",
@@ -806,26 +710,21 @@ const I18N = {
     "pick.title":"اختر شريكك","pick.sub":"اختر مستخدماً للترابط معه — ستدخلان قائمة هذا الأسبوع معاً",
     "pick.online":"متصل الآن · قريب","pick.last":"آخر ظهور قبل ساعتين",
     "gift.title":"أرسل هدية شريك","gift.sub":"تتحول قيمة الهدية إلى نقاط ألفة لرباطكما",
-    "gift.rose":"وردة","gift.ring":"خاتم","gift.firework":"ألعاب نارية","gift.send":"أرسل",
-    "break.title":"فك الرباط؟","break.sub":"بعد الفك لن يُحتسب هذا الرباط في قائمة هذا الأسبوع. لا يمكن التراجع.",
-    "break.cancel":"إلغاء","break.confirm":"فك الرباط",
-    "sheet.breakBtn":"فك هذا الرباط"
+    "gift.rose":"وردة","gift.ring":"خاتم","gift.firework":"ألعاب نارية","gift.send":"أرسل"
   }
 };
 /* ═══════════════ 全局配置态 ═══════════════ */
 const cfg = {
-  state:"s1", sub:"sheet", lang:"en", anno:true,
+  state:"s1", lang:"en", anno:true,
   mods:{banner:true, tabs:true, count:true, podium:true, list:true, myrank:true},
   texts:{}   // tkey -> 用户改写
 };
-const STATE_LABELS = {s1:"S1 本周榜·有数据", s2:"S2 空态·无CP引导", s3:"S3 解除CP·Bond Broken", s4:"S4 奖励页·Award", s5:"S5 上周榜·Last week", s6:"S6 弹层组"};
+const STATE_LABELS = {s1:"S1 本周榜·有数据", s4:"S4 奖励页·Award", s5:"S5 上周榜·Last week", s6:"S6 规则弹窗"};
 const PRD_REFS = {
   s1:`<span class="tag">S1</span>主参照态：Banner + Tabs + 倒计时 + 领奖台(2-1-3) + 列表4+ + 我的排名条。<br><span class="tag">P1</span>4.5 倒计时最后24h转强调色闪烁（本态为常规态）。`,
-  s2:`<span class="tag">P0-4.1</span>空态引导：本周榜 rows 为空且无 currentMyRank → 空态插画 + Find Your CP CTA（沿用现有CP引导路由，不新增页面）；倒计时与奖励预览保留，避免页面显得"坏了"。`,
-  s3:`<span class="tag">P0-4.2</span>解除CP解释：status=0 → 头像置灰38% + 分值不透明度降至60% + 「Bond Broken · 羁绊已断」标签；点击弹轻提示"Bond no longer counts toward this week's ranking."（本线框以标签示意）。`,
   s4:`<span class="tag">P0-4.3</span>奖励页：卡片固定325px高 → min-height 自适应；奖品名长按/hover tooltip；TOP1 档位发光+缓浮（线框以双描边示意）；数据源 type=2。`,
   s5:`<span class="tag">S5</span>上周榜：与本周同构，无倒计时；列表副色转冷调；"Ranking sealed"封印文案（P1-4.5 的 duration=0 分支在此态展示）。`,
-  s6:`<span class="tag">P0-4.4</span>我的排名弹层：生效中组合置顶高亮 + 摘要行（N段CP/最高名次）。<span class="tag">P2-4.6</span>规则弹窗氛围层；规则6条业务含义与原版逐条对应。`
+  s6:`<span class="tag">P2-4.6</span>规则弹窗：6 条规则业务含义与原版逐条对应，措辞按 CP 主题包装；氛围层以虚线示意。（原「我的排名弹层」已于 2026-10-14 移除）`
 };
 
 const $  = s => document.querySelector(s);
@@ -844,13 +743,10 @@ function renderTexts(){
 /* ── 状态机 ── */
 function applyState(){
   document.body.dataset.state = cfg.state;
-  document.body.dataset.sub   = cfg.sub;
   $("#stateBadge").textContent = cfg.state.toUpperCase();
   $("#stateLabel").textContent = STATE_LABELS[cfg.state];
   $("#prdRef").innerHTML = PRD_REFS[cfg.state] || "";
-  $("#subRow").style.display = cfg.state==="s6" ? "block" : "none";
   $$("#stateSeg button").forEach(b=>b.classList.toggle("on", b.dataset.s===cfg.state));
-  $$("#subRow button").forEach(b=>b.classList.toggle("on", b.dataset.sub===cfg.sub));
 }
 function applyMods(){
   Object.entries(cfg.mods).forEach(([m,on])=>{
@@ -871,7 +767,6 @@ function applyAnno(){
 }
 /* ── 事件绑定 ── */
 $$("#stateSeg button").forEach(b=>b.onclick=()=>{cfg.state=b.dataset.s; applyState();});
-$$("#subRow button").forEach(b=>b.onclick=()=>{cfg.sub=b.dataset.sub; applyState();});
 $$("input[data-mod]").forEach(c=>c.onchange=()=>{cfg.mods[c.dataset.mod]=c.checked; applyMods();});
 $("#annoChk").onchange = e=>{cfg.anno=e.target.checked; applyAnno();};
 $("#langEn").onclick = ()=>{cfg.lang="en"; applyLang(); renderTexts(); renderMyRank();};
@@ -973,8 +868,8 @@ document.addEventListener("click", e=>{
 /* ── 导出 / 导入 / 还原 ── */
 function snapshot(){
   return JSON.stringify({
-    _meta:{doc:"CP Ranking wireframe", v:"2.5", stage:"v2.5", exportedAt:new Date().toISOString()},
-    state:cfg.state, sub:cfg.sub, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts,
+    _meta:{doc:"CP Ranking wireframe", v:"2.8", stage:"v2.8", exportedAt:new Date().toISOString()},
+    state:cfg.state, lang:cfg.lang, anno:cfg.anno, mods:cfg.mods, texts:cfg.texts,
     annos:ANNOS.map(a=>({id:a.id, host:a.host, style:a.style, html:a.html}))
   }, null, 2);
 }
@@ -992,7 +887,7 @@ $("#btnImport").onclick = ()=>{
   if(!raw){ $("#fileIn").click(); return; }
   try{
     const o = JSON.parse(raw);
-    Object.assign(cfg, {state:o.state||cfg.state, sub:o.sub||cfg.sub, lang:o.lang||cfg.lang});
+    Object.assign(cfg, {state:o.state||cfg.state, lang:o.lang||cfg.lang});
     if(typeof o.anno==="boolean") cfg.anno=o.anno;
     if(o.mods) Object.assign(cfg.mods, o.mods);
     if(o.texts) cfg.texts = o.texts;
@@ -1023,26 +918,22 @@ const LEGEND_DEFAULT = [
   ["n2","Rule 按钮","高31px（8.26vw）· 圆角胶囊（CP 主题造型待设计） · <b>位置：头图下方 1/4（top:75%，2026-10-13 由贴顶下移）</b> · right:0 贴边 · 原版 top 69.33vw"],
   ["n3","② 倒计时","数字块（CP 主题造型待设计） · 服务器 sysTime 校准 · 最后24h转强调色闪烁（P1-4.5）"],
   ["n4","③ Tabs","119.5×53.5px（31.87×14.27vw）· 选中=心动粉渐变+描边强调 · 三态 This week/Award/Last week"],
-  ["n5","⑤ Top3 领奖台","头像52.5px（14vw）+2px描边 · 双头像=CP · 底座2-1-3排布+纹理 · TOP1 专属强调（P2）"],
-  ["n6","⑥ 榜单列表 4+","行高≈60px · status=0置灰60%+Bond Broken标签（P0-4.2）· 触底加载 limit=30 · 分值 quantile 格式化"],
-  ["n7","空态引导","<span class='prd'>P0-4.1</span>本周榜空且无我的排名时展示 · 空态插画170×150px + Find Your CP CTA（h44px）· 沿用现有CP引导路由"],
+  ["n5","④ Top3 领奖台","头像52.5px（14vw）+2px描边 · 双头像=CP · 底座2-1-3排布+纹理 · TOP1 专属强调（P2）"],
+  ["n6","⑤ 榜单列表 4+","行高≈60px · 触底加载 limit=30 · 分值 quantile 格式化"],
   ["n8","奖励卡","<span class='prd'>P0-4.3</span>固定325px高 → min-height自适应 · <b>卡片宽 371px→100%(max 355px)</b>（原值超出手机壳可视宽 36px，右侧被裁） · 奖品名单行省略+tooltip · TOP1双描边=发光 · 数据源 /shop/productRankReward/getByType?type=2"],
-  ["n9","⑥ 我的排名条","<b>仅本周榜（This week）展示</b> · 固定底部（sticky 吸底）· 原4px奶油色顶边 → 毛玻璃+描边强调 · <b>本版不做点击弹层</b>（弹层改由左侧面板「S6 弹层组」进入）· 展示：My Rank #名次 + 分值 + <b>动态文案</b>（未上榜→距离上榜还差 x；已上榜→距上一名还差 x；TOP1→无文案）"],
-  ["n10","我的排名弹层","<span class='prd'>P0-4.4</span>生效中组合置顶高亮 · 摘要行：N段CP+最高名次（P1-4.4）· 解除CP段显示 Bond Broken"],
+  ["n9","⑥ 我的排名条","<b>仅本周榜（This week）展示</b> · 固定底部（sticky 吸底）· 原4px奶油色顶边 → 毛玻璃+描边强调 · <b>本版不做点击弹层</b>（我的排名弹层已于 2026-10-14 移除）· 展示：My Rank #名次 + 分值 + <b>动态文案</b>（未上榜→距离上榜还差 x；已上榜→距上一名还差 x；TOP1→无文案）"],
   ["n11","规则弹窗","6条规则业务含义与原版逐条对应，措辞按 CP 主题包装 · 氛围层（P2-4.6，虚线示意）"]
 ];
 
 /* 可挂角标的宿主（须是定位上下文；角标随宿主内容滚动） */
 const ANNO_HOSTS = [
   ["#mBanner","① Banner 头图"],
-  ["#mTabs","② Tab 切换"],
-  ["#mCount","③ 倒计时"],
+  ["#mCount","② 倒计时"],
+  ["#mTabs","③ Tab 切换"],
   ["#mPodium","④ Top3 领奖台"],
   ["#mList","⑤ 榜单列表"],
-  ["#mEmpty","空态引导"],
   ["#rewardWrap","奖励卡区"],
   ["#mMyRank","⑥ 我的排名条"],
-  ["#ovSheet .sheet","我的排名弹层"],
   ["#ovRule .dialog","规则弹窗"]
 ];
 
@@ -1169,9 +1060,16 @@ function renderLegend(){
   $("#legCnt").textContent = ANNOS.length;
 }
 
+/* 新标注的 id：取现有最大编号 +1 —— 不能用 ANNOS.length+1，
+   因为源里可能有编号空档（如删掉 n7 后剩 n1..n6,n8..n11，length=10 会生成 n11 撞号） */
+function nextAnnoId(){
+  let max = 0;
+  ANNOS.forEach(a => { const m = /^n(\d+)$/.exec(a.id); if(m) max = Math.max(max, +m[1]); });
+  return "n" + (max + 1);
+}
 function addAnno(){
   const sel = $("#annoHost");
-  const a = { id: "n" + (ANNOS.length + 1), host: sel.value, style: "top:8px; left:8px", html: defaultAnnoHtml("__new__") };
+  const a = { id: nextAnnoId(), host: sel.value, style: "top:8px; left:8px", html: defaultAnnoHtml("__new__") };
   ANNOS.push(a);
   renderAnnos(); renderLegend();
   toast("已新增标注（挂在「" + sel.options[sel.selectedIndex].text + "」左上角）· 拖到目标位置");
@@ -1272,7 +1170,8 @@ const fmt = n => n.toLocaleString("en-US");
 const MY_SCENARIOS = {
   top1:    { rank:1,  love:13600 },   // TOP1：只展示 My Rank，无文案
   onList:  { rank:4,  love:8800  },   // 已上榜：距离上一名还差 x（上一名 #3 = 9,100）
-  offList: { rank:12, love:820   }    // 未上榜：距离上榜还差 x（门槛 = 第 10 名 1,240）
+  offList: { rank:12, love:820   },   // 未上榜：距离上榜还差 x（门槛 = 第 10 名 1,240）
+  noCp:    { noCp:true           }    // 无 CP：底部条只展示「Find Your CP」（原 S2 空态，2026-10-14 并入）
 };
 let myScenario = "offList";           // 默认停在未上榜（与线上原版 #12 一致）
 
@@ -1298,10 +1197,12 @@ function myRankGapText(sc){
 /* 渲染底部浮窗（名次 + 分值 + 文案） */
 function renderMyRank(){
   const sc = MY_SCENARIOS[myScenario] || MY_SCENARIOS.offList;
-  const pos = $q("#mrPos"), val = $q("#mrVal"), gap = $q("#mrGap");
-  if(pos) pos.textContent = "#" + sc.rank;
-  if(val) val.textContent = fmt(sc.love);
-  if(gap) gap.textContent = myRankGapText(sc);
+  const bar = $q("#mMyRank"), pos = $q("#mrPos"), val = $q("#mrVal"), gap = $q("#mrGap");
+  const noCp = !!sc.noCp;
+  if(bar) bar.classList.toggle("noCp", noCp);          // 无 CP：隐藏 My Rank 标签/分值/火苗，只留 CTA 文案
+  if(pos) pos.textContent = noCp ? t("empty.cta") : ("#" + sc.rank);
+  if(val) val.textContent = noCp ? "" : fmt(sc.love);
+  if(gap) gap.textContent = noCp ? "" : myRankGapText(sc);
 }
 
 function renderRanking(){
@@ -1334,33 +1235,21 @@ function renderRanking(){
   renderTexts();
 }
 
-/* ── 我的排名条 & 快捷按钮 → 弹层 ── */
-function openSheet(){
-  switchState("s6");
-  document.body.dataset.sub = "sheet";
-  applySub();
-}
-function openRule(){
-  switchState("s6");
-  document.body.dataset.sub = "rule";
-  applySub();
-}
-function applySub(){
-  $("#subRow").style.display = cfg.state==="s6" ? "block" : "none";
-  $$("#subRow button").forEach(b=>b.classList.toggle("on", b.dataset.sub===cfg.sub));
-}
+/* ── 规则按钮 → 规则弹窗（S6）──
+   2026-10-14：我的排名弹层与 S6 子态切换器已移除，S6 现在只有「规则弹窗」一个内容 */
+function openRule(){ switchState("s6"); }
 const mr = $q("#mMyRank");
-/* 底部浮窗仅作信息展示，点击不唤起弹层（弹层由左侧面板 S6 进入） */
+/* 底部浮窗仅作信息展示，点击不唤起任何弹层 */
 const ruleBtn = $q("#btnRule");
 if(ruleBtn) ruleBtn.onclick = openRule;
 
 /* S6 内 × 关闭 → 回到本周榜 */
 $$(".overlay .xBtn").forEach(b=>{
-  b.onclick = ()=>{ switchState("s1"); document.body.dataset.sub = "sheet"; applySub(); renderRanking(); };
+  b.onclick = ()=>{ switchState("s1"); renderRanking(); };
 });
 /* S6 遮罩点击关闭 */
-$$("#ovSheet .mask, #ovRule .mask").forEach(m=>{
-  m.onclick = ()=>{ switchState("s1"); document.body.dataset.sub = "sheet"; applySub(); renderRanking(); };
+$$("#ovRule .mask").forEach(m=>{
+  m.onclick = ()=>{ switchState("s1"); renderRanking(); };
 });
 
 /* ── 倒计时（静态起点，纯展示走秒）── */
