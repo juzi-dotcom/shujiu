@@ -54,7 +54,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <body>
 <div class="top"><div class="in">
   <h1><strong>Litchat H5 · CP 亲密排行榜（/ranking/cpv2）</strong></h1>
-  <div class="meta">v1.1 · 2026-10-14 ·依据：线框原型 v2.8</div>
+  <div class="meta">v1.2 · 2026-10-14 ·依据：线框原型 v2.8</div>
 </div></div>
 <div class="wrap"><div class="card">
 <h2>一、文档说明</h2>
@@ -172,39 +172,13 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <tr><td>S6 规则弹窗</td><td>点「×」或弹窗外遮罩</td><td>S1 本周榜</td><td>弹窗关闭</td></tr>
 <tr><td>S1 本周榜</td><td>点底部「我的排名」条</td><td>（不变）</td><td>纯展示，无任何跳转或弹层</td></tr>
 </tbody></table></div>
-<h2>六、数据与接口（全部沿用现状，不变更）</h2>
-<div class="tw"><table>
-<thead><tr>
-<th>接口</th>
-<th>用途</th>
-<th>关键参数</th>
-</tr></thead><tbody>
-<tr><td>GET /revenue/couple/v2/getRankConfig</td><td>活动周期 + 服务器时间</td><td>返回 start / end / sysTime（倒计时校准依据）</td></tr>
-<tr><td>GET /revenue/couple/v2/rank</td><td>榜单列表</td><td>index / limit（默认 30）/ rankingListType（0=本周，2=上周）</td></tr>
-<tr><td>GET /shop/productRankReward/getByType</td><td>奖励配置</td><td>type（1=v1，2=v2）</td></tr>
-</tbody></table></div>
-<p><strong>字段语义（不变）：</strong></p>
-<div class="tw"><table>
-<thead><tr>
-<th>字段</th>
-<th>含义</th>
-<th>前端表现</th>
-</tr></thead><tbody>
-<tr><td>loveValue</td><td>CP 之间互赠 CP 礼物的金额（榜单分值）</td><td>榜单分值展示</td></tr>
-<tr><td>user / cpUser</td><td>一对 CP（双方头像 / 昵称 / id）</td><td>双头像并列</td></tr>
-<tr><td>status</td><td>CP 关系状态；0 = 已解除</td><td>沿用线上现状（本期不新增表现）</td></tr>
-<tr><td>rank</td><td>名次</td><td>≤ 3 进领奖台，&gt; 3 进普通列表</td></tr>
-</tbody></table></div>
-<ul>
-  <li>⚠️ 以上接口<strong>均需登录态</strong>（匿名访问返回 status:1010），联调时请准备登录账号。</li>
-</ul>
-<h2>七、文案与多语言</h2>
+<h2>六、文案与多语言</h2>
 <ul>
   <li>页面文案以原型为准（原型中双击即可查看 / 编辑全部文案，共 30+ 条）。</li>
   <li>需支持 en / ar 两种语言；ar 为从右到左（RTL）布局，<strong>镜像需覆盖弹窗、列表、倒计时等全部模块</strong>。</li>
   <li>新增文案需在两种语言下均无缺失；切换语言后动态文案（底部条差值、倒计时标签等）需同步刷新。</li>
 </ul>
-<h2>八、验收标准（测试逐项核对）</h2>
+<h2>七、验收标准（测试逐项核对）</h2>
 <div class="tw"><table>
 <thead><tr>
 <th>#</th>
@@ -226,7 +200,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
 <tr><td>13</td><td>移动端适配</td><td>移动端视口下无横向滚动、无文字截断</td></tr>
 <tr><td>14</td><td>视觉还原</td><td>按设计稿核对（本项由设计 / 产品验收，不在开发自测范围）</td></tr>
 </tbody></table></div>
-<h2>九、边界与异常</h2>
+<h2>八、边界与异常</h2>
 <ul>
   <li>榜单无数据：列表区域不出现空白错位（沿用线上现状处理）。</li>
   <li>分页到底：不再发起请求，不出现重复行。</li>
@@ -235,7 +209,7 @@ tbody tr:nth-child(even){background:#fcfcfd}
   <li>语言切换：切换瞬间不得出现文案缺失或布局跳动。</li>
   <li>网络异常：请求失败时保持页面可用（沿用线上现状处理）。</li>
 </ul>
-<h2>十、已确认结论</h2>
+<h2>九、已确认结论</h2>
 <p>以下三项已于 2026-10-14 由产品确认，<strong>本期均不做改动</strong>：</p>
 <div class="tw"><table>
 <thead><tr>
@@ -249,11 +223,11 @@ tbody tr:nth-child(even){background:#fcfcfd}
 </tbody></table></div>
 <p><strong>备注：</strong>奖励档位与发奖时间<strong>沿用现状</strong>，本文档不做规定；如需变更请与后端确认后另行同步。</p>
   <div class="dl">
-    <a href="Litchat-CP-ranking-requirements-v1.1.docx">⬇ 下载 Word 版（.docx）</a>
+    <a href="Litchat-CP-ranking-requirements-v1.2.docx">⬇ 下载 Word 版（.docx）</a>
     <a class="ghost" href="../">← 返回原型索引</a>
   </div>
   <div class="note">本页由 Word 版需求文档自动转换生成，内容与 .docx 一致；两者若有出入，以 Word 版为准。</div>
 </div></div>
-<div class="foot">Litchat H5 · CP 亲密排行榜 · 需求文档（开发测试版）· 依据线框原型 v2.8</div>
+<div class="foot">Litchat H5 · CP 亲密排行榜 · 需求文档 · 依据线框原型 v2.8</div>
 </body>
 </html>
